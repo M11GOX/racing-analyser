@@ -867,12 +867,13 @@ function renderRunnersSec(out, body) {
 }
 
 function renderRunnerBody(text) {
-  var tableM = text.match(/\*\*Profile Match:\*\*\n([\s\S]*?)(?=\*\*Pros:|$)/);
-  var prosM  = text.match(/\*\*Pros:\*\*\n([\s\S]*?)(?=\*\*Cons:|$)/);
-  var consM  = text.match(/\*\*Cons:\*\*\n([\s\S]*?)(?=\*\*Overall|$)/);
+  var tableM = text.match(/\*\*Profile Match:\*\*[\s\S]*?(?=\*\*Pros:|\*\*Cons:|$)/);
+  var prosM  = text.match(/\*\*Pros:\*\*([\s\S]*?)(?=\*\*Cons:|\*\*Overall|$)/);
+  var consM  = text.match(/\*\*Cons:\*\*([\s\S]*?)(?=\*\*Overall|\*\*Pros:|$)/);
+  var tableContent = text.match(/\*\*Profile Match:\*\*(\n\|[\s\S]*?)(?=\*\*Pros:|\*\*Cons:|$)/);
   var pros = prosM ? prosM[1].replace(/^[-•*] */gm,'').trim() : '';
   var cons = consM ? consM[1].replace(/^[-•*] */gm,'').trim() : '';
-  return (tableM ? mdTable(tableM[1]) : '')
+  return (tableContent ? mdTable(tableContent[1]) : (tableM ? mdTable(tableM[0].replace('**Profile Match:**','')) : ''))
     + ((pros||cons) ? '<div class="pc-grid"><div class="pros"><div class="pc-lbl">Pros</div><div class="pc-body">' + pros.replace(/\n/g,'<br>') + '</div></div><div class="cons"><div class="pc-lbl">Cons</div><div class="pc-body">' + cons.replace(/\n/g,'<br>') + '</div></div></div>' : '');
 }
 
