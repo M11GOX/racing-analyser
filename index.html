@@ -622,7 +622,7 @@ function processYear() {
   if (!key) { res.textContent = 'No API key set — open Settings first.'; return; }
   res.textContent = 'Processing...';
   var prompt = 'Extract the 2000 Guineas winner from this result text. Return ONLY valid JSON with: year(number), winner(string), bred(IRE/GB/USA/FR/Other), draw(string e.g. "5 (Low)"), style(LED/PROMINENT/MIDFIELD/HOLD UP), trainer(string), or(number), sp(string), field(number), di(number or null), cod(number or null), jsi(number or null).\n\nText:\n' + text;
-  fetch('https://api.anthropic.com/v1/messages', {
+  fetch('https://racing-proxy.danmigo.workers.dev', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'x-api-key': key, 'anthropic-version': '2023-06-01' },
     body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 500, messages: [{ role: 'user', content: prompt }] })
@@ -753,13 +753,10 @@ function runAnalysis(key) {
   waitEl.textContent = 'Sending request... this takes 20-40 seconds for a full field.';
   out.appendChild(waitEl);
 
-  fetch('https://api.anthropic.com/v1/messages', {
+  fetch('https://racing-proxy.danmigo.workers.dev', {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json',
-      'x-api-key': key,
-      'anthropic-version': '2023-06-01',
-      'anthropic-dangerous-allow-browser': 'true'
+      'Content-Type': 'application/json'
     },
     body: JSON.stringify({
       model: 'claude-sonnet-4-20250514',
