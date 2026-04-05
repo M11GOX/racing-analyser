@@ -348,7 +348,7 @@ textarea{resize:vertical;min-height:52px}
     <div id="analysis-status"></div>
   </div>
   <div id="analysis-loading" style="display:none">
-    <div class="stream-row"><div class="dot"></div>Generating analysis — streaming live</div>
+    <div class="stream-row"><div class="dot"></div>Generating analysis — please wait 20-40 seconds</div>
   </div>
   <div id="analysis-out">
     <div class="analysis-empty">
@@ -747,6 +747,12 @@ function runAnalysis(key) {
   var prompt = buildPrompt(fieldSize);
   console.log('Prompt chars:', prompt.length, '| Field size:', fieldSize);
 
+  // Show a waiting message
+  var waitEl = document.createElement('div');
+  waitEl.style.cssText = 'font-family:IBM Plex Mono,monospace;font-size:11px;color:var(--mid);padding:12px 0';
+  waitEl.textContent = 'Sending request... this takes 20-40 seconds for a full field.';
+  out.appendChild(waitEl);
+
   fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
     headers: {
@@ -758,49 +764,35 @@ function runAnalysis(key) {
     body: JSON.stringify({
       model: 'claude-sonnet-4-20250514',
       max_tokens: 8000,
-      stream: true,
       messages: [{ role: 'user', content: prompt }]
     })
   }).then(function(response) {
+    console.log('Response status:', response.status);
     if (!response.ok) {
-      return response.text().then(function(t) { throw new Error('HTTP ' + response.status + ': ' + t.slice(0,200)); });
-    }
-    loading.style.display = 'none';
-    var fullText = '';
-    var streamEl = document.createElement('div');
-    streamEl.style.cssText = 'font-family:IBM Plex Mono,monospace;font-size:11px;line-height:1.7;white-space:pre-wrap;padding:16px;color:var(--ink)';
-    out.appendChild(streamEl);
-    var reader = response.body.getReader();
-    var decoder = new TextDecoder();
-    function read() {
-      reader.read().then(function(result) {
-        if (result.done) {
-          out.innerHTML = '';
-          renderStructured(fullText);
-          return;
-        }
-        var lines = decoder.decode(result.value, {stream:true}).split('\n');
-        lines.forEach(function(line) {
-          if (!line.startsWith('data: ')) return;
-          var d = line.slice(6).trim();
-          if (!d || d === '[DONE]') return;
-          try {
-            var p = JSON.parse(d);
-            if (p.type === 'content_block_delta' && p.delta && p.delta.text) {
-              fullText += p.delta.text;
-              streamEl.textContent = fullText;
-              streamEl.scrollTop = streamEl.scrollHeight;
-            }
-          } catch(e) {}
-        });
-        read();
+      return response.text().then(function(t) {
+        console.error('Error body:', t);
+        throw new Error('HTTP ' + response.status + ': ' + t.slice(0,300));
       });
     }
-    read();
+    return response.json();
+  }).then(function(data) {
+    console.log('Response keys:', Object.keys(data).join(','));
+    loading.style.display = 'none';
+    var fullText = '';
+    if (data.content && Array.isArray(data.content)) {
+      fullText = data.content.filter(function(b){return b.type==='text';}).map(function(b){return b.text;}).join('');
+    } else {
+      throw new Error('Unexpected response format: ' + JSON.stringify(data).slice(0,200));
+    }
+    if (!fullText.trim()) throw new Error('Empty response from API');
+    out.innerHTML = '';
+    renderStructured(fullText);
   }).catch(function(err) {
     loading.style.display = 'none';
-    console.error('Analysis error:', err);
-    out.innerHTML = '<div class="err-box"><strong>Error generating analysis</strong><br><br>' + err.message + '</div>';
+    console.error('Analysis error:', err.name, err.message);
+    out.innerHTML = '<div class="err-box"><strong>Error generating analysis</strong><br><br>'
+      + '<strong>' + err.name + ':</strong> ' + err.message + '<br><br>'
+      + 'Check browser console (F12) for details.</div>';
   });
 }
 
