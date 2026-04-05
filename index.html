@@ -691,7 +691,11 @@ function buildPrompt(fieldSize) {
     + '2019-2025 sample: 99 runners, 7 winners.\n\n'
     + 'ICP: ' + icp + '\n\n'
     + 'RUNNERS (' + runners.length + ' of ' + fieldSize + '):\n' + runnerLines + '\n'
-    + 'Score each runner vs ICP. Accept pre-assigned running styles. Score pedigree metrics vs sweet spots when provided. Ignore Draw for any non-Flat race context (not applicable here as this is Flat).\n\n'
+    + 'Score each runner vs ICP. Accept pre-assigned running styles. Score pedigree metrics vs sweet spots when provided.\n'
+    + 'For BREEDING: use 🟢 for USA, 🟡 for IRE or GB (with their A/E noted), 🔴 only for unusually weak breeding.\n'
+    + 'For TRAINER: use 🟢 for Appleby or Balding, 🔴 for A P O Brien (A/E 0.39), 🟡 for all others (neutral).\n'
+    + 'For JOCKEY: use 🟢 for Buick or Doyle, 🔴 for R Moore (0W/6R), 🟡 for all others (neutral).\n'
+    + 'Use ✅ ⚠️ ❌ only for objective factors: Style, Draw, OR, SP, and pedigree metrics.\n\n'
     + 'OUTPUT - use EXACTLY these section headers:\n\n'
     + '## STYLE DERIVATION TABLE\n'
     + '| Horse | Stall | Draw Group | Style | Profile Match |\n\n'
@@ -714,7 +718,8 @@ function buildPrompt(fieldSize) {
     + '| Joint Sire Index | 18.0-21.0 | x | emoji |\n'
     + '| Dosage Index | 0.60-1.60 | x | emoji |\n'
     + '| COD Index | -0.20 to +0.35 | x | emoji |\n'
-    + '**Pros:** - bullet\n**Cons:** - bullet\n**Overall Rating: stars**\n\n'
+    + '**Assessment:** 2-3 sentence narrative summarising the key strengths, concerns and overall verdict for this runner. Reference the most important matching and non-matching factors. End with a clear view on whether this runner fits the winning profile.\n\n'
+    + '**Overall Rating: stars**\n\n'
     + '## PREDICTION\n'
     + '| Position | Horse | Stall | Rating | SP | Key Reason |\n|---|---|---|---|---|---|\n\n'
     + '## PREDICTION NARRATIVE\n'
@@ -867,14 +872,11 @@ function renderRunnersSec(out, body) {
 }
 
 function renderRunnerBody(text) {
-  var tableM = text.match(/\*\*Profile Match:\*\*[\s\S]*?(?=\*\*Pros:|\*\*Cons:|$)/);
-  var prosM  = text.match(/\*\*Pros:\*\*([\s\S]*?)(?=\*\*Cons:|\*\*Overall|$)/);
-  var consM  = text.match(/\*\*Cons:\*\*([\s\S]*?)(?=\*\*Overall|\*\*Pros:|$)/);
-  var tableContent = text.match(/\*\*Profile Match:\*\*(\n\|[\s\S]*?)(?=\*\*Pros:|\*\*Cons:|$)/);
-  var pros = prosM ? prosM[1].replace(/^[-•*] */gm,'').trim() : '';
-  var cons = consM ? consM[1].replace(/^[-•*] */gm,'').trim() : '';
-  return (tableContent ? mdTable(tableContent[1]) : (tableM ? mdTable(tableM[0].replace('**Profile Match:**','')) : ''))
-    + ((pros||cons) ? '<div class="pc-grid"><div class="pros"><div class="pc-lbl">Pros</div><div class="pc-body">' + pros.replace(/\n/g,'<br>') + '</div></div><div class="cons"><div class="pc-lbl">Cons</div><div class="pc-body">' + cons.replace(/\n/g,'<br>') + '</div></div></div>' : '');
+  var tableContent = text.match(/\*\*Profile Match:\*\*(\n\|[\s\S]*?)(?=\*\*Assessment:|\*\*Overall|$)/);
+  var assessM = text.match(/\*\*Assessment:\*\*([\s\S]*?)(?=\*\*Overall|$)/);
+  var assessment = assessM ? assessM[1].trim() : '';
+  return (tableContent ? mdTable(tableContent[1]) : '')
+    + (assessment ? '<div style="background:#f5f1e8;border-left:3px solid var(--gold);padding:12px 15px;margin-top:12px;font-family:IBM Plex Sans,sans-serif;font-size:13px;line-height:1.65;color:var(--ink)">' + assessment + '</div>' : '');
 }
 
 function renderPredSec(out, body) {
