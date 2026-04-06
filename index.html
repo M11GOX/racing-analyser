@@ -71,9 +71,7 @@ textarea{resize:vertical;min-height:52px}
 .field-size-row input{width:80px;font-family:'IBM Plex Mono',monospace;font-size:14px}
 .fsr-hint{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--mid)}
 /* FORM BOXES */
-.form-boxes{display:flex;gap:6px;align-items:center}
-.form-box{width:38px;height:38px;font-family:'IBM Plex Mono',monospace;font-size:15px;font-weight:500;text-align:center;background:var(--paper);border:1px solid var(--rule);color:var(--ink);padding:0;text-transform:uppercase}
-.form-box:focus{border-color:var(--gold);outline:none}
+
 .form-sep{font-family:'IBM Plex Mono',monospace;font-size:14px;color:var(--gold);font-weight:700;padding:0 2px}
 .form-legend{font-family:'IBM Plex Mono',monospace;font-size:9px;color:#aaa;margin-top:5px}
 /* RUNNER CARDS */
@@ -244,38 +242,23 @@ textarea{resize:vertical;min-height:52px}
       </div>
     </div>
     <div class="hint">Trainer &amp; Jockey: full name or surname both work.</div>
+
+
     <div class="fsec">Form &amp; Race Record</div>
     <div class="g2">
       <div class="fg">
         <label>Previous Form <span style="color:var(--gold);font-size:8px">MAX 6 RUNS · USE - TO SEPARATE SEASONS</span></label>
-        <input id="f-form" placeholder="e.g. 121-1 or 111 or 13-1" maxlength="13" style="font-family:'IBM Plex Mono',monospace;letter-spacing:.08em" oninput="validateForm(this)">
-        <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#aaa">Format: prev season runs - this season runs. Oldest left, most recent right. 0=outside top 10.</span>
+        <input id="f-form" placeholder="e.g. 121-1 or 13-1 or 111" maxlength="13" style="font-family:'IBM Plex Mono',monospace;font-size:15px;letter-spacing:.12em" oninput="validateForm(this)">
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#aaa;margin-top:3px;display:block">Oldest → most recent · 1-3 = finish pos · 0 = outside top 10 · - = season break</span>
       </div>
       <div class="fg">
-        <label>Group / Grade Win (career)</label>
-        <select id="f-gw">
-          <option value="">— Select —</option>
-          <option value="Y">Yes — has won at Group/Grade level</option>
-          <option value="N">No — no Group/Grade win</option>
-        </select>
-      </div>
-    </div>
-
-    <div class="fsec">Form &amp; Record</div>
-    <div class="g2">
-      <div class="fg">
-        <label>Previous Form <span style="font-weight:300;text-transform:none;letter-spacing:0;font-family:'IBM Plex Sans',sans-serif;font-size:10px;color:#aaa">— oldest to most recent, use - to mark season break</span></label>
-        <div class="form-boxes" id="form-boxes"></div>
-        <div class="form-legend">1-3 = finish pos · 0 = outside top 10 · F = fell · P = pulled up · - = season break · max 6 runs</div>
-      </div>
-      <div class="fg">
-        <label>Group / Grade Win</label>
+        <label>Group Win (Flat) / Grade Win (Jumps)</label>
         <select id="f-grp">
-          <option value="">Unknown</option>
-          <option value="yes">Yes — has a Group/Grade win</option>
-          <option value="no">No Group/Grade win</option>
+          <option value="">— Select —</option>
+          <option value="yes">Yes</option>
+          <option value="no">No</option>
         </select>
-        <div class="hint" style="margin-top:4px">Career Group/Grade win at any level (G1-G3)</div>
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#aaa;margin-top:3px;display:block">Career win at Group/Grade level (G1–G3)</span>
       </div>
     </div>
 
@@ -546,48 +529,6 @@ function scoreInRange(val, lo, hi, alo, ahi) {
   return 5;
 }
 
-function parseForm(formStr) {
-  // Parse form string with - separator (before - = prev season, after - = this season)
-  // Returns: { prevSeason, thisSeason, runsThisSeason, lastRun, winThisSeason, display }
-  if (!formStr || !formStr.trim()) return null;
-  var str = formStr.trim().toUpperCase();
-  var dashIdx = str.indexOf('-');
-  var prevStr = '', thisStr = '';
-  if (dashIdx === -1) {
-    // No dash — all runs this season (if 6 digits filled, likely all this season)
-    thisStr = str;
-    prevStr = '';
-  } else if (dashIdx === str.length - 1) {
-    // Dash at end — all runs are previous season, went fresh
-    prevStr = str.slice(0, dashIdx);
-    thisStr = '';
-  } else {
-    prevStr = str.slice(0, dashIdx);
-    thisStr = str.slice(dashIdx + 1);
-  }
-  // Count runs this season (ignore DNF chars for flat: F, U, R, P — treat as run but no position)
-  var runsThisSeason = thisStr.replace(/[^0-9FURP]/g,'').length;
-  // Last run — most recent character overall (right end of full string, skip DNF for flat)
-  var allRuns = (prevStr + thisStr).replace(/[^0-9]/g,'');
-  var lastRunChar = '';
-  // Find rightmost numeric result
-  var fullClean = str.replace(/-/g,'');
-  for (var i = fullClean.length - 1; i >= 0; i--) {
-    if ('0123456789'.indexOf(fullClean[i]) >= 0) { lastRunChar = fullClean[i]; break; }
-  }
-  var lastRun = lastRunChar ? parseInt(lastRunChar) : null;
-  if (lastRun === 0) lastRun = 0; // outside top 10
-  // Win this season
-  var winThisSeason = thisStr.indexOf('1') >= 0;
-  return {
-    prevSeason: prevStr,
-    thisSeason: thisStr,
-    runsThisSeason: runsThisSeason,
-    lastRun: lastRun,
-    winThisSeason: winThisSeason,
-    display: formStr.trim()
-  };
-}
 
 function parseSP(sp) {
   if (!sp || sp === '---') return null;
@@ -638,84 +579,6 @@ function switchTab(name, btn) {
 }
 
 // ─────────────────────────────────────────────
-// FORM BOXES — build 6 input boxes with dash separator
-// ─────────────────────────────────────────────
-function buildFormBoxes() {
-  var container = document.getElementById('form-boxes');
-  if (!container) return;
-  var html = '';
-  for (var i = 0; i < 6; i++) {
-    if (i === 3) html += '<span class="form-sep" title="Season break">—</span>';
-    html += '<input class="form-box" id="fb-'+i+'" maxlength="1" placeholder="·" oninput="onFormBox(this,'+i+')" onkeydown="formBoxKey(event,'+i+')">';
-  }
-  container.innerHTML = html;
-}
-
-function onFormBox(el, idx) {
-  var val = el.value.toUpperCase();
-  var allowed = '0123456789FPU-';
-  if (val && allowed.indexOf(val) === -1) { el.value = ''; return; }
-  el.value = val;
-  // Auto-advance
-  if (val && idx < 5) {
-    var next = document.getElementById('fb-'+(idx+1));
-    if (next) next.focus();
-  }
-}
-
-function formBoxKey(e, idx) {
-  if (e.key === 'Backspace' && !e.target.value && idx > 0) {
-    var prev = document.getElementById('fb-'+(idx-1));
-    if (prev) { prev.value = ''; prev.focus(); }
-  }
-}
-
-function getFormString() {
-  var prev = '', curr = '';
-  for (var i = 0; i < 3; i++) {
-    var el = document.getElementById('fb-'+i);
-    if (el && el.value) prev += el.value;
-  }
-  for (var i = 3; i < 6; i++) {
-    var el = document.getElementById('fb-'+i);
-    if (el && el.value) curr += el.value;
-  }
-  if (!prev && !curr) return '';
-  if (prev && !curr) return prev + '-';
-  if (!prev && curr) return curr;
-  return prev + '-' + curr;
-}
-
-function setFormBoxes(formStr) {
-  // Clear all
-  for (var i = 0; i < 6; i++) {
-    var el = document.getElementById('fb-'+i);
-    if (el) el.value = '';
-  }
-  if (!formStr) return;
-  var parsed = parseForm(formStr);
-  var prev = parsed.prevSeason;
-  var curr = parsed.thisSeason;
-  // Fill prev (last 3 chars → boxes 0-2 right-aligned)
-  var prevStart = Math.max(0, 3 - prev.length);
-  for (var i = 0; i < prev.length && i < 3; i++) {
-    var el = document.getElementById('fb-'+(prevStart+i));
-    if (el) el.value = prev[i];
-  }
-  // Fill curr (boxes 3-5)
-  for (var i = 0; i < curr.length && i < 3; i++) {
-    var el = document.getElementById('fb-'+(3+i));
-    if (el) el.value = curr[i];
-  }
-}
-
-function clearFormBoxes() {
-  for (var i = 0; i < 6; i++) {
-    var el = document.getElementById('fb-'+i);
-    if (el) el.value = '';
-  }
-}
-
 // ─────────────────────────────────────────────
 // JSI AUTO
 // ─────────────────────────────────────────────
@@ -769,7 +632,7 @@ function addRunner() {
     jockey:document.getElementById('f-jockey').value.trim()||'---',
     or:document.getElementById('f-or').value.trim()||'---',
     style:document.getElementById('f-style').value,
-    form:getFormString(),
+    form:document.getElementById('f-form').value.trim(),
     grpWin:document.getElementById('f-grp').value,
     notes:document.getElementById('f-notes').value.trim(),
     ped:hasPed?{si:isNaN(si)?null:si,dsi:isNaN(dsi)?null:dsi,jsi:isNaN(jsi)?null:jsi,di:isNaN(di)?null:di,cod:isNaN(cod)?null:cod}:null
@@ -792,7 +655,7 @@ function editRunner(i) {
   document.getElementById('f-grp').value=r.grpWin||'';
   document.getElementById('f-notes').value=r.notes||'';
   document.getElementById('f-form').value=r.formStr||'';
-  document.getElementById('f-gw').value=(r.groupWin===true||r.groupWin==='Y')?'Y':'N';
+  document.getElementById('f-grp').value=r.groupWin?'yes':'no';
   setFormBoxes(r.form||'');
   if (r.ped) {
     document.getElementById('f-si').value=r.ped.si!==null?r.ped.si:'';
@@ -813,6 +676,7 @@ function clearForm() {
   });
   document.getElementById('f-bred').value='IRE';
   document.getElementById('f-style').value='MIDFIELD';
+  document.getElementById('f-grp').value='';
   document.getElementById('f-grp').value='';
   clearFormBoxes();
   editIdx=-1; document.getElementById('form-title').textContent='Add Runner';
