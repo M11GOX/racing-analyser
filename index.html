@@ -295,7 +295,7 @@ textarea{resize:vertical;min-height:52px}
   <hr class="rule">
   <div class="sec-label" style="margin-bottom:9px">Winner History</div>
   <table class="wtable">
-    <thead><tr><th>Year</th><th>Winner</th><th>Bred</th><th>Draw</th><th>Style</th><th>Trainer</th><th>OR</th><th>Wgt</th><th>SP</th><th>Form</th><th>Last Run</th><th>Grp Win</th><th>DI</th><th>COD</th><th>JSI</th><th>Field</th></tr></thead>
+    <thead><tr><th>Year</th><th>Winner</th><th>Bred</th><th>Draw</th><th>Style</th><th>Trainer</th><th>OR</th><th>Wgt</th><th>SP</th><th>Form</th><th>Last Run</th><th>Grp Win</th><th>SI</th><th>DSI</th><th>JSI</th><th>DI</th><th>COD</th><th>Field</th></tr></thead>
     <tbody id="winner-tbody"></tbody>
   </table>
 </div>
@@ -356,13 +356,13 @@ var RACE = {
 // To update: paste new result here in chat
 // ─────────────────────────────────────────────
 var WINNERS = [
-  {year:2019,winner:'Magna Grecia',   bred:'IRE',draw:17,drawGrp:'High',style:'PROMINENT',trainer:'A P O\'Brien',  jockey:'D O\'Brien', or:113,sp:'11/2',spDec:5.5,  form:'121-',  lastRun:'1',grpWin:'yes',di:1.00, cod:0.12, jsi:18.8,field:19},
-  {year:2020,winner:'Kameko',         bred:'USA',draw:15,drawGrp:'High',style:'MIDFIELD', trainer:'A Balding',     jockey:'O Murphy',   or:118,sp:'10/1',spDec:10.0, form:'1221-', lastRun:'1',grpWin:'yes',di:2.64, cod:0.70, jsi:18.8,field:15},
-  {year:2021,winner:'Poetic Flare',   bred:'IRE',draw:4, drawGrp:'Low', style:'PROMINENT',trainer:'J S Bolger',    jockey:'K Manning',  or:109,sp:'16/1',spDec:16.0, form:'101-1', lastRun:'1',grpWin:'yes',di:1.46, cod:0.31, jsi:18.3,field:14},
-  {year:2022,winner:'Coroebus',       bred:'IRE',draw:1, drawGrp:'Low', style:'MIDFIELD', trainer:'C Appleby',    jockey:'J Doyle',    or:115,sp:'5/1', spDec:5.0,  form:'121-',  lastRun:'1',grpWin:'yes',di:0.76, cod:-0.13,jsi:20.5,field:15},
-  {year:2023,winner:'Chaldean',       bred:'GB', draw:3, drawGrp:'Low', style:'PROMINENT',trainer:'A Balding',    jockey:'F Dettori',  or:119,sp:'7/2', spDec:3.5,  form:'51111-UR',lastRun:'1',grpWin:'yes',di:0.67,cod:-0.15,jsi:18.3,field:14},
-  {year:2024,winner:'Notable Speech', bred:'GB', draw:6, drawGrp:'Mid', style:'MIDFIELD', trainer:'C Appleby',    jockey:'W Buick',    or:109,sp:'16/1',spDec:16.0, form:'111',   lastRun:'1',grpWin:'no', di:1.26, cod:0.12, jsi:17.1,field:11},
-  {year:2025,winner:'Ruling Court',   bred:'USA',draw:11,drawGrp:'High',style:'MIDFIELD', trainer:'C Appleby',    jockey:'W Buick',    or:112,sp:'9/2', spDec:4.5,  form:'13-1',  lastRun:'1',grpWin:'no', di:1.00, cod:0.11, jsi:20.5,field:11}
+  {year:2019,winner:'Magna Grecia',   bred:'IRE',draw:17,drawGrp:'High',style:'PROMINENT',trainer:"A P O'Brien",  jockey:"D O'Brien", or:113,wgt:'9-0',sp:'11/2',spDec:5.5,  form:'121-',    lastRun:'1',grpWin:'yes',si:7.5, dsi:11.3,jsi:18.8,di:1.00, cod:0.12, field:19},
+  {year:2020,winner:'Kameko',         bred:'USA',draw:15,drawGrp:'High',style:'MIDFIELD', trainer:'A Balding',    jockey:'O Murphy',  or:118,wgt:'9-0',sp:'10/1',spDec:10.0, form:'1221-',   lastRun:'1',grpWin:'yes',si:9.8, dsi:9.0, jsi:18.8,di:2.64, cod:0.70, field:15},
+  {year:2021,winner:'Poetic Flare',   bred:'IRE',draw:4, drawGrp:'Low', style:'PROMINENT',trainer:'J S Bolger',   jockey:'K Manning', or:109,wgt:'9-0',sp:'16/1',spDec:16.0, form:'101-1',   lastRun:'1',grpWin:'yes',si:9.3, dsi:9.0, jsi:18.3,di:1.46, cod:0.31, field:14},
+  {year:2022,winner:'Coroebus',       bred:'IRE',draw:1, drawGrp:'Low', style:'MIDFIELD', trainer:'C Appleby',   jockey:'J Doyle',   or:115,wgt:'9-0',sp:'5/1', spDec:5.0,  form:'121-',    lastRun:'1',grpWin:'yes',si:9.6, dsi:10.9,jsi:20.5,di:0.76, cod:-0.13,field:15},
+  {year:2023,winner:'Chaldean',       bred:'GB', draw:3, drawGrp:'Low', style:'PROMINENT',trainer:'A Balding',   jockey:'F Dettori', or:119,wgt:'9-0',sp:'7/2', spDec:3.5,  form:'51111-UR',lastRun:'1',grpWin:'yes',si:10.5,dsi:7.8, jsi:18.3,di:0.67, cod:-0.15,field:14},
+  {year:2024,winner:'Notable Speech', bred:'GB', draw:6, drawGrp:'Mid', style:'MIDFIELD', trainer:'C Appleby',   jockey:'W Buick',   or:109,wgt:'9-0',sp:'16/1',spDec:16.0, form:'111',     lastRun:'1',grpWin:'no', si:9.6, dsi:7.5, jsi:17.1,di:1.26, cod:0.12, field:11},
+  {year:2025,winner:'Ruling Court',   bred:'USA',draw:11,drawGrp:'High',style:'MIDFIELD', trainer:'C Appleby',   jockey:'W Buick',   or:112,wgt:'9-0',sp:'9/2', spDec:4.5,  form:'13-1',    lastRun:'1',grpWin:'no', si:9.8, dsi:10.7,jsi:20.5,di:1.00, cod:0.11, field:11}
 ];
 
 // ─────────────────────────────────────────────
@@ -410,7 +410,7 @@ function parseForm(formStr) {
   return {
     prevSeason: prev,
     thisSeason: curr,
-    runsThisSeason: curr.length,
+    runsThisSeason: curr.filter(function(c){return c!=='F'&&c!=='P'&&c!=='U'&&c!=='R';}).length,
     lastRun: lastRun,
     fresh: curr.length === 0,
     formDisplay: formStr.trim()
@@ -423,109 +423,181 @@ function parseForm(formStr) {
 function scoreRunner(r, fieldSize) {
   var scores = {};
   var details = {};
-  var W = RACE.weights;
-  var FR = RACE.formRules;
 
-  // STYLE
-  var styleMap = {MIDFIELD:100, PROMINENT:70, LED:20, 'HOLD UP':20};
+  // ── STYLE (weight 23%) ──────────────────────────
+  var styleMap = {MIDFIELD:100, PROMINENT:75, LED:20, 'HOLD UP':20};
   scores.style = styleMap[r.style] || 0;
-  details.style = r.style === 'MIDFIELD' ? '✅ IV 1.49 A/E 1.26 — primary winner profile' :
-                  r.style === 'PROMINENT' ? '⚠️ IV 1.09 A/E 0.72 — overbet' : '❌ 0 wins in sample';
+  details.style = r.style === 'MIDFIELD'   ? '✅ IV 1.49 A/E 1.26 — primary winner profile (4W/38R)' :
+                  r.style === 'PROMINENT'  ? '⚠️ IV 1.09 A/E 0.72 — 3 wins but overbet by market' :
+                                             '❌ LED/HOLD UP — 0 wins in 7-year sample';
 
-  // DRAW
+  // ── DRAW (weight 16%) — adjusted by field size ──
   var dg = getDrawGroup(r.draw, fieldSize);
-  scores.draw = dg === 'High' ? 85 : dg === 'Low' ? 80 : 20;
-  details.draw = dg === 'Mid' ? '❌ IV 0.42 — avoid' : dg === 'High' ? '✅ IV 1.37 A/E 1.02' : '✅ IV 1.25 A/E 0.94';
+  var midScore = fieldSize <= 11 ? 40 : fieldSize <= 16 ? 25 : 15;
+  scores.draw = dg === 'High' ? 85 : dg === 'Low' ? 80 : midScore;
+  details.draw = dg === 'High' ? '✅ High draw — IV 1.37 A/E 1.02 · 3 winners' :
+                 dg === 'Low'  ? '✅ Low draw — IV 1.25 A/E 0.94 · 3 winners' :
+                 '❌ Mid draw — IV 0.42 · 1 winner (Notable Speech, 11-runner field)';
 
-  // OR
+  // ── OR (weight 13%) — continuous curve ──────────
   var orVal = parseInt(r.or);
-  if (isNaN(orVal)) { scores.or = 30; details.or = '⚠️ Unrated'; }
-  else if (orVal >= 120) { scores.or = 0; details.or = '❌ OR 120+ — 0W/8R'; }
-  else if (orVal >= 110) { scores.or = 100; details.or = '✅ 110-119 — 5/7 winners IV 1.39'; }
-  else if (orVal >= 100) { scores.or = 70; details.or = '✅ 100-109 — A/E 2.17 value band'; }
-  else { scores.or = 20; details.or = '⚠️ Sub-100 — limited sample'; }
+  if (isNaN(orVal)) {
+    scores.or = 30; details.or = '⚠️ Unrated — limited data';
+  } else if (orVal >= 120) {
+    scores.or = 95; details.or = '🟡 OR 120+ — no statistical penalty. High OR reflects quality not a barrier. SP already captures market tendency.';
+  } else if (orVal >= 116) {
+    scores.or = 100; details.or = '✅ OR 116-119 — top of winner range (Chaldean 119, Kameko 118)';
+  } else if (orVal >= 112) {
+    scores.or = 97; details.or = '✅ OR 112-115 — core sweet spot · mean winner OR is 113.6';
+  } else if (orVal >= 109) {
+    scores.or = 82; details.or = '✅ OR 109-111 — value zone · A/E 2.17 · market underrates (Poetic Flare, Notable Speech)';
+  } else if (orVal >= 100) {
+    scores.or = 65; details.or = '🟡 OR 100-108 — below typical winner range';
+  } else {
+    scores.or = 20; details.or = '❌ OR sub-100 — well below winner range';
+  }
 
-  // SP
-  var spDec = parseSP(r.sp);
-  if (spDec === null) { scores.sp = 50; details.sp = '⚠️ SP not available'; }
-  else if (spDec < 2.5) { scores.sp = 0; details.sp = '❌ Shorter than 5/2 — 0W/5R never won'; }
-  else if (spDec <= 8)  { scores.sp = 100; details.sp = '✅ 9/2-8/1 — 3W IV 2.65 A/E 1.24'; }
-  else if (spDec <= 20) { scores.sp = 80; details.sp = '✅ 9/1-20/1 — 3W IV 1.70 A/E 1.72'; }
-  else if (spDec <= 33) { scores.sp = 20; details.sp = '⚠️ 25/1-33/1 — 0 wins in sample'; }
-  else { scores.sp = 5; details.sp = '❌ 40/1+ — 0 wins in sample'; }
-
-  // FORM — composite of 3 sub-scores
+  // ── FORM: RUNS THIS SEASON (weight 6%) ──────────
   var formData = parseForm(r.form || '');
   var runsN = formData.runsThisSeason;
-  var runsS = FR.runsScore[Math.min(runsN, 6)] !== undefined ? FR.runsScore[Math.min(runsN, 6)] : 30;
-  var lastKey = formData.lastRun.toLowerCase();
-  var lastS = FR.lastRunScore[lastKey] !== undefined ? FR.lastRunScore[lastKey] : (formData.fresh ? FR.lastRunScore['fresh'] : 30);
-  var grpS = FR.grpWinScore[r.grpWin || ''] !== undefined ? FR.grpWinScore[r.grpWin || ''] : 55;
-  scores.form = Math.round((runsS + lastS + grpS) / 3);
-  var freshNote = formData.fresh ? 'Fresh (0 runs this season — valid route: 3/7 winners)' : runsN + ' run' + (runsN !== 1 ? 's' : '') + ' this season';
-  var lastNote = formData.fresh ? 'Last run: ' + formData.lastRun + ' (prev season)' : 'Last run: ' + formData.lastRun;
-  var grpNote = r.grpWin === 'yes' ? '🟢 Group win' : r.grpWin === 'no' ? '🟡 No Group win (last 2 winners also had none)' : '🟡 Group win unknown';
-  details.form = freshNote + ' | ' + lastNote + ' | ' + grpNote;
+  var runsScore;
+  if      (runsN === 0) { runsScore = 75; }
+  else if (runsN === 1) { runsScore = 90; }
+  else if (runsN === 2) { runsScore = 60; }
+  else if (runsN === 3) { runsScore = 70; }
+  else                  { runsScore = 30; }
+  scores.form = runsScore;
+  details.form = runsN === 0 ? '✅ Fresh — 3/7 winners went straight from previous season' :
+                 runsN === 1 ? '✅ 1 prep run — sweet spot · 3/7 winners' :
+                 runsN === 3 ? '🟡 3 runs — Notable Speech won from 3 unbeaten' :
+                 runsN >= 4  ? '❌ 4+ runs — no winner had 4+ seasonal runs' :
+                               '🟡 2 runs — below sweet spot but not disqualifying';
 
-  // PEDIGREE
+  // ── LAST RUN RESULT (weight 6%) ─────────────────
+  var lr = formData.lastRun;
+  var lastRunScore;
+  if      (lr === '1') { lastRunScore = 100; }
+  else if (lr === '2') { lastRunScore = 60;  }
+  else if (lr === '3') { lastRunScore = 40;  }
+  else if (lr === '0') { lastRunScore = 10;  }
+  else if (lr === 'fresh') { lastRunScore = 65; }
+  else                  { lastRunScore = 25;  }
+  scores.lastRun = lastRunScore;
+  details.lastRun = lr === '1' ? '✅ Won last run — 6/7 winners · strongest single form signal' :
+                   lr === '2' ? '🟡 2nd last run — no winner matched this, slight concern' :
+                   lr === '3' ? '⚠️ 3rd last run — below winner profile' :
+                   lr === '0' ? '❌ Outside top 10 last run' :
+                   lr === 'fresh' ? '🟡 Fresh — last recorded run was in previous season' :
+                                    '⚠️ Last run: ' + lr;
+
+  // ── GROUP WIN (weight 6%) ────────────────────────
+  var gwScore = r.grpWin === 'yes' ? 82 : r.grpWin === 'no' ? 55 : 55;
+  scores.groupWin = gwScore;
+  details.groupWin = r.grpWin === 'yes' ? '🟢 Group win — 5/7 winners had Group form' :
+                     r.grpWin === 'no'  ? '🟡 No Group win — last 2 winners (2024/2025) also had none' :
+                                          '🟡 Unknown — neutral score';
+
+  // ── PEDIGREE (weight 18%) — empirical curves ─────
+  function scoreSI(v)  { if(v>12.5)return 40; if(v>=11.6)return 65; if(v>=10.6)return 88; if(v>=9.3)return 100; if(v>=8.5)return 78; if(v>=7.5)return 55; if(v>=7.0)return 35; return 15; }
+  function scoreDSI(v) { if(v>12.5)return 35; if(v>=11.6)return 65; if(v>=11.1)return 88; if(v>=9.0)return 100; if(v>=7.5)return 88; if(v>=7.0)return 60; if(v>=6.0)return 30; return 15; }
+  function scoreJSI(v) { if(v>=22.0)return 85; if(v>=19.0)return 100; if(v>=17.5)return 90; if(v>=16.0)return 72; if(v>=14.0)return 50; return 25; }
+  function scoreDI(v)  { if(v>2.80)return 20; if(v>=2.01)return 40; if(v>=1.61)return 70; if(v>=1.31)return 90; if(v>=0.70)return 100; if(v>=0.55)return 85; if(v>=0.40)return 55; return 25; }
+  function scoreCOD(v) { if(v>0.75||v<-0.50)return 10; if(v>=0.56)return 35; if(v>=0.36)return 65; if(v>=0.21)return 90; if(v>=-0.10)return 100; if(v>=-0.20)return 90; if(v>=-0.30)return 65; if(v>=-0.50)return 35; return 10; }
+
   var pedMetrics = [];
   var pedBits = [];
   if (r.ped) {
-    if (r.ped.si !== null) { var v=scoreInRange(r.ped.si,9.0,11.0,7.0,12.0); pedMetrics.push(v); pedBits.push('SI '+r.ped.si+' '+(v>=80?'✅':v>=40?'⚠️':'❌')); }
-    if (r.ped.dsi !== null) { var v=scoreInRange(r.ped.dsi,7.5,11.5,7.0,12.5); pedMetrics.push(v); pedBits.push('DSI '+r.ped.dsi+' '+(v>=80?'✅':v>=40?'⚠️':'❌')); }
-    if (r.ped.jsi !== null) { var v=scoreInRange(r.ped.jsi,18.0,21.0,17.0,22.0); pedMetrics.push(v); pedBits.push('JSI '+r.ped.jsi+' '+(v>=80?'✅':v>=40?'⚠️':'❌')); }
-    if (r.ped.di !== null) { var v=scoreInRange(r.ped.di,0.60,1.60,0.50,2.20); pedMetrics.push(v); pedBits.push('DI '+r.ped.di+' '+(v>=80?'✅':v>=40?'⚠️':'❌')); }
-    if (r.ped.cod !== null) { var v=scoreInRange(r.ped.cod,-0.20,0.35,-0.40,0.55); pedMetrics.push(v); pedBits.push('COD '+r.ped.cod+' '+(v>=80?'✅':v>=40?'⚠️':'❌')); }
+    var pedFns = [
+      {key:'si',  fn:scoreSI,  label:'SI'},
+      {key:'dsi', fn:scoreDSI, label:'DSI'},
+      {key:'jsi', fn:scoreJSI, label:'JSI'},
+      {key:'di',  fn:scoreDI,  label:'DI'},
+      {key:'cod', fn:scoreCOD, label:'COD'}
+    ];
+    pedFns.forEach(function(pf) {
+      var val = r.ped[pf.key];
+      if (val !== null && val !== undefined) {
+        var s = pf.fn(val);
+        pedMetrics.push(s);
+        pedBits.push(pf.label + ' ' + val + ' ' + (s >= 88 ? '✅' : s >= 65 ? '⚠️' : '❌'));
+      }
+    });
   }
-  scores.pedigree = pedMetrics.length > 0 ? Math.round(pedMetrics.reduce(function(a,b){return a+b;},0)/pedMetrics.length) : 50;
-  details.pedigree = pedBits.length ? pedBits.join(' | ') : 'No pedigree data — neutral score applied';
+  scores.pedigree = pedMetrics.length > 0
+    ? Math.round(pedMetrics.reduce(function(a,b){return a+b;},0) / pedMetrics.length)
+    : 50;
+  details.pedigree = pedBits.length ? pedBits.join(' | ') : 'No pedigree data — neutral 50 applied';
 
-  // TRAINER
+  // ── TRAINER (weight 3%) ──────────────────────────
   var tl = r.trainer.toLowerCase();
-  if (tl.indexOf('appleby') >= 0) { scores.trainer = 100; details.trainer = '🟢 Appleby — 3W/12R IV 3.54 A/E 1.49'; }
-  else if (tl.indexOf('balding') >= 0) { scores.trainer = 100; details.trainer = '🟢 Balding — 2W/4R IV 7.07 A/E 4.86'; }
-  else if (tl.indexOf('o\'brien') >= 0 || tl.indexOf('obrien') >= 0 || tl.indexOf('aidan') >= 0) { scores.trainer = 10; details.trainer = '🔴 A P O\'Brien — A/E 0.39, negative signal'; }
-  else { scores.trainer = 50; details.trainer = '🟡 ' + r.trainer + ' — neutral'; }
+  if      (tl.indexOf('appleby') >= 0) { scores.trainer = 100; details.trainer = "🟢 Appleby — 3W/12R IV 3.54 A/E 1.49"; }
+  else if (tl.indexOf('balding') >= 0) { scores.trainer = 100; details.trainer = "🟢 Balding — 2W/4R IV 7.07 A/E 4.86"; }
+  else if (tl.indexOf("o'brien") >= 0 || tl.indexOf('obrien') >= 0 || tl.indexOf('aidan') >= 0) { scores.trainer = 10; details.trainer = "🔴 A P O'Brien — A/E 0.39 across 14 runners · negative signal"; }
+  else { scores.trainer = 50; details.trainer = '🟡 ' + r.trainer + ' — no historical record in this race · neutral'; }
 
-  // JOCKEY
+  // ── JOCKEY (weight 3%) ───────────────────────────
   var jl = r.jockey.toLowerCase();
-  if (jl.indexOf('buick') >= 0) { scores.jockey = 100; details.jockey = '🟢 Buick — 2W/4R PRB 0.95'; }
-  else if (jl.indexOf('doyle') >= 0) { scores.jockey = 90; details.jockey = '🟢 Doyle — 1W/4R PRB 0.83'; }
-  else if (jl.indexOf('moore') >= 0) { scores.jockey = 5; details.jockey = '🔴 R. Moore — 0W/6R incl 3 favs'; }
-  else { scores.jockey = 50; details.jockey = '🟡 ' + r.jockey + ' — neutral'; }
+  if      (jl.indexOf('buick') >= 0) { scores.jockey = 100; details.jockey = '🟢 Buick — 2W/4R · Mean PRB 0.95 · strongest jockey signal'; }
+  else if (jl.indexOf('doyle') >= 0) { scores.jockey = 90;  details.jockey = '🟢 Doyle — 1W/4R · Mean PRB 0.83'; }
+  else if (jl.indexOf('moore') >= 0) { scores.jockey = 5;   details.jockey = '🔴 R. Moore — 0W/6R including 3 short-priced favourites · negative'; }
+  else { scores.jockey = 50; details.jockey = '🟡 ' + r.jockey + ' — neutral · no historical record in this race'; }
 
-  // BRED — informational only
-  var bredMap = {USA:'🟢 USA — IV 4.72 A/E 2.11 (small sample)', IRE:'🟡 IRE — A/E 0.59 overbet', GB:'🟡 GB — A/E 0.88', FR:'🟡 FR — limited sample'};
-  details.bred = bredMap[r.bred] || '🟡 ' + r.bred;
+  // ── BRED — informational only, not scored ────────
+  var bredMap = {
+    USA: '🟢 USA — IV 4.72 A/E 2.11 (2 winners, small sample — positive indicator)',
+    IRE: '🟡 IRE — A/E 0.59 · 3 winners but overbet by market',
+    GB:  '🟡 GB — A/E 0.88 · 2 winners · slightly below expectation',
+    FR:  '🟡 FR — limited sample · no wins in 7-year period'
+  };
+  details.bred = bredMap[r.bred] || '🟡 ' + r.bred + ' — no specific data';
 
-  // TRIP VERDICT
+  // ── SP — reference only, not scored ─────────────
+  var spDec = parseSP(r.sp);
+  var spNote = '';
+  if (spDec !== null) {
+    if (spDec < 2.5) spNote = '⚠️ Shorter than 5/2 — 0W/5R in sample. Short SP favourites have historically underperformed (small sample — variance possible).';
+    else if (spDec <= 8)  spNote = '9/2-8/1 — 3 winners in this range (IV 2.65 A/E 1.24)';
+    else if (spDec <= 20) spNote = '9/1-20/1 — 3 winners in this range (IV 1.70 A/E 1.72)';
+    else spNote = '20/1+ — no winner at this price in sample. SP not used in scoring — retained for reference only.';
+  }
+  details.sp = spNote || 'SP not available';
+
+  // ── TRIP VERDICT from DI + COD ───────────────────
   var tripVerdict = null;
   if (r.ped && r.ped.di !== null && r.ped.cod !== null) {
     var di = r.ped.di; var cod = r.ped.cod;
-    if (di > 2.20 || cod > 0.55) tripVerdict = {icon:'🔴', text:'Trip too short — speed-biased pedigree. Only Kameko (DI 2.64/COD 0.70) won with a comparable profile.'};
-    else if (cod < -0.40) tripVerdict = {icon:'🔴', text:'Trip too long — staying pedigree, optimal distance 10f+.'};
-    else if (di >= 0.60 && di <= 1.60 && cod >= -0.20 && cod <= 0.35) tripVerdict = {icon:'🟢', text:'Ideal trip — DI and COD both in the winner sweet spot.'};
-    else if (di > 1.60) tripVerdict = {icon:'🟡', text:'Slightly sharp — mild speed bias, fine in a truly-run mile.'};
-    else if (cod < -0.20) tripVerdict = {icon:'🟡', text:'Slightly long — stamina lean, benefits from genuine pace.'};
-    else tripVerdict = {icon:'🟢', text:'Within acceptable range for the Guineas mile.'};
+    if      (di > 2.20 && cod > 0.55) tripVerdict = {icon:'🔴', text:'Trip too short — speed-biased on both metrics. Kameko (DI 2.64 / COD 0.70) is the only winner with a comparable profile.'};
+    else if (di > 2.20)  tripVerdict = {icon:'🔴', text:'DI ' + di + ' — significant speed bias. Kameko (2.64) is the only winner above 2.0.'};
+    else if (cod > 0.55) tripVerdict = {icon:'🔴', text:'COD ' + cod + ' — sprint pedigree. Mile may be beyond optimal trip.'};
+    else if (cod < -0.40) tripVerdict = {icon:'🔴', text:'COD ' + cod + ' — staying pedigree. Optimal trip likely 10f+.'};
+    else if (di >= 0.70 && di <= 1.30 && cod >= -0.10 && cod <= 0.20) tripVerdict = {icon:'🟢', text:'Ideal — DI ' + di + ' and COD ' + cod + ' both in the core winner zone.'};
+    else if (di >= 0.55 && di <= 1.60 && cod >= -0.20 && cod <= 0.35) tripVerdict = {icon:'🟢', text:'Good — DI ' + di + ' and COD ' + cod + ' within the winner sweet spot.'};
+    else if (di > 1.60) tripVerdict = {icon:'🟡', text:'Slightly sharp — DI ' + di + ' above sweet spot upper limit. Fine in a truly-run mile.'};
+    else if (cod < -0.20) tripVerdict = {icon:'🟡', text:'Slightly long — COD ' + cod + ' · stamina lean · benefits from genuine pace.'};
+    else tripVerdict = {icon:'🟡', text:'Acceptable — DI ' + di + ' / COD ' + cod + ' · within range for the Guineas mile.'};
   }
 
-  // COMPOSITE
+  // ── COMPOSITE SCORE ──────────────────────────────
+  // Weights: Style 23, Draw 16, OR 13, Form 6, LastRun 6, GroupWin 6, Pedigree 18, Trainer 3, Jockey 3 = 94
+  // SP removed from scoring — retained as reference note
+  var WEIGHTS = {style:23, draw:16, or:13, form:6, lastRun:6, groupWin:6, pedigree:18, trainer:3, jockey:3};
   var total = 0; var totalW = 0;
-  Object.keys(W).forEach(function(k) {
-    if (scores[k] !== undefined) { total += scores[k] * W[k]; totalW += W[k]; }
+  Object.keys(WEIGHTS).forEach(function(k) {
+    if (scores[k] !== undefined) { total += scores[k] * WEIGHTS[k]; totalW += WEIGHTS[k]; }
   });
   var composite = Math.round(total / totalW);
 
-  return {composite:composite, scores:scores, details:details, tripVerdict:tripVerdict, drawGroup:dg, formData:formData};
+  return {
+    composite: composite,
+    scores: scores,
+    details: details,
+    tripVerdict: tripVerdict,
+    drawGroup: dg,
+    formData: formData
+  };
 }
 
-function scoreInRange(val, lo, hi, alo, ahi) {
-  if (val >= lo && val <= hi) return 100;
-  if (val >= alo && val < lo) return 40 + 40*((val-alo)/(lo-alo));
-  if (val > hi && val <= ahi) return 40 + 40*((ahi-val)/(ahi-hi));
-  return 5;
-}
+// scoreInRange removed — individual metric curves now embedded in scoreRunner
 
 
 function parseSP(sp) {
@@ -747,8 +819,9 @@ function renderProfile() {
       +'<td>'+w.draw+' ('+w.drawGrp+')</td><td>'+w.style+'</td><td>'+w.trainer+'</td>'
       +'<td>'+w.or+'</td><td>'+(w.wgt||'9-0')+'</td><td>'+w.sp+'</td><td style="font-family:IBM Plex Mono,monospace;letter-spacing:.05em">'+w.form+'</td>'
       +'<td>'+w.lastRun+'</td><td>'+(w.grpWin==='yes'?'✓':'✗')+'</td>'
-      +'<td>'+(w.di!==null?w.di:'—')+'</td><td>'+(w.cod!==null?w.cod:'—')+'</td>'
-      +'<td>'+(w.jsi!==null?w.jsi:'—')+'</td><td>'+w.field+'</td></tr>';
+      +'<td>'+(w.si!=null?w.si:'—')+'</td><td>'+(w.dsi!=null?w.dsi:'—')+'</td>'
+      +'<td>'+(w.jsi!=null?w.jsi:'—')+'</td><td>'+(w.di!=null?w.di:'—')+'</td>'
+      +'<td>'+(w.cod!=null?w.cod:'—')+'</td><td>'+w.field+'</td></tr>';
   }).join('');
 }
 
@@ -821,7 +894,7 @@ function runAnalysis(key) {
     +'| Running Style | MIDFIELD | x | ✅/⚠️/❌ |\n'
     +'| Draw | High/Low | x | ✅/⚠️/❌ |\n'
     +'| OR | 110-119 | x | ✅/⚠️/❌ |\n'
-    +'| SP | 9/2-8/1 | x | ✅/⚠️/❌ |\n'
+    +'| SP | Reference only | x | Note only — not scored |\n'
     +'| Runs This Season | 0 or 1 | x | ✅/⚠️/❌ |\n'
     +'| Last Run | 1st | x | ✅/⚠️/❌ |\n'
     +'| Group Win | Preferred | x | 🟢/🟡 |\n'
