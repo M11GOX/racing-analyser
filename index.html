@@ -468,7 +468,7 @@ function scoreRunner(r, fieldSize) {
   // Mean 116.0. Range 109-126. 4/15 winners rated 120+.
   var orVal = parseInt(r.or);
   if (isNaN(orVal)) { scores.or=28; details.or='⚠️ Unrated — limited data'; }
-  else if (orVal>=120) { scores.or=98; details.or='✅ OR 120+ — Frankel 126, Churchill 122, Dawn Approach 124 all won · not a barrier'; }
+  else if (orVal>=120) { scores.or=100; details.or='✅ OR 120+ — Frankel 126, Churchill 122, Dawn Approach 124 all won · not a barrier'; }
   else if (orVal>=116) { scores.or=100; details.or='✅ OR 116-119 — 5/15 winners · peak band'; }
   else if (orVal>=112) { scores.or=94; details.or='✅ OR 112-115 — 4/15 winners · core range'; }
   else if (orVal>=109) { scores.or=80; details.or='✅ OR 109-111 — 3/15 winners · A/E 2.17 · market underrates this band'; }
@@ -520,51 +520,53 @@ function scoreRunner(r, fieldSize) {
 
   // ── PEDIGREE (weight 22%) — 15-year empirical curves ─────────
   // All 5 metrics scored individually, averaged.
+  // Pedigree curves — tight empirical, primary focus 2019-2025 (last 7)
   function scoreSI(v) {
-    if (v<7.5)   return 12;   // below any winner
-    if (v<=7.9)  return 28;   // Magna Grecia 7.5, Galileo Gold 7.7 — 2/15
-    if (v<=8.9)  return 50;   // gap — 0/15 winners here
-    if (v<=9.5)  return 88;   // approaching core
-    if (v<=11.0) return 100;  // core — 9/15 winners
-    if (v<=11.5) return 95;   // Frankel 11.3, Gleneagles 11.3, Churchill 11.3
-    if (v<=12.0) return 82;   // Camelot 11.9
+    if (v<7.5)   return 5;    // below any winner ever
+    if (v<=7.9)  return 22;   // outlier zone — Magna Grecia 7.5, Galileo Gold 7.7
+    if (v<=8.9)  return 40;   // GAP — 0 winners in 15yr sample here
+    if (v<=9.2)  return 80;   // approaching core
+    if (v<=10.5) return 100;  // core — 5/7 recent winners, 9/15 total
+    if (v<=11.0) return 90;   // strong
+    if (v<=11.9) return 78;   // Frankel/Gleneagles/Churchill/Camelot — historical only
     return 45;                // above any winner
   }
   function scoreDSI(v) {
-    if (v<7.0)   return 18;
-    if (v<=7.9)  return 70;   // 5/15 winners: 7.0-7.8
-    if (v<=11.0) return 100;  // core — wide spread but all win
-    if (v<=11.5) return 88;   // 4 winners at 11.3
-    if (v<=12.0) return 65;
-    return 35;
+    if (v<7.0)   return 15;   // below Dawn Approach (7.0 floor)
+    if (v<=7.9)  return 68;   // 5/15 winners here — positive but below core
+    if (v<=11.0) return 100;  // core — 10/15 winners
+    if (v<=11.5) return 85;   // just above core
+    if (v<=12.0) return 62;
+    return 30;
   }
   function scoreJSI(v) {
-    if (v<17.0)  return 10;   // BELOW every winner — Bow Echo 15.6, Publish 16.1
-    if (v<=17.1) return 40;   // Dawn Approach 17.0, Notable Speech 17.1 — only 2 winners here
-    if (v<=18.2) return 52;   // gap — 0/15 winners between 17.1 and 18.3
-    if (v<=20.5) return 97;   // core — 10/15 winners
-    if (v<=22.0) return 100;  // Camelot 21.8, Saxon Warrior 21.8
-    return 75;                // above any winner
+    if (v<17.0)  return 8;    // BELOW every winner across 15 years
+    if (v<=17.1) return 35;   // Dawn Approach 17.0 + Notable Speech 17.1 only
+    if (v<=18.2) return 45;   // gap — 0 winners between 17.1 and 18.3
+    if (v<=20.5) return 100;  // core — 10/15 winners, 6/7 recent
+    if (v<=22.0) return 95;   // Camelot 21.8, Saxon Warrior 21.8
+    return 70;                // above any winner
   }
   function scoreDI(v) {
-    if (v>2.65)  return 12;
-    if (v>=2.01) return 28;   // Kameko 2.64 — sole winner here
-    if (v>=1.61) return 22;   // 0/15 winners — Publish 1.67 is in this void
-    if (v>=1.47) return 50;   // amber — no winner in 15yr sample
-    if (v>=1.31) return 80;   // Poetic Flare 1.46, Notable Speech 1.26
-    if (v>=0.67) return 100;  // core — 12/15 winners
-    if (v>=0.60) return 58;
-    return 32;
+    if (v>2.65)  return 10;
+    if (v>=2.01) return 25;   // Kameko 2.64 only
+    if (v>=1.61) return 15;   // VOID — 0 winners in 15yr sample
+    if (v>=1.47) return 42;   // amber — no winner
+    if (v>=1.31) return 78;   // Poetic Flare 1.46, Notable Speech 1.26
+    if (v>=1.01) return 95;   // near top of core
+    if (v>=0.67) return 100;  // core — 12/15 winners, 5/7 recent
+    if (v>=0.60) return 55;
+    return 30;
   }
   function scoreCOD(v) {
     if (v>0.75||v<-0.40) return 8;
-    if (v>=0.56) return 22;   // Kameko 0.70
-    if (v>=0.32) return 48;   // between Poetic Flare and Kameko
-    if (v>=0.13) return 80;   // Poetic Flare 0.31
-    if (v>=-0.15) return 100; // core — 13/15 winners
-    if (v>=-0.20) return 70;  // just outside core
-    if (v>=-0.30) return 42;  // Publish -0.25 — below every non-outlier winner
-    if (v>=-0.40) return 22;
+    if (v>=0.56) return 20;   // Kameko 0.70 only
+    if (v>=0.32) return 40;   // between Poetic Flare and Kameko
+    if (v>=0.13) return 78;   // Poetic Flare 0.31
+    if (v>=-0.15) return 100; // core — 13/15 winners, all 5/7 recent excl Kameko+Poetic
+    if (v>=-0.20) return 65;  // just outside core
+    if (v>=-0.30) return 38;  // below all recent non-outlier winners
+    if (v>=-0.40) return 20;
     return 8;
   }
 
@@ -620,26 +622,21 @@ function scoreRunner(r, fieldSize) {
   // 15yr: Buick 2, Moore 2, Dettori 2, Manning 2
   // Recency: Buick 2 recent wins dominant. Moore wins 2015/17 — neutral not negative.
   var jl = (r.jockey||'').toLowerCase();
-  if      (jl.indexOf('buick')>=0)    { scores.jockey=100; details.jockey="🟢 Buick — 2/15 wins · both recent (2024-2025) · PRB 0.95"; }
-  else if (jl.indexOf('doyle')>=0)    { scores.jockey=88;  details.jockey="🟢 Doyle — 1/15 wins · 2022 · PRB 0.83"; }
-  else if (jl.indexOf('dettori')>=0)  { scores.jockey=82;  details.jockey="🟢 Dettori — retired · 2/15 wins · 2016, 2023 · historical positive"; }
-  else if (jl.indexOf('manning')>=0)  { scores.jockey=78;  details.jockey="🟢 Manning — retired · 2/15 wins · 2013, 2021 · historical positive"; }
-  else if (jl.indexOf('fallon')>=0)   { scores.jockey=58;  details.jockey="🟡 Fallon — retired · 1/15 wins (Night of Thunder 2014) · historical only"; }
-  else if (jl.indexOf('moore')>=0)    { scores.jockey=58;  details.jockey="🟡 R Moore — 2/15 wins (2015, 2017) · 0 wins 2019-2025 · neutral"; }
-  else if (jl.indexOf("o'brien")>=0||jl.indexOf('obrien')>=0) { scores.jockey=55; details.jockey="🟡 O'Brien — historical wins but retired from top-level riding"; }
-  else if (jl.indexOf('murphy')>=0)   { scores.jockey=55;  details.jockey="🟡 Murphy — 1/15 wins (Kameko 2020) · solid neutral"; }
+  if      (jl.indexOf('buick')>=0)    { scores.jockey=100; details.jockey="🟢 Buick — 2/15 wins · both recent (2024-2025) · PRB 0.95 · strongest active jockey signal"; }
+  else if (jl.indexOf('doyle')>=0)    { scores.jockey=88;  details.jockey="🟢 Doyle — 1/15 wins · 2022 · PRB 0.83 · strong active signal"; }
+  else if (jl.indexOf('moore')>=0)    { scores.jockey=55;  details.jockey="🟡 R Moore — 2 historical wins (2015/17) · 0 wins 2019-2025 · neutral"; }
+  else if (jl.indexOf('murphy')>=0)   { scores.jockey=55;  details.jockey="🟡 Murphy — 1 historical win (Kameko 2020) · neutral"; }
+  else if (jl.indexOf('dettori')>=0)  { scores.jockey=50;  details.jockey="🟡 Dettori — retired · historical wins (2016, 2023) for reference only · neutral scored"; }
+  else if (jl.indexOf('manning')>=0)  { scores.jockey=50;  details.jockey="🟡 Manning — retired · historical wins (2013, 2021) for reference only · neutral scored"; }
+  else if (jl.indexOf('fallon')>=0)   { scores.jockey=50;  details.jockey="🟡 Fallon — retired · historical win (2014) for reference only · neutral scored"; }
+  else if (jl.indexOf("o'brien")>=0||jl.indexOf('obrien')>=0) { scores.jockey=50; details.jockey="🟡 O'Brien — retired from top-level riding · historical wins for reference only"; }
   else                                 { scores.jockey=50;  details.jockey="🟡 "+r.jockey+" — no historical record in this race · neutral"; }
 
   // ── SP — reference only, not scored ─────────────────────────
   var spDec = parseSP(r.sp);
-  var spNote = '';
-  if (spDec!==null) {
-    if      (spDec<2.5)  spNote='⚠️ Shorter than 5/2 — 0W from this price range in 15yr sample. Small sample — variance possible but notable pattern.';
-    else if (spDec<=8)   spNote='9/2-8/1 — strong SP band historically';
-    else if (spDec<=20)  spNote='9/1-20/1 — value range, multiple winners here';
-    else                 spNote='20/1+ — big outsider. SP not used in scoring.';
-  }
-  details.sp = spNote || '—';
+  var spFlag = '';
+  if (spDec!==null && spDec<2.5) spFlag=' ⚠️ Shorter than 5/2 — 0W in 15yr sample';
+  details.sp = (r.sp && r.sp!=='---' ? r.sp : '—') + (spFlag ? spFlag : ' (not scored — reference only)');
 
   // ── BRED — informational only ────────────────────────────────
   var bredMap={
@@ -653,7 +650,8 @@ function scoreRunner(r, fieldSize) {
   // ── COMPOSITE — weights sum to 100% ─────────────────────────
   // Style 20 · Draw 15 · OR 12 · Form 6 · LastRun 6 · GrpWin 5 · Pedigree 22 · Trainer 8 · Jockey 8 = 102... adjust
   // Style 20 · Draw 15 · OR 12 · Form 5 · LastRun 6 · GrpWin 4 · Pedigree 22 · Trainer 8 · Jockey 8 = 100
-  var W={style:20,draw:15,or:12,form:5,lastRun:6,groupWin:4,pedigree:22,trainer:8,jockey:8};
+  // Weights: Pedigree dominant (30%), Form total 19% (6+8+5), OR 12%, Trainer 8%, Jockey 9%, Style 12%, Draw 10%
+  var W={style:12,draw:10,or:12,form:6,lastRun:8,groupWin:5,pedigree:30,trainer:8,jockey:9};
   var tot=0, totW=0;
   Object.keys(W).forEach(function(k){
     if (scores[k]!==undefined){tot+=scores[k]*W[k];totW+=W[k];}
@@ -861,13 +859,13 @@ var PROFILE_FACTORS = [
   {label:'OR Band',       ideal:'116-119 peak · 120+ not a barrier',     stats:'OR 120+: 4/15 winners (Frankel 126, Churchill 122, Dawn Approach 124)\nOR 116-119: 5/15 winners · peak band\nOR 109-115: 7/15 winners · A/E value zone\nMean winner OR: 116.0'},
   {label:'Starting Price',ideal:'Reference only — not scored',           stats:'Shorter than 5/2: 0W in 15yr sample (small sample — variance possible)\nBig prices have won multiple times\nSP removed from scoring'},
   {label:'Trainer',       ideal:"Appleby · O'Brien · Balding · Bolger",  stats:"Appleby: 3/15 (2022-2025) · dominant recent\nA P O'Brien: 5/15 (2012-2019) · strong historical\nBalding: 2/15 · Bolger: 2/15 — all four are positive signals"},
-  {label:'Jockey',        ideal:'Buick · Dettori · Manning · Doyle',     stats:'Buick: 2/15 (2024-2025) · most recent dominant · PRB 0.95\nDettori: 2/15 · Manning: 2/15 · Doyle: 1/15\nR Moore: 2 wins (2015/17) but 0 since 2019 — neutral'},
+  {label:'Jockey',        ideal:'Buick · Doyle (active)',                 stats:'Buick: 2/15 (2024-2025) · dominant active signal · PRB 0.95\nDoyle: 1/15 (2022) · strong active signal\nRetired: Dettori 2, Manning 2, Moore 2 — historical record, not scored as positive\nAll others: neutral'},
   {label:'Breeding',      ideal:'IRE dominant · GB solid · USA positive', stats:'IRE: 7/15 winners · dominant breeding\nGB: 5/15 · USA: 2/15 (Kameko, Ruling Court)\nJPN: 1/15 (Saxon Warrior)'},
   {label:'Key Insight',   ideal:'Fresh + won last run = core template',  stats:'10/15 winners went fresh (0 runs this season) — dominant\n12/15 winners won their last run — strongest single signal\nSP shorter than 5/2: 0W in 15 years\nLow draw + clean pedigree + Appleby/OBrien/Balding = ideal profile'}
 ];
 
 var DOSAGE_CELLS = [
-  {label:'Sire Index',       sweet:'9.0 – 11.5',    note:'Core: 9/15 winners · Low outliers: 7.5-7.9 (2 winners) · Gap 8.0-8.9: 0 winners'},
+  {label:'Sire Index',       sweet:'9.3 – 10.5',    note:'Core 5/7 recent winners · Gap 8.0-8.9: 0 winners in 15yr · Outliers: 7.5/7.7 (2 wins), 11.3/11.9 (4 historical wins)'},
   {label:'Damsire Index',    sweet:'7.0 – 11.5',    note:'Wide range · 5/15 winners below 8.0 · core 8.0-11.0'},
   {label:'Joint Sire Index', sweet:'18.3 – 22.0',   note:'Floor: 17.0 (Dawn Approach) · 0 winners ever below 17.0 · 10/15 in 18.3-22.0'},
   {label:'Dosage Index',     sweet:'0.67 – 1.30',   note:'12/15 winners in this core · 0 winners between 1.47-2.63 · Kameko 2.64 only outlier'},
