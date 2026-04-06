@@ -654,7 +654,6 @@ function editRunner(i) {
   document.getElementById('f-notes').value=r.notes||'';
   document.getElementById('f-form').value=r.formStr||'';
   document.getElementById('f-grp').value=r.groupWin?'yes':'no';
-  setFormBoxes(r.form||'');
   if (r.ped) {
     document.getElementById('f-si').value=r.ped.si!==null?r.ped.si:'';
     document.getElementById('f-dsi').value=r.ped.dsi!==null?r.ped.dsi:'';
@@ -675,8 +674,6 @@ function clearForm() {
   document.getElementById('f-bred').value='IRE';
   document.getElementById('f-style').value='MIDFIELD';
   document.getElementById('f-grp').value='';
-  document.getElementById('f-grp').value='';
-  clearFormBoxes();
   editIdx=-1; document.getElementById('form-title').textContent='Add Runner';
 }
 
