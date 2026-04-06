@@ -6,21 +6,7 @@
 <title>Racing Analyser — 2000 Guineas</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=IBM+Plex+Mono:wght@300;400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-:root {
-  --ink: #0e0e0e;
-  --paper: #f5f0e8;
-  --cream: #ede7d4;
-  --gold: #b8972a;
-  --gold-light: #d4b044;
-  --gold-dim: #8a7020;
-  --red: #8b1a1a;
-  --green: #1a5c2e;
-  --amber: #856404;
-  --mid: #4a4035;
-  --rule: #c8b98a;
-  --rule-light: #e0d8c4;
-  --card: #faf6ee;
-}
+:root{--ink:#0e0e0e;--paper:#f5f0e8;--cream:#ede7d4;--gold:#b8972a;--gold-light:#d4b044;--gold-dim:#8a7020;--red:#8b1a1a;--green:#1a5c2e;--amber:#856404;--mid:#4a4035;--rule:#c8b98a;--rule-light:#e0d8c4;--card:#faf6ee}
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'IBM Plex Sans',sans-serif;background:var(--paper);color:var(--ink);min-height:100vh}
 header{background:var(--ink);position:relative;overflow:hidden}
@@ -62,7 +48,6 @@ header::before{content:'';position:absolute;inset:0;background:repeating-linear-
 .btn-ink:hover{background:#222}
 .btn-gold{background:var(--gold);color:var(--ink);font-weight:500}
 .btn-gold:hover{background:var(--gold-light)}
-.btn-gold:disabled{background:#ccc;color:#888;cursor:not-allowed}
 .btn-ghost{background:none;color:var(--mid);border:1px solid var(--rule)}
 .btn-ghost:hover{border-color:var(--ink);color:var(--ink)}
 .btn-danger{background:none;color:var(--red);border:1px solid #d4a0a0;font-size:9px;padding:6px 10px}
@@ -71,6 +56,7 @@ header::before{content:'';position:absolute;inset:0;background:repeating-linear-
 .form-card-title{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;margin-bottom:14px}
 .fsec{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin:16px 0 10px;padding-bottom:4px;border-bottom:1px solid var(--rule-light)}
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:10px 18px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px 18px}
 .g5{display:grid;grid-template-columns:repeat(5,1fr);gap:10px 14px}
 .fg{display:flex;flex-direction:column;gap:4px}
 label{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--mid)}
@@ -80,10 +66,17 @@ select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='ht
 textarea{resize:vertical;min-height:52px}
 .fa{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap}
 .hint{font-family:'IBM Plex Mono',monospace;font-size:9px;color:#aaa;margin-top:-4px;margin-bottom:8px}
-.field-size-row{display:flex;align-items:center;gap:10px;background:var(--cream);border:1px solid var(--rule);padding:12px 16px;margin-bottom:18px}
+.field-size-row{display:flex;align-items:center;gap:10px;background:var(--cream);border:1px solid var(--rule);padding:12px 16px;margin-bottom:18px;flex-wrap:wrap}
 .field-size-row label{white-space:nowrap;margin-bottom:0}
 .field-size-row input{width:80px;font-family:'IBM Plex Mono',monospace;font-size:14px}
 .fsr-hint{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--mid)}
+/* FORM BOXES */
+.form-boxes{display:flex;gap:6px;align-items:center}
+.form-box{width:38px;height:38px;font-family:'IBM Plex Mono',monospace;font-size:15px;font-weight:500;text-align:center;background:var(--paper);border:1px solid var(--rule);color:var(--ink);padding:0;text-transform:uppercase}
+.form-box:focus{border-color:var(--gold);outline:none}
+.form-sep{font-family:'IBM Plex Mono',monospace;font-size:14px;color:var(--gold);font-weight:700;padding:0 2px}
+.form-legend{font-family:'IBM Plex Mono',monospace;font-size:9px;color:#aaa;margin-top:5px}
+/* RUNNER CARDS */
 .runners-list{display:flex;flex-direction:column;gap:7px;margin-bottom:18px}
 .rc{background:var(--card);border:1px solid var(--rule);padding:11px 15px;display:flex;align-items:center;gap:12px;transition:border-color .18s}
 .rc:hover{border-color:var(--gold)}
@@ -92,6 +85,7 @@ textarea{resize:vertical;min-height:52px}
 .rc-name{font-family:'Playfair Display',serif;font-size:15px;font-weight:700}
 .rc-meta{font-family:'IBM Plex Mono',monospace;font-size:10px;color:#888;margin-top:2px;display:flex;gap:10px;flex-wrap:wrap}
 .rc-meta b{color:var(--mid)}
+.rc-form{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--gold);margin-top:2px;letter-spacing:.05em}
 .rc-badges{display:flex;gap:5px;align-items:center;flex-wrap:wrap}
 .pbadge{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.08em;padding:3px 7px;text-transform:uppercase;font-weight:500}
 .pLED{background:#fff3cd;color:#856404}
@@ -103,6 +97,7 @@ textarea{resize:vertical;min-height:52px}
 .pedbadge.none{background:#e8e4d8;color:var(--mid)}
 .gen-row{display:flex;align-items:center;gap:14px;padding:18px 0;border-top:1px solid var(--rule);flex-wrap:wrap}
 .gen-info{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--mid)}
+/* PROFILE */
 .icp-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--rule);border:1px solid var(--rule);margin-bottom:22px}
 .icp-cell{background:var(--card);padding:15px}
 .icp-label{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:4px}
@@ -118,6 +113,7 @@ textarea{resize:vertical;min-height:52px}
 .wtable th{background:var(--ink);color:var(--gold);padding:7px 9px;text-align:left;letter-spacing:.07em;font-weight:400}
 .wtable td{padding:7px 9px;border-bottom:1px solid var(--rule-light);background:var(--card)}
 .wtable tr:hover td{background:var(--cream)}
+/* ANALYSIS */
 .analysis-empty{text-align:center;padding:70px 20px}
 .ae-icon{font-size:32px;opacity:.2;margin-bottom:12px}
 .ae-title{font-family:'Playfair Display',serif;font-size:18px;color:var(--mid);margin-bottom:5px}
@@ -155,9 +151,9 @@ textarea{resize:vertical;min-height:52px}
 .pred-tbl tr:nth-child(1) td{background:#fffbf0}
 .pred-tbl tr:nth-child(2) td{background:#faf8f5}
 .pred-tbl tr:nth-child(3) td,.pred-tbl tr:nth-child(4) td{background:var(--card)}
-.score-bar-wrap{display:flex;align-items:center;gap:8px}
-.score-bar{height:6px;background:var(--gold);border-radius:2px;transition:width .3s}
+.score-bar-wrap{display:flex;align-items:center;gap:8px;margin-bottom:10px}
 .score-bar-bg{flex:1;background:var(--rule-light);border-radius:2px;overflow:hidden}
+.score-bar{height:6px;background:var(--gold);border-radius:2px}
 .score-val{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--mid);min-width:32px;text-align:right}
 .narrative-box{background:var(--ink);color:var(--paper);padding:22px;font-family:'IBM Plex Sans',sans-serif;font-size:14px;line-height:1.75;font-weight:300}
 .narrative-box em{color:var(--gold);font-style:normal}
@@ -170,7 +166,7 @@ textarea{resize:vertical;min-height:52px}
 .md-tbl td{padding:7px 9px;border-bottom:1px solid var(--rule-light);font-size:12px}
 @media(max-width:760px){
   .icp-grid{grid-template-columns:1fr 1fr}
-  .dos-grid,.g2,.g5{grid-template-columns:1fr 1fr}
+  .dos-grid,.g2,.g3,.g5{grid-template-columns:1fr 1fr}
   .hdr{flex-direction:column;align-items:flex-start}
   .main{padding:18px 14px 60px}
   .tabs{padding:0 14px}
@@ -184,7 +180,7 @@ textarea{resize:vertical;min-height:52px}
   <div>
     <div class="hdr-eyebrow">Racing Analyser · Phase 3</div>
     <div class="hdr-race">2000 Guineas</div>
-    <div class="hdr-sub">Newmarket · 1 Mile · 3yo · Group 1 · 2019–2025 Sample · 99 runners · 7 winners</div>
+    <div class="hdr-sub">Newmarket · 1 Mile · 3yo · Group 1 · 2019–2025 · 99 runners · 7 winners</div>
   </div>
   <div class="hdr-right">
     <span class="api-status" id="api-status">⚠ No API Key</span>
@@ -205,11 +201,8 @@ textarea{resize:vertical;min-height:52px}
 <div class="modal">
   <button class="modal-close" onclick="closeSettings()">✕</button>
   <div class="modal-title">API Settings</div>
-  <div class="modal-sub">Your Anthropic API key is stored in your browser only. It is never sent anywhere except to your Cloudflare Worker proxy, which forwards it securely to Anthropic.</div>
-  <div class="fg">
-    <label>Anthropic API Key</label>
-    <input type="password" id="api-key-input" placeholder="sk-ant-api03-...">
-  </div>
+  <div class="modal-sub">Your API key is stored in this browser only. It is sent exclusively to your Cloudflare Worker proxy, which forwards it securely to Anthropic.</div>
+  <div class="fg"><label>Anthropic API Key</label><input type="password" id="api-key-input" placeholder="sk-ant-api03-..."></div>
   <div class="modal-actions">
     <button class="btn btn-ink" onclick="saveKey()">Save Key</button>
     <button class="btn btn-ghost" onclick="clearKey()">Clear</button>
@@ -228,12 +221,13 @@ textarea{resize:vertical;min-height:52px}
 
   <div class="field-size-row">
     <label>Total Field Size</label>
-    <input type="number" id="field-size" min="1" max="30" placeholder="e.g. 12">
-    <span class="fsr-hint">Actual number of runners declared — used for draw groupings.</span>
+    <input type="number" id="field-size" min="1" max="30" placeholder="e.g. 12" style="width:80px">
+    <span class="fsr-hint">Declared runners — used for draw groupings.</span>
   </div>
 
   <div class="form-card" id="runner-form">
     <div class="form-card-title" id="form-title">Add Runner</div>
+
     <div class="fsec">Race Details</div>
     <div class="g2">
       <div class="fg"><label>Horse Name</label><input id="f-name" placeholder="e.g. Rosallion"></div>
@@ -244,20 +238,56 @@ textarea{resize:vertical;min-height:52px}
       <div class="fg"><label>SP (Odds)</label><input id="f-sp" placeholder="e.g. 7/2"></div>
       <div class="fg"><label>Trainer</label><input id="f-trainer" placeholder="e.g. Charlie Appleby"></div>
       <div class="fg"><label>Jockey</label><input id="f-jockey" placeholder="e.g. William Buick"></div>
-      <div class="fg"><label>Official Rating (OR)</label><input id="f-or" placeholder="e.g. 115 or ---"></div>
+      <div class="fg"><label>Official Rating (OR)</label><input id="f-or" placeholder="e.g. 115"></div>
       <div class="fg"><label>Running Style</label>
         <select id="f-style"><option>LED</option><option>PROMINENT</option><option selected>MIDFIELD</option><option value="HOLD UP">HOLD UP</option></select>
       </div>
     </div>
     <div class="hint">Trainer &amp; Jockey: full name or surname both work.</div>
+    <div class="fsec">Form &amp; Race Record</div>
+    <div class="g2">
+      <div class="fg">
+        <label>Previous Form <span style="color:var(--gold);font-size:8px">MAX 6 RUNS · USE - TO SEPARATE SEASONS</span></label>
+        <input id="f-form" placeholder="e.g. 121-1 or 111 or 13-1" maxlength="13" style="font-family:'IBM Plex Mono',monospace;letter-spacing:.08em" oninput="validateForm(this)">
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#aaa">Format: prev season runs - this season runs. Oldest left, most recent right. 0=outside top 10.</span>
+      </div>
+      <div class="fg">
+        <label>Group / Grade Win (career)</label>
+        <select id="f-gw">
+          <option value="">— Select —</option>
+          <option value="Y">Yes — has won at Group/Grade level</option>
+          <option value="N">No — no Group/Grade win</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="fsec">Form &amp; Record</div>
+    <div class="g2">
+      <div class="fg">
+        <label>Previous Form <span style="font-weight:300;text-transform:none;letter-spacing:0;font-family:'IBM Plex Sans',sans-serif;font-size:10px;color:#aaa">— oldest to most recent, use - to mark season break</span></label>
+        <div class="form-boxes" id="form-boxes"></div>
+        <div class="form-legend">1-3 = finish pos · 0 = outside top 10 · F = fell · P = pulled up · - = season break · max 6 runs</div>
+      </div>
+      <div class="fg">
+        <label>Group / Grade Win</label>
+        <select id="f-grp">
+          <option value="">Unknown</option>
+          <option value="yes">Yes — has a Group/Grade win</option>
+          <option value="no">No Group/Grade win</option>
+        </select>
+        <div class="hint" style="margin-top:4px">Career Group/Grade win at any level (G1-G3)</div>
+      </div>
+    </div>
+
     <div class="fsec">Pedigree / Dosage <span style="font-weight:300;letter-spacing:0;text-transform:none;font-family:'IBM Plex Sans',sans-serif;font-size:10px;color:#aaa">(optional)</span></div>
     <div class="g5">
       <div class="fg"><label>Sire Index</label><input id="f-si" placeholder="e.g. 9.6" oninput="calcJSI()"></div>
       <div class="fg"><label>Damsire Index</label><input id="f-dsi" placeholder="e.g. 10.9" oninput="calcJSI()"></div>
-      <div class="fg"><label>Joint Sire Index <span style="color:var(--gold);font-size:8px">AUTO</span></label><input id="f-jsi" placeholder="auto" style="background:#f0ece0;color:var(--gold-dim)" readonly></div>
+      <div class="fg"><label>JSI <span style="color:var(--gold);font-size:8px">AUTO</span></label><input id="f-jsi" placeholder="auto" style="background:#f0ece0;color:var(--gold-dim)" readonly></div>
       <div class="fg"><label>Dosage Index (DI)</label><input id="f-di" placeholder="e.g. 1.00"></div>
       <div class="fg"><label>COD Index</label><input id="f-cod" placeholder="e.g. 0.12"></div>
     </div>
+
     <div class="fg" style="margin-top:12px"><label>Notes (optional)</label><textarea id="f-notes" placeholder="Course form, fitness, jockey booking context, going preferences..."></textarea></div>
     <div class="fa">
       <button class="btn btn-ink" onclick="addRunner()">Add Runner</button>
@@ -266,7 +296,6 @@ textarea{resize:vertical;min-height:52px}
   </div>
 
   <div class="runners-list" id="runners-list"></div>
-
   <div class="gen-row" id="gen-row" style="display:none">
     <button class="btn btn-gold" style="padding:12px 28px;font-size:11px" onclick="goGenerate()">Generate Phase 3 Analysis →</button>
     <span class="gen-info" id="gen-info"></span>
@@ -285,7 +314,7 @@ textarea{resize:vertical;min-height:52px}
   <hr class="rule">
   <div class="sec-label" style="margin-bottom:9px">Winner History</div>
   <table class="wtable">
-    <thead><tr><th>Year</th><th>Winner</th><th>Bred</th><th>Draw</th><th>Style</th><th>Trainer</th><th>OR</th><th>SP</th><th>DI</th><th>COD</th><th>JSI</th><th>Field</th></tr></thead>
+    <thead><tr><th>Year</th><th>Winner</th><th>Bred</th><th>Draw</th><th>Style</th><th>Trainer</th><th>OR</th><th>SP</th><th>Form</th><th>Last Run</th><th>Grp Win</th><th>DI</th><th>COD</th><th>JSI</th><th>Field</th></tr></thead>
     <tbody id="winner-tbody"></tbody>
   </table>
 </div>
@@ -311,268 +340,203 @@ textarea{resize:vertical;min-height:52px}
 
 <script>
 // ─────────────────────────────────────────────
-// PROFILE DATA — update this section each year
-// To update: paste new result in chat, Claude gives updated data block
+// RACE CONFIG — weights are race-specific
+// Update this block when adding new races
+// ─────────────────────────────────────────────
+var RACE = {
+  name: '2000 Guineas',
+  course: 'Newmarket',
+  dist: '1 Mile',
+  type: 'flat',
+  // Scoring weights — must sum to 100
+  weights: {
+    style:    23,  // IV 1.49 strongest signal
+    draw:     16,  // IV 1.37 High / 1.25 Low
+    or:       14,  // IV 1.39 for 110-119
+    sp:       13,  // IV 2.65 for 9/2-8/1
+    form:     18,  // runs this season + last run + group win
+    pedigree: 10,  // dosage composite
+    trainer:   3,  // modifier
+    jockey:    3   // modifier
+  },
+  // Form scoring rules (race-specific)
+  formRules: {
+    // Runs this season (after the dash)
+    runsScore: {0:75, 1:90, 2:60, 3:70, 4:30, 5:20, 6:10},
+    // Last run result (most recent run regardless of season)
+    lastRunScore: {'1':100, '2':65, '3':45, '4':25, '0':10, 'fresh':65, 'dnf':50},
+    // Group win
+    grpWinScore: {'yes':80, 'no':50, '':55}
+  }
+};
+
+// ─────────────────────────────────────────────
+// WINNER DATA — update annually
+// To update: paste new result here in chat
 // ─────────────────────────────────────────────
 var WINNERS = [
-  {year:2019,winner:'Magna Grecia',   bred:'IRE',draw:17,drawGrp:'High',style:'PROMINENT',trainer:'A P O\'Brien',   jockey:'D O\'Brien',  or:113,sp:'11/2',spDec:5.5,  di:1.00, cod:0.12, jsi:18.8,field:19},
-  {year:2020,winner:'Kameko',         bred:'USA',draw:15,drawGrp:'High',style:'MIDFIELD', trainer:'Andrew Balding', jockey:'O Murphy',    or:118,sp:'10/1',spDec:10.0, di:2.64, cod:0.70, jsi:18.8,field:15},
-  {year:2021,winner:'Poetic Flare',   bred:'IRE',draw:4, drawGrp:'Low', style:'PROMINENT',trainer:'J S Bolger',     jockey:'K Manning',   or:109,sp:'16/1',spDec:16.0, di:1.46, cod:0.31, jsi:18.3,field:14},
-  {year:2022,winner:'Coroebus',       bred:'IRE',draw:1, drawGrp:'Low', style:'MIDFIELD', trainer:'C Appleby',     jockey:'J Doyle',     or:115,sp:'5/1', spDec:5.0,  di:0.76, cod:-0.13,jsi:20.5,field:15},
-  {year:2023,winner:'Chaldean',       bred:'GB', draw:3, drawGrp:'Low', style:'PROMINENT',trainer:'Andrew Balding', jockey:'F Dettori',   or:119,sp:'7/2', spDec:3.5,  di:0.67, cod:-0.15,jsi:18.3,field:14},
-  {year:2024,winner:'Notable Speech', bred:'GB', draw:6, drawGrp:'Mid', style:'MIDFIELD', trainer:'C Appleby',     jockey:'W Buick',     or:109,sp:'16/1',spDec:16.0, di:1.26, cod:0.12, jsi:17.1,field:11},
-  {year:2025,winner:'Ruling Court',   bred:'USA',draw:11,drawGrp:'High',style:'MIDFIELD', trainer:'C Appleby',     jockey:'W Buick',     or:112,sp:'9/2', spDec:4.5,  di:1.00, cod:0.11, jsi:20.5,field:11}
+  {year:2019,winner:'Magna Grecia',   bred:'IRE',draw:17,drawGrp:'High',style:'PROMINENT',trainer:'A P O\'Brien',  jockey:'D O\'Brien', or:113,sp:'11/2',spDec:5.5,  form:'121-',  lastRun:'1',grpWin:'yes',di:1.00, cod:0.12, jsi:18.8,field:19},
+  {year:2020,winner:'Kameko',         bred:'USA',draw:15,drawGrp:'High',style:'MIDFIELD', trainer:'A Balding',     jockey:'O Murphy',   or:118,sp:'10/1',spDec:10.0, form:'1221-', lastRun:'1',grpWin:'yes',di:2.64, cod:0.70, jsi:18.8,field:15},
+  {year:2021,winner:'Poetic Flare',   bred:'IRE',draw:4, drawGrp:'Low', style:'PROMINENT',trainer:'J S Bolger',    jockey:'K Manning',  or:109,sp:'16/1',spDec:16.0, form:'101-1', lastRun:'1',grpWin:'yes',di:1.46, cod:0.31, jsi:18.3,field:14},
+  {year:2022,winner:'Coroebus',       bred:'IRE',draw:1, drawGrp:'Low', style:'MIDFIELD', trainer:'C Appleby',    jockey:'J Doyle',    or:115,sp:'5/1', spDec:5.0,  form:'121-',  lastRun:'1',grpWin:'yes',di:0.76, cod:-0.13,jsi:20.5,field:15},
+  {year:2023,winner:'Chaldean',       bred:'GB', draw:3, drawGrp:'Low', style:'PROMINENT',trainer:'A Balding',    jockey:'F Dettori',  or:119,sp:'7/2', spDec:3.5,  form:'51111-UR',lastRun:'1',grpWin:'yes',di:0.67,cod:-0.15,jsi:18.3,field:14},
+  {year:2024,winner:'Notable Speech', bred:'GB', draw:6, drawGrp:'Mid', style:'MIDFIELD', trainer:'C Appleby',    jockey:'W Buick',    or:109,sp:'16/1',spDec:16.0, form:'111',   lastRun:'1',grpWin:'no', di:1.26, cod:0.12, jsi:17.1,field:11},
+  {year:2025,winner:'Ruling Court',   bred:'USA',draw:11,drawGrp:'High',style:'MIDFIELD', trainer:'C Appleby',    jockey:'W Buick',    or:112,sp:'9/2', spDec:4.5,  form:'13-1',  lastRun:'1',grpWin:'no', di:1.00, cod:0.11, jsi:20.5,field:11}
 ];
 
 // ─────────────────────────────────────────────
-// DERIVED ICP — calculated from WINNERS
+// PARSE FORM STRING
 // ─────────────────────────────────────────────
-var ICP = (function() {
-  var n = WINNERS.length;
-  // Style wins
-  var styleW = {LED:0,PROMINENT:0,MIDFIELD:0,'HOLD UP':0};
-  WINNERS.forEach(function(w){ styleW[w.style] = (styleW[w.style]||0)+1; });
-  // Draw wins
-  var drawW = {Low:0,Mid:0,High:0};
-  WINNERS.forEach(function(w){ drawW[w.drawGrp] = (drawW[w.drawGrp]||0)+1; });
-  // Bred wins
-  var bredW = {};
-  WINNERS.forEach(function(w){ bredW[w.bred] = (bredW[w.bred]||0)+1; });
-  // Trainer wins
-  var trainerW = {};
-  WINNERS.forEach(function(w){
-    var t = w.trainer.toLowerCase();
-    if (t.indexOf('appleby')>=0) trainerW['Appleby'] = (trainerW['Appleby']||0)+1;
-    else if (t.indexOf('balding')>=0) trainerW['Balding'] = (trainerW['Balding']||0)+1;
-    else if (t.indexOf('o\'brien')>=0 || t.indexOf('obrien')>=0) trainerW['OBrien'] = (trainerW['OBrien']||0)+1;
-  });
-  // Jockey wins
-  var jockeyW = {};
-  WINNERS.forEach(function(w){
-    var j = w.jockey.toLowerCase();
-    if (j.indexOf('buick')>=0) jockeyW['Buick'] = (jockeyW['Buick']||0)+1;
-    else if (j.indexOf('doyle')>=0) jockeyW['Doyle'] = (jockeyW['Doyle']||0)+1;
-    else if (j.indexOf('moore')>=0) jockeyW['Moore'] = (jockeyW['Moore']||0)+1;
-  });
-  // OR bands
-  var orBands = {'100-109':0,'110-119':0,'120+':0};
-  WINNERS.forEach(function(w){
-    if (w.or>=120) orBands['120+']++;
-    else if (w.or>=110) orBands['110-119']++;
-    else if (w.or>=100) orBands['100-109']++;
-  });
-  // SP bands
-  var spBands = {'u5/2':0,'9/2-8/1':0,'9/1-20/1':0,'20/1+':0};
-  WINNERS.forEach(function(w){
-    if (w.spDec<2.5) spBands['u5/2']++;
-    else if (w.spDec<=8) spBands['9/2-8/1']++;
-    else if (w.spDec<=20) spBands['9/1-20/1']++;
-    else spBands['20/1+']++;
-  });
-  // Dosage averages
-  var diVals = WINNERS.filter(function(w){return w.di!==null;}).map(function(w){return w.di;});
-  var codVals = WINNERS.filter(function(w){return w.cod!==null;}).map(function(w){return w.cod;});
-  var jsiVals = WINNERS.filter(function(w){return w.jsi!==null;}).map(function(w){return w.jsi;});
-
-  return {
-    n: n,
-    styleW: styleW,
-    drawW: drawW,
-    bredW: bredW,
-    trainerW: trainerW,
-    jockeyW: jockeyW,
-    orBands: orBands,
-    spBands: spBands,
-    diRange: [Math.min.apply(null,diVals), Math.max.apply(null,diVals)],
-    codRange: [Math.min.apply(null,codVals), Math.max.apply(null,codVals)],
-    jsiRange: [Math.min.apply(null,jsiVals), Math.max.apply(null,jsiVals)],
-    jsiMin: Math.min.apply(null,jsiVals)
+function parseForm(formStr) {
+  if (!formStr || !formStr.trim()) {
+    return {prevSeason:[], thisSeason:[], runsThisSeason:0, lastRun:'fresh', fresh:true, formDisplay:'—'};
+  }
+  var s = formStr.trim().toUpperCase();
+  var dashIdx = s.indexOf('-');
+  var prevStr, thisStr;
+  if (dashIdx === -1) {
+    // No dash — all runs this season
+    prevStr = '';
+    thisStr = s;
+  } else if (dashIdx === s.length - 1) {
+    // Dash at end — all prev season, went fresh
+    prevStr = s.slice(0, dashIdx);
+    thisStr = '';
+  } else {
+    prevStr = s.slice(0, dashIdx);
+    thisStr = s.slice(dashIdx + 1);
+  }
+  // Parse runs — each character is one run, skip '-'
+  var parseRuns = function(str) {
+    var runs = [];
+    for (var i = 0; i < str.length; i++) {
+      var c = str[i];
+      if (c !== '-') runs.push(c);
+    }
+    return runs;
   };
-})();
+  var prev = parseRuns(prevStr);
+  var curr = parseRuns(thisStr);
+  // Last run = rightmost non-DNF result across both seasons
+  var allRuns = prev.concat(curr);
+  var lastRun = 'fresh';
+  for (var i = allRuns.length - 1; i >= 0; i--) {
+    var c = allRuns[i];
+    if (c === 'F' || c === 'P' || c === 'U') continue; // skip DNF for flat
+    lastRun = c;
+    break;
+  }
+  return {
+    prevSeason: prev,
+    thisSeason: curr,
+    runsThisSeason: curr.length,
+    lastRun: lastRun,
+    fresh: curr.length === 0,
+    formDisplay: formStr.trim()
+  };
+}
 
 // ─────────────────────────────────────────────
 // STATISTICAL SCORING ENGINE
-// Weights derived from IV strength in Phase 2 data
 // ─────────────────────────────────────────────
-var WEIGHTS = {
-  style:   25,   // IV 1.49 — strongest signal
-  draw:    18,   // IV 1.37 High / 1.25 Low
-  or:      16,   // IV 1.39 for 110-119
-  sp:      15,   // IV 2.65 for 9/2-8/1
-  pedigree:14,   // composite of 5 dosage metrics
-  trainer:  6,   // modifier — positive/negative signal
-  jockey:   6    // modifier — positive/negative signal
-  // bred: informational only, not scored
-};
-
 function scoreRunner(r, fieldSize) {
   var scores = {};
   var details = {};
+  var W = RACE.weights;
+  var FR = RACE.formRules;
 
-  // STYLE (0-100)
+  // STYLE
   var styleMap = {MIDFIELD:100, PROMINENT:70, LED:20, 'HOLD UP':20};
   scores.style = styleMap[r.style] || 0;
-  details.style = r.style === 'MIDFIELD' ? '✅ IV 1.49 A/E 1.26' : r.style === 'PROMINENT' ? '⚠️ IV 1.09 A/E 0.72' : '❌ 0 wins in sample';
+  details.style = r.style === 'MIDFIELD' ? '✅ IV 1.49 A/E 1.26 — primary winner profile' :
+                  r.style === 'PROMINENT' ? '⚠️ IV 1.09 A/E 0.72 — overbet' : '❌ 0 wins in sample';
 
-  // DRAW (0-100)
+  // DRAW
   var dg = getDrawGroup(r.draw, fieldSize);
-  var drawScoreMap = {Low:80, High:85, Mid:20};
-  scores.draw = drawScoreMap[dg] || 50;
-  details.draw = dg === 'Mid' ? '❌ IV 0.42 — weakest group' : dg === 'High' ? '✅ IV 1.37 A/E 1.02' : '✅ IV 1.25 A/E 0.94';
+  scores.draw = dg === 'High' ? 85 : dg === 'Low' ? 80 : 20;
+  details.draw = dg === 'Mid' ? '❌ IV 0.42 — avoid' : dg === 'High' ? '✅ IV 1.37 A/E 1.02' : '✅ IV 1.25 A/E 0.94';
 
-  // OR (0-100)
+  // OR
   var orVal = parseInt(r.or);
-  if (isNaN(orVal)) {
-    scores.or = 30;
-    details.or = '⚠️ Unrated — 0 wins from unrated runners';
-  } else if (orVal >= 120) {
-    scores.or = 0;
-    details.or = '❌ OR 120+ — 0W/8R in sample';
-  } else if (orVal >= 110) {
-    scores.or = 100;
-    details.or = '✅ 110-119 — 5 of 7 winners, IV 1.39';
-  } else if (orVal >= 100) {
-    scores.or = 70;
-    details.or = '✅ 100-109 — A/E 2.17, market underrates';
-  } else {
-    scores.or = 20;
-    details.or = '⚠️ Below 100 — limited sample';
-  }
+  if (isNaN(orVal)) { scores.or = 30; details.or = '⚠️ Unrated'; }
+  else if (orVal >= 120) { scores.or = 0; details.or = '❌ OR 120+ — 0W/8R'; }
+  else if (orVal >= 110) { scores.or = 100; details.or = '✅ 110-119 — 5/7 winners IV 1.39'; }
+  else if (orVal >= 100) { scores.or = 70; details.or = '✅ 100-109 — A/E 2.17 value band'; }
+  else { scores.or = 20; details.or = '⚠️ Sub-100 — limited sample'; }
 
-  // SP (0-100)
+  // SP
   var spDec = parseSP(r.sp);
-  if (spDec === null) {
-    scores.sp = 50;
-    details.sp = '⚠️ SP not parseable';
-  } else if (spDec < 2.5) {
-    scores.sp = 0;
-    details.sp = '❌ Shorter than 5/2 — 0W/5R, never won';
-  } else if (spDec <= 8) {
-    scores.sp = 100;
-    details.sp = '✅ 9/2-8/1 — 3W, IV 2.65 A/E 1.24';
-  } else if (spDec <= 20) {
-    scores.sp = 80;
-    details.sp = '✅ 9/1-20/1 — 3W, IV 1.70 A/E 1.72';
-  } else if (spDec <= 33) {
-    scores.sp = 20;
-    details.sp = '⚠️ 25/1-33/1 — 0 wins in sample';
-  } else {
-    scores.sp = 5;
-    details.sp = '❌ 40/1+ — 0 wins in sample';
-  }
+  if (spDec === null) { scores.sp = 50; details.sp = '⚠️ SP not available'; }
+  else if (spDec < 2.5) { scores.sp = 0; details.sp = '❌ Shorter than 5/2 — 0W/5R never won'; }
+  else if (spDec <= 8)  { scores.sp = 100; details.sp = '✅ 9/2-8/1 — 3W IV 2.65 A/E 1.24'; }
+  else if (spDec <= 20) { scores.sp = 80; details.sp = '✅ 9/1-20/1 — 3W IV 1.70 A/E 1.72'; }
+  else if (spDec <= 33) { scores.sp = 20; details.sp = '⚠️ 25/1-33/1 — 0 wins in sample'; }
+  else { scores.sp = 5; details.sp = '❌ 40/1+ — 0 wins in sample'; }
 
-  // PEDIGREE (0-100) — composite of up to 5 metrics
-  var pedScore = null;
-  var pedDetails = [];
+  // FORM — composite of 3 sub-scores
+  var formData = parseForm(r.form || '');
+  var runsN = formData.runsThisSeason;
+  var runsS = FR.runsScore[Math.min(runsN, 6)] !== undefined ? FR.runsScore[Math.min(runsN, 6)] : 30;
+  var lastKey = formData.lastRun.toLowerCase();
+  var lastS = FR.lastRunScore[lastKey] !== undefined ? FR.lastRunScore[lastKey] : (formData.fresh ? FR.lastRunScore['fresh'] : 30);
+  var grpS = FR.grpWinScore[r.grpWin || ''] !== undefined ? FR.grpWinScore[r.grpWin || ''] : 55;
+  scores.form = Math.round((runsS + lastS + grpS) / 3);
+  var freshNote = formData.fresh ? 'Fresh (0 runs this season — valid route: 3/7 winners)' : runsN + ' run' + (runsN !== 1 ? 's' : '') + ' this season';
+  var lastNote = formData.fresh ? 'Last run: ' + formData.lastRun + ' (prev season)' : 'Last run: ' + formData.lastRun;
+  var grpNote = r.grpWin === 'yes' ? '🟢 Group win' : r.grpWin === 'no' ? '🟡 No Group win (last 2 winners also had none)' : '🟡 Group win unknown';
+  details.form = freshNote + ' | ' + lastNote + ' | ' + grpNote;
+
+  // PEDIGREE
+  var pedMetrics = [];
+  var pedBits = [];
   if (r.ped) {
-    var metrics = [];
-    if (r.ped.si !== null) {
-      var siS = scoreInRange(r.ped.si, 9.0, 11.0, 7.0, 12.0);
-      metrics.push(siS);
-      pedDetails.push('SI ' + r.ped.si + ' ' + (siS>=80?'✅':siS>=40?'⚠️':'❌'));
-    }
-    if (r.ped.dsi !== null) {
-      var dsiS = scoreInRange(r.ped.dsi, 7.5, 11.5, 7.0, 12.5);
-      metrics.push(dsiS);
-      pedDetails.push('DSI ' + r.ped.dsi + ' ' + (dsiS>=80?'✅':dsiS>=40?'⚠️':'❌'));
-    }
-    if (r.ped.jsi !== null) {
-      var jsiS = scoreInRange(r.ped.jsi, 18.0, 21.0, 17.0, 22.0);
-      metrics.push(jsiS);
-      pedDetails.push('JSI ' + r.ped.jsi + ' ' + (jsiS>=80?'✅':jsiS>=40?'⚠️':'❌'));
-    }
-    if (r.ped.di !== null) {
-      var diS = scoreInRange(r.ped.di, 0.60, 1.60, 0.50, 2.20);
-      metrics.push(diS);
-      pedDetails.push('DI ' + r.ped.di + ' ' + (diS>=80?'✅':diS>=40?'⚠️':'❌'));
-    }
-    if (r.ped.cod !== null) {
-      var codS = scoreInRange(r.ped.cod, -0.20, 0.35, -0.40, 0.55);
-      metrics.push(codS);
-      pedDetails.push('COD ' + r.ped.cod + ' ' + (codS>=80?'✅':codS>=40?'⚠️':'❌'));
-    }
-    if (metrics.length > 0) {
-      pedScore = metrics.reduce(function(a,b){return a+b;},0) / metrics.length;
-      scores.pedigree = pedScore;
-    } else {
-      scores.pedigree = 50;
-    }
-  } else {
-    scores.pedigree = 50; // neutral when no data
+    if (r.ped.si !== null) { var v=scoreInRange(r.ped.si,9.0,11.0,7.0,12.0); pedMetrics.push(v); pedBits.push('SI '+r.ped.si+' '+(v>=80?'✅':v>=40?'⚠️':'❌')); }
+    if (r.ped.dsi !== null) { var v=scoreInRange(r.ped.dsi,7.5,11.5,7.0,12.5); pedMetrics.push(v); pedBits.push('DSI '+r.ped.dsi+' '+(v>=80?'✅':v>=40?'⚠️':'❌')); }
+    if (r.ped.jsi !== null) { var v=scoreInRange(r.ped.jsi,18.0,21.0,17.0,22.0); pedMetrics.push(v); pedBits.push('JSI '+r.ped.jsi+' '+(v>=80?'✅':v>=40?'⚠️':'❌')); }
+    if (r.ped.di !== null) { var v=scoreInRange(r.ped.di,0.60,1.60,0.50,2.20); pedMetrics.push(v); pedBits.push('DI '+r.ped.di+' '+(v>=80?'✅':v>=40?'⚠️':'❌')); }
+    if (r.ped.cod !== null) { var v=scoreInRange(r.ped.cod,-0.20,0.35,-0.40,0.55); pedMetrics.push(v); pedBits.push('COD '+r.ped.cod+' '+(v>=80?'✅':v>=40?'⚠️':'❌')); }
   }
-  details.pedigree = pedDetails.length ? pedDetails.join(' | ') : 'No data — neutral score applied';
+  scores.pedigree = pedMetrics.length > 0 ? Math.round(pedMetrics.reduce(function(a,b){return a+b;},0)/pedMetrics.length) : 50;
+  details.pedigree = pedBits.length ? pedBits.join(' | ') : 'No pedigree data — neutral score applied';
 
-  // TRAINER modifier (0-100)
+  // TRAINER
   var tl = r.trainer.toLowerCase();
-  if (tl.indexOf('appleby')>=0) {
-    scores.trainer = 100;
-    details.trainer = '🟢 Appleby — 3W/12R IV 3.54 A/E 1.49';
-  } else if (tl.indexOf('balding')>=0) {
-    scores.trainer = 100;
-    details.trainer = '🟢 Balding — 2W/4R IV 7.07 A/E 4.86';
-  } else if (tl.indexOf('o\'brien')>=0 || tl.indexOf('obrien')>=0 || tl.indexOf('aidan')>=0) {
-    scores.trainer = 10;
-    details.trainer = '🔴 A P O\'Brien — A/E 0.39, 14R, avoid';
-  } else {
-    scores.trainer = 50;
-    details.trainer = '🟡 ' + r.trainer + ' — no historical edge in this race';
-  }
+  if (tl.indexOf('appleby') >= 0) { scores.trainer = 100; details.trainer = '🟢 Appleby — 3W/12R IV 3.54 A/E 1.49'; }
+  else if (tl.indexOf('balding') >= 0) { scores.trainer = 100; details.trainer = '🟢 Balding — 2W/4R IV 7.07 A/E 4.86'; }
+  else if (tl.indexOf('o\'brien') >= 0 || tl.indexOf('obrien') >= 0 || tl.indexOf('aidan') >= 0) { scores.trainer = 10; details.trainer = '🔴 A P O\'Brien — A/E 0.39, negative signal'; }
+  else { scores.trainer = 50; details.trainer = '🟡 ' + r.trainer + ' — neutral'; }
 
-  // JOCKEY modifier (0-100)
+  // JOCKEY
   var jl = r.jockey.toLowerCase();
-  if (jl.indexOf('buick')>=0) {
-    scores.jockey = 100;
-    details.jockey = '🟢 Buick — 2W/4R, Mean PRB 0.95';
-  } else if (jl.indexOf('doyle')>=0) {
-    scores.jockey = 90;
-    details.jockey = '🟢 Doyle — 1W/4R, Mean PRB 0.83';
-  } else if (jl.indexOf('moore')>=0) {
-    scores.jockey = 5;
-    details.jockey = '🔴 R. Moore — 0W/6R incl 3 favs, negative signal';
-  } else {
-    scores.jockey = 50;
-    details.jockey = '🟡 ' + r.jockey + ' — neutral, no historical record in this race';
-  }
-
-  // COMPOSITE SCORE (weighted)
-  var total = 0;
-  var totalW = 0;
-  Object.keys(WEIGHTS).forEach(function(k) {
-    if (scores[k] !== undefined) {
-      total += scores[k] * WEIGHTS[k];
-      totalW += WEIGHTS[k];
-    }
-  });
-  var composite = Math.round(total / totalW);
+  if (jl.indexOf('buick') >= 0) { scores.jockey = 100; details.jockey = '🟢 Buick — 2W/4R PRB 0.95'; }
+  else if (jl.indexOf('doyle') >= 0) { scores.jockey = 90; details.jockey = '🟢 Doyle — 1W/4R PRB 0.83'; }
+  else if (jl.indexOf('moore') >= 0) { scores.jockey = 5; details.jockey = '🔴 R. Moore — 0W/6R incl 3 favs'; }
+  else { scores.jockey = 50; details.jockey = '🟡 ' + r.jockey + ' — neutral'; }
 
   // BRED — informational only
-  var bredInfo = {
-    USA: '🟢 USA — IV 4.72 A/E 2.11 (small sample)',
-    IRE: '🟡 IRE — A/E 0.59, overbet by market',
-    GB:  '🟡 GB — A/E 0.88, slightly below expectation',
-    FR:  '🟡 FR — 2 runners, no wins in sample'
-  };
-  details.bred = bredInfo[r.bred] || '🟡 ' + r.bred + ' — no specific data';
+  var bredMap = {USA:'🟢 USA — IV 4.72 A/E 2.11 (small sample)', IRE:'🟡 IRE — A/E 0.59 overbet', GB:'🟡 GB — A/E 0.88', FR:'🟡 FR — limited sample'};
+  details.bred = bredMap[r.bred] || '🟡 ' + r.bred;
 
-  // TRIP VERDICT from DI + COD
+  // TRIP VERDICT
   var tripVerdict = null;
   if (r.ped && r.ped.di !== null && r.ped.cod !== null) {
     var di = r.ped.di; var cod = r.ped.cod;
-    if (di > 2.20 || cod > 0.55) tripVerdict = {icon:'🔴',text:'Trip too short — speed-biased pedigree. Only Kameko (2.64/0.70) won with a similar profile.'};
-    else if (cod < -0.40) tripVerdict = {icon:'🔴',text:'Trip too long — staying pedigree, optimal distance likely 10f+.'};
-    else if (di >= 0.60 && di <= 1.60 && cod >= -0.20 && cod <= 0.35) tripVerdict = {icon:'🟢',text:'Ideal trip — DI and COD both in the winning sweet spot.'};
-    else if (di > 1.60) tripVerdict = {icon:'🟡',text:'Slightly sharp — mild speed bias, fine in a truly-run mile.'};
-    else if (cod < -0.20) tripVerdict = {icon:'🟡',text:'Slightly long — stamina lean, may prefer stronger pace.'};
-    else tripVerdict = {icon:'🟢',text:'Within acceptable range for the Guineas mile.'};
+    if (di > 2.20 || cod > 0.55) tripVerdict = {icon:'🔴', text:'Trip too short — speed-biased pedigree. Only Kameko (DI 2.64/COD 0.70) won with a comparable profile.'};
+    else if (cod < -0.40) tripVerdict = {icon:'🔴', text:'Trip too long — staying pedigree, optimal distance 10f+.'};
+    else if (di >= 0.60 && di <= 1.60 && cod >= -0.20 && cod <= 0.35) tripVerdict = {icon:'🟢', text:'Ideal trip — DI and COD both in the winner sweet spot.'};
+    else if (di > 1.60) tripVerdict = {icon:'🟡', text:'Slightly sharp — mild speed bias, fine in a truly-run mile.'};
+    else if (cod < -0.20) tripVerdict = {icon:'🟡', text:'Slightly long — stamina lean, benefits from genuine pace.'};
+    else tripVerdict = {icon:'🟢', text:'Within acceptable range for the Guineas mile.'};
   }
 
-  return {
-    composite: composite,
-    scores: scores,
-    details: details,
-    tripVerdict: tripVerdict,
-    drawGroup: dg
-  };
+  // COMPOSITE
+  var total = 0; var totalW = 0;
+  Object.keys(W).forEach(function(k) {
+    if (scores[k] !== undefined) { total += scores[k] * W[k]; totalW += W[k]; }
+  });
+  var composite = Math.round(total / totalW);
+
+  return {composite:composite, scores:scores, details:details, tripVerdict:tripVerdict, drawGroup:dg, formData:formData};
 }
 
 function scoreInRange(val, lo, hi, alo, ahi) {
@@ -582,22 +546,61 @@ function scoreInRange(val, lo, hi, alo, ahi) {
   return 5;
 }
 
+function parseForm(formStr) {
+  // Parse form string with - separator (before - = prev season, after - = this season)
+  // Returns: { prevSeason, thisSeason, runsThisSeason, lastRun, winThisSeason, display }
+  if (!formStr || !formStr.trim()) return null;
+  var str = formStr.trim().toUpperCase();
+  var dashIdx = str.indexOf('-');
+  var prevStr = '', thisStr = '';
+  if (dashIdx === -1) {
+    // No dash — all runs this season (if 6 digits filled, likely all this season)
+    thisStr = str;
+    prevStr = '';
+  } else if (dashIdx === str.length - 1) {
+    // Dash at end — all runs are previous season, went fresh
+    prevStr = str.slice(0, dashIdx);
+    thisStr = '';
+  } else {
+    prevStr = str.slice(0, dashIdx);
+    thisStr = str.slice(dashIdx + 1);
+  }
+  // Count runs this season (ignore DNF chars for flat: F, U, R, P — treat as run but no position)
+  var runsThisSeason = thisStr.replace(/[^0-9FURP]/g,'').length;
+  // Last run — most recent character overall (right end of full string, skip DNF for flat)
+  var allRuns = (prevStr + thisStr).replace(/[^0-9]/g,'');
+  var lastRunChar = '';
+  // Find rightmost numeric result
+  var fullClean = str.replace(/-/g,'');
+  for (var i = fullClean.length - 1; i >= 0; i--) {
+    if ('0123456789'.indexOf(fullClean[i]) >= 0) { lastRunChar = fullClean[i]; break; }
+  }
+  var lastRun = lastRunChar ? parseInt(lastRunChar) : null;
+  if (lastRun === 0) lastRun = 0; // outside top 10
+  // Win this season
+  var winThisSeason = thisStr.indexOf('1') >= 0;
+  return {
+    prevSeason: prevStr,
+    thisSeason: thisStr,
+    runsThisSeason: runsThisSeason,
+    lastRun: lastRun,
+    winThisSeason: winThisSeason,
+    display: formStr.trim()
+  };
+}
+
 function parseSP(sp) {
   if (!sp || sp === '---') return null;
-  sp = sp.trim().toLowerCase().replace('f','').replace('j','');
+  sp = sp.trim().toLowerCase().replace(/[fj]/g,'');
   if (sp === 'evs' || sp === 'evens') return 1.0;
   var parts = sp.split('/');
-  if (parts.length === 2) {
-    var n = parseFloat(parts[0]); var d = parseFloat(parts[1]);
-    if (!isNaN(n) && !isNaN(d) && d > 0) return n/d;
-  }
-  var f = parseFloat(sp);
-  return isNaN(f) ? null : f;
+  if (parts.length === 2) { var n=parseFloat(parts[0]); var d=parseFloat(parts[1]); if (!isNaN(n)&&!isNaN(d)&&d>0) return n/d; }
+  var f = parseFloat(sp); return isNaN(f) ? null : f;
 }
 
 function getDrawGroup(stall, fieldSize) {
   var lo, mid;
-  if (fieldSize <= 8)       { lo=2; mid=5; }
+  if (fieldSize <= 8) { lo=2; mid=5; }
   else if (fieldSize <= 12) { lo=4; mid=8; }
   else if (fieldSize <= 16) { lo=5; mid=10; }
   else if (fieldSize <= 20) { lo=6; mid=13; }
@@ -607,49 +610,139 @@ function getDrawGroup(stall, fieldSize) {
   return 'High';
 }
 
-function starsFromScore(score) {
-  if (score >= 80) return 5;
-  if (score >= 65) return 4;
-  if (score >= 50) return 3;
-  if (score >= 35) return 2;
-  return 1;
-}
+function starsFromScore(s) { return s>=80?5:s>=65?4:s>=50?3:s>=35?2:1; }
 
 // ─────────────────────────────────────────────
 // SETTINGS
 // ─────────────────────────────────────────────
 function getKey() { return localStorage.getItem('ra_api_key') || ''; }
 function updateKeyStatus() {
-  var k = getKey();
-  var el = document.getElementById('api-status');
-  if (k && k.length > 10) { el.textContent = '✓ API Key Set'; el.className = 'api-status api-ok'; }
-  else { el.textContent = '⚠ No API Key'; el.className = 'api-status api-missing'; }
+  var k=getKey(); var el=document.getElementById('api-status');
+  if (k&&k.length>10) { el.textContent='✓ API Key Set'; el.className='api-status api-ok'; }
+  else { el.textContent='⚠ No API Key'; el.className='api-status api-missing'; }
 }
-function openSettings() { document.getElementById('api-key-input').value = getKey(); document.getElementById('settings-modal').classList.add('open'); }
+function openSettings() { document.getElementById('api-key-input').value=getKey(); document.getElementById('settings-modal').classList.add('open'); }
 function closeSettings() { document.getElementById('settings-modal').classList.remove('open'); }
-function saveKey() { localStorage.setItem('ra_api_key', document.getElementById('api-key-input').value.trim()); updateKeyStatus(); closeSettings(); }
-function clearKey() { localStorage.removeItem('ra_api_key'); document.getElementById('api-key-input').value = ''; updateKeyStatus(); }
+function saveKey() { localStorage.setItem('ra_api_key',document.getElementById('api-key-input').value.trim()); updateKeyStatus(); closeSettings(); }
+function clearKey() { localStorage.removeItem('ra_api_key'); document.getElementById('api-key-input').value=''; updateKeyStatus(); }
 
 // ─────────────────────────────────────────────
 // TABS
 // ─────────────────────────────────────────────
 function switchTab(name, btn) {
-  document.querySelectorAll('.panel').forEach(function(p){ p.classList.remove('active'); });
-  document.querySelectorAll('.tab').forEach(function(b){ b.classList.remove('active'); });
-  document.getElementById('panel-' + name).classList.add('active');
+  document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('active');});
+  document.querySelectorAll('.tab').forEach(function(b){b.classList.remove('active');});
+  document.getElementById('panel-'+name).classList.add('active');
   btn.classList.add('active');
-  if (name === 'profile') renderProfile();
+  if (name==='profile') renderProfile();
+}
+
+// ─────────────────────────────────────────────
+// FORM BOXES — build 6 input boxes with dash separator
+// ─────────────────────────────────────────────
+function buildFormBoxes() {
+  var container = document.getElementById('form-boxes');
+  if (!container) return;
+  var html = '';
+  for (var i = 0; i < 6; i++) {
+    if (i === 3) html += '<span class="form-sep" title="Season break">—</span>';
+    html += '<input class="form-box" id="fb-'+i+'" maxlength="1" placeholder="·" oninput="onFormBox(this,'+i+')" onkeydown="formBoxKey(event,'+i+')">';
+  }
+  container.innerHTML = html;
+}
+
+function onFormBox(el, idx) {
+  var val = el.value.toUpperCase();
+  var allowed = '0123456789FPU-';
+  if (val && allowed.indexOf(val) === -1) { el.value = ''; return; }
+  el.value = val;
+  // Auto-advance
+  if (val && idx < 5) {
+    var next = document.getElementById('fb-'+(idx+1));
+    if (next) next.focus();
+  }
+}
+
+function formBoxKey(e, idx) {
+  if (e.key === 'Backspace' && !e.target.value && idx > 0) {
+    var prev = document.getElementById('fb-'+(idx-1));
+    if (prev) { prev.value = ''; prev.focus(); }
+  }
+}
+
+function getFormString() {
+  var prev = '', curr = '';
+  for (var i = 0; i < 3; i++) {
+    var el = document.getElementById('fb-'+i);
+    if (el && el.value) prev += el.value;
+  }
+  for (var i = 3; i < 6; i++) {
+    var el = document.getElementById('fb-'+i);
+    if (el && el.value) curr += el.value;
+  }
+  if (!prev && !curr) return '';
+  if (prev && !curr) return prev + '-';
+  if (!prev && curr) return curr;
+  return prev + '-' + curr;
+}
+
+function setFormBoxes(formStr) {
+  // Clear all
+  for (var i = 0; i < 6; i++) {
+    var el = document.getElementById('fb-'+i);
+    if (el) el.value = '';
+  }
+  if (!formStr) return;
+  var parsed = parseForm(formStr);
+  var prev = parsed.prevSeason;
+  var curr = parsed.thisSeason;
+  // Fill prev (last 3 chars → boxes 0-2 right-aligned)
+  var prevStart = Math.max(0, 3 - prev.length);
+  for (var i = 0; i < prev.length && i < 3; i++) {
+    var el = document.getElementById('fb-'+(prevStart+i));
+    if (el) el.value = prev[i];
+  }
+  // Fill curr (boxes 3-5)
+  for (var i = 0; i < curr.length && i < 3; i++) {
+    var el = document.getElementById('fb-'+(3+i));
+    if (el) el.value = curr[i];
+  }
+}
+
+function clearFormBoxes() {
+  for (var i = 0; i < 6; i++) {
+    var el = document.getElementById('fb-'+i);
+    if (el) el.value = '';
+  }
 }
 
 // ─────────────────────────────────────────────
 // JSI AUTO
 // ─────────────────────────────────────────────
+function validateForm(el) {
+  // Allow digits, dash, F, U, R, P (DNF chars) — max 13 chars total (6 runs each side + dash)
+  var val = el.value.replace(/[^0-9\-FURPfurp]/g,'');
+  // Count runs on each side of dash
+  var dashIdx = val.indexOf('-');
+  if (dashIdx >= 0) {
+    var before = val.slice(0, dashIdx).replace(/[^0-9FURPfurp]/g,'');
+    var after = val.slice(dashIdx+1).replace(/[^0-9FURPfurp]/g,'');
+    if (before.length > 6) before = before.slice(0,6);
+    if (after.length > 6) after = after.slice(0,6);
+    val = before + '-' + after;
+  } else {
+    val = val.replace(/[^0-9FURPfurp]/g,'');
+    if (val.length > 6) val = val.slice(0,6);
+  }
+  el.value = val.toUpperCase();
+}
+
 function calcJSI() {
   try {
-    var si = parseFloat(document.getElementById('f-si').value);
-    var dsi = parseFloat(document.getElementById('f-dsi').value);
-    var el = document.getElementById('f-jsi');
-    el.value = (!isNaN(si) && !isNaN(dsi)) ? (si+dsi).toFixed(1) : '';
+    var si=parseFloat(document.getElementById('f-si').value);
+    var dsi=parseFloat(document.getElementById('f-dsi').value);
+    var el=document.getElementById('f-jsi');
+    el.value=(!isNaN(si)&&!isNaN(dsi))?(si+dsi).toFixed(1):'';
   } catch(e) {}
 }
 
@@ -667,18 +760,19 @@ function addRunner() {
   var jsi=parseFloat(document.getElementById('f-jsi').value);
   var di=parseFloat(document.getElementById('f-di').value);
   var cod=parseFloat(document.getElementById('f-cod').value);
-  var hasPed = !isNaN(si)||!isNaN(dsi)||!isNaN(jsi)||!isNaN(di)||!isNaN(cod);
+  var hasPed=!isNaN(si)||!isNaN(dsi)||!isNaN(jsi)||!isNaN(di)||!isNaN(cod);
   var runner = {
-    name: name,
-    bred: document.getElementById('f-bred').value,
-    draw: parseInt(document.getElementById('f-draw').value)||0,
-    sp: document.getElementById('f-sp').value.trim()||'---',
-    trainer: document.getElementById('f-trainer').value.trim()||'---',
-    jockey: document.getElementById('f-jockey').value.trim()||'---',
-    or: document.getElementById('f-or').value.trim()||'---',
-    style: document.getElementById('f-style').value,
-    notes: document.getElementById('f-notes').value.trim(),
-    ped: hasPed ? {si:isNaN(si)?null:si, dsi:isNaN(dsi)?null:dsi, jsi:isNaN(jsi)?null:jsi, di:isNaN(di)?null:di, cod:isNaN(cod)?null:cod} : null
+    name:name, bred:document.getElementById('f-bred').value,
+    draw:parseInt(document.getElementById('f-draw').value)||0,
+    sp:document.getElementById('f-sp').value.trim()||'---',
+    trainer:document.getElementById('f-trainer').value.trim()||'---',
+    jockey:document.getElementById('f-jockey').value.trim()||'---',
+    or:document.getElementById('f-or').value.trim()||'---',
+    style:document.getElementById('f-style').value,
+    form:getFormString(),
+    grpWin:document.getElementById('f-grp').value,
+    notes:document.getElementById('f-notes').value.trim(),
+    ped:hasPed?{si:isNaN(si)?null:si,dsi:isNaN(dsi)?null:dsi,jsi:isNaN(jsi)?null:jsi,di:isNaN(di)?null:di,cod:isNaN(cod)?null:cod}:null
   };
   if (editIdx>=0) { runners[editIdx]=runner; editIdx=-1; document.getElementById('form-title').textContent='Add Runner'; }
   else runners.push(runner);
@@ -695,7 +789,11 @@ function editRunner(i) {
   document.getElementById('f-jockey').value=r.jockey;
   document.getElementById('f-or').value=r.or;
   document.getElementById('f-style').value=r.style;
+  document.getElementById('f-grp').value=r.grpWin||'';
   document.getElementById('f-notes').value=r.notes||'';
+  document.getElementById('f-form').value=r.formStr||'';
+  document.getElementById('f-gw').value=(r.groupWin===true||r.groupWin==='Y')?'Y':'N';
+  setFormBoxes(r.form||'');
   if (r.ped) {
     document.getElementById('f-si').value=r.ped.si!==null?r.ped.si:'';
     document.getElementById('f-dsi').value=r.ped.dsi!==null?r.ped.dsi:'';
@@ -703,21 +801,21 @@ function editRunner(i) {
     document.getElementById('f-cod').value=r.ped.cod!==null?r.ped.cod:'';
     calcJSI();
   }
-  editIdx=i;
-  document.getElementById('form-title').textContent='Edit — '+r.name;
+  editIdx=i; document.getElementById('form-title').textContent='Edit — '+r.name;
   document.getElementById('runner-form').scrollIntoView({behavior:'smooth'});
 }
 
 function removeRunner(i) { runners.splice(i,1); renderRunners(); }
 
 function clearForm() {
-  ['f-name','f-draw','f-sp','f-trainer','f-jockey','f-or','f-notes','f-si','f-dsi','f-jsi','f-di','f-cod'].forEach(function(id){
+  ['f-name','f-draw','f-sp','f-trainer','f-jockey','f-or','f-notes','f-si','f-dsi','f-jsi','f-di','f-cod','f-form'].forEach(function(id){
     var el=document.getElementById(id); if(el) el.value='';
   });
   document.getElementById('f-bred').value='IRE';
   document.getElementById('f-style').value='MIDFIELD';
-  editIdx=-1;
-  document.getElementById('form-title').textContent='Add Runner';
+  document.getElementById('f-grp').value='';
+  clearFormBoxes();
+  editIdx=-1; document.getElementById('form-title').textContent='Add Runner';
 }
 
 function renderRunners() {
@@ -731,11 +829,15 @@ function renderRunners() {
   list.innerHTML=sorted.map(function(item){
     var r=item.r; var i=item.i;
     var sk=r.style.replace(' ','');
+    var fd=parseForm(r.form||'');
+    var formDisp=r.form?('<span style="letter-spacing:.15em">'+r.form+'</span> <span style="color:#aaa;font-size:9px">('+fd.runsThisSeason+' run'+(fd.runsThisSeason!==1?'s':'')+' this season)</span>'):'No form entered';
     var pb=r.ped?'<span class="pedbadge ok">Pedigree ✓</span>':'<span class="pedbadge none">No pedigree</span>';
+    var grpBadge=r.grpWin==='yes'?'<span class="pedbadge ok">Grp Win ✓</span>':r.grpWin==='no'?'<span class="pedbadge none">No Grp Win</span>':'';
     return '<div class="rc"><div class="rc-draw">'+(r.draw||'?')+'</div>'
       +'<div class="rc-info"><div class="rc-name">'+r.name+' <span style="font-family:\'IBM Plex Mono\',monospace;font-size:10px;font-weight:400;color:var(--mid)">('+r.bred+')</span></div>'
-      +'<div class="rc-meta"><span><b>T:</b> '+r.trainer+'</span><span><b>J:</b> '+r.jockey+'</span><span><b>OR:</b> '+r.or+'</span><span><b>SP:</b> '+r.sp+'</span></div></div>'
-      +'<div class="rc-badges"><span class="pbadge p'+sk+'">'+r.style+'</span>'+pb+'</div>'
+      +'<div class="rc-meta"><span><b>T:</b> '+r.trainer+'</span><span><b>J:</b> '+r.jockey+'</span><span><b>OR:</b> '+r.or+'</span><span><b>SP:</b> '+r.sp+'</span></div>'
+      +'<div class="rc-form">'+formDisp+'</div></div>'
+      +'<div class="rc-badges"><span class="pbadge p'+sk+'">'+r.style+'</span>'+pb+grpBadge+'</div>'
       +'<div style="display:flex;gap:6px;margin-left:8px">'
       +'<button class="btn btn-ghost" style="padding:5px 10px;font-size:9px" onclick="editRunner('+i+')">Edit</button>'
       +'<button class="btn btn-danger" onclick="removeRunner('+i+')">✕</button>'
@@ -756,8 +858,10 @@ var PROFILE_FACTORS = [
   {label:'Starting Price', ideal:'9/2–8/1 · 9/1–20/1 strong', stats:'9/2-8/1: IV 2.65 · A/E 1.24 · 3 wins\n9/1-20/1: IV 1.70 · A/E 1.72 · 3 wins\nShorter than 5/2: 0W/5R — never won'},
   {label:'Trainer', ideal:'Appleby · Balding', stats:'Appleby: 3W/12R IV 3.54 A/E 1.49\nBalding: 2W/4R IV 7.07 A/E 4.86\nA P O\'Brien: 14R A/E 0.39 — negative'},
   {label:'Jockey', ideal:'Buick · Doyle', stats:'Buick: 2W/4R PRB 0.95\nDoyle: 1W/4R PRB 0.83\nR. Moore: 0W/6R incl 3 favs — negative'},
+  {label:'Form Profile', ideal:'0 or 1 prep run · Last run a win', stats:'0 runs this season: 3/7 winners (fresh route valid)\n1 run this season: 3/7 winners (sweet spot)\n4+ runs: 0 winners — flag\nLast run a 1st: 6/7 winners — key signal'},
+  {label:'Group Win', ideal:'Group win preferred — not essential', stats:'5/7 winners had a Group win\nLast 2 winners (2024, 2025) had none\nUnbeaten record compensates for no Group win'},
   {label:'Breeding', ideal:'USA indicative · IRE & GB below expectation', stats:'USA: IV 4.72 · A/E 2.11 (small sample)\nIRE: IV 0.79 · A/E 0.59 — overbet\nGB: IV 0.76 · A/E 0.88'},
-  {label:'Key Insight', ideal:'Dismiss the jolly. Back the traveller.', stats:'Favs shorter than 5/2 have never won.\nMIDFIELD + Appleby/Balding + OR 109-119\n= the winning template.'}
+  {label:'Key Insight', ideal:'Dismiss the jolly. Back the traveller.', stats:'Favs shorter than 5/2 have never won.\nMIDFIELD + Appleby/Balding + OR 109-119\n+ last run a win = the winning template.'}
 ];
 
 var DOSAGE_CELLS = [
@@ -779,7 +883,12 @@ function renderProfile() {
   }).join('');
   var tbody=document.getElementById('winner-tbody');
   tbody.innerHTML=WINNERS.map(function(w){
-    return '<tr><td><strong>'+w.year+'</strong></td><td>'+w.winner+'</td><td>'+w.bred+'</td><td>'+w.draw+' ('+w.drawGrp+')</td><td>'+w.style+'</td><td>'+w.trainer+'</td><td>'+w.or+'</td><td>'+w.sp+'</td><td>'+(w.di!==null?w.di:'—')+'</td><td>'+(w.cod!==null?w.cod:'—')+'</td><td>'+(w.jsi!==null?w.jsi:'—')+'</td><td>'+w.field+'</td></tr>';
+    return '<tr><td><strong>'+w.year+'</strong></td><td>'+w.winner+'</td><td>'+w.bred+'</td>'
+      +'<td>'+w.draw+' ('+w.drawGrp+')</td><td>'+w.style+'</td><td>'+w.trainer+'</td>'
+      +'<td>'+w.or+'</td><td>'+w.sp+'</td><td style="font-family:IBM Plex Mono,monospace;letter-spacing:.05em">'+w.form+'</td>'
+      +'<td>'+w.lastRun+'</td><td>'+(w.grpWin==='yes'?'✓':'✗')+'</td>'
+      +'<td>'+(w.di!==null?w.di:'—')+'</td><td>'+(w.cod!==null?w.cod:'—')+'</td>'
+      +'<td>'+(w.jsi!==null?w.jsi:'—')+'</td><td>'+w.field+'</td></tr>';
   }).join('');
 }
 
@@ -801,87 +910,84 @@ function runAnalysis(key) {
   var loading=document.getElementById('analysis-loading');
   out.innerHTML=''; loading.style.display='block';
 
-  // Score all runners statistically first
   var fsEl=document.getElementById('field-size');
   var fieldSize=(fsEl&&parseInt(fsEl.value)>0)?parseInt(fsEl.value):runners.length;
-  var scored=runners.map(function(r){
-    var s=scoreRunner(r,fieldSize);
-    return {runner:r, result:s};
-  });
-  // Sort by composite score descending
+
+  var scored=runners.map(function(r){ return {runner:r, result:scoreRunner(r,fieldSize)}; });
   scored.sort(function(a,b){return b.result.composite-a.result.composite;});
 
-  // Build prompt with pre-computed scores
+  var W=RACE.weights;
+  var weightNote='Weights: Style '+W.style+'% · Draw '+W.draw+'% · OR '+W.or+'% · SP '+W.sp+'% · Form '+W.form+'% · Pedigree '+W.pedigree+'% · Trainer '+W.trainer+'% · Jockey '+W.jockey+'%';
+
   var scoreSummary=scored.map(function(s,i){
-    return (i+1)+'. '+s.runner.name+' — composite score '+s.result.composite+'/100 ('+starsFromScore(s.result.composite)+'★)';
+    return (i+1)+'. '+s.runner.name+' — composite '+s.result.composite+'/100 ('+starsFromScore(s.result.composite)+'★)';
   }).join('\n');
 
   var runnerDetails=scored.map(function(s,i){
     var r=s.runner; var res=s.result;
-    var ped=r.ped?('SI:'+(r.ped.si||'?')+' DSI:'+(r.ped.dsi||'?')+' JSI:'+(r.ped.jsi||'?')+' DI:'+(r.ped.di!==null?r.ped.di:'?')+' COD:'+(r.ped.cod!==null?r.ped.cod:'?')):'no pedigree data';
-    return (i+1)+'. '+r.name+' ('+r.bred+') Stall:'+r.draw+'('+res.drawGroup+') '+r.trainer+'/'+r.jockey+' OR:'+r.or+' SP:'+r.sp+' Style:'+r.style+' '+ped+(r.notes?' Note:'+r.notes:'')
-      +'\n   SCORES: Style='+res.scores.style+' Draw='+res.scores.draw+' OR='+res.scores.or+' SP='+res.scores.sp+' Pedigree='+Math.round(res.scores.pedigree||50)+' Trainer='+res.scores.trainer+' Jockey='+res.scores.jockey+' COMPOSITE='+res.result
-      +'\n   DETAILS: '+Object.keys(res.details).map(function(k){return k+': '+res.details[k];}).join(' | ');
-  }).join('\n\n');
-
-  // Fix the result reference issue
-  var runnerDetailsFixed=scored.map(function(s,i){
-    var r=s.runner; var res=s.result;
-    var ped=r.ped?('SI:'+(r.ped.si||'?')+' DSI:'+(r.ped.dsi||'?')+' JSI:'+(r.ped.jsi||'?')+' DI:'+(r.ped.di!==null?r.ped.di:'?')+' COD:'+(r.ped.cod!==null?r.ped.cod:'?')):'no pedigree data';
-    return (i+1)+'. '+r.name+' ('+r.bred+') Stall:'+r.draw+'('+res.drawGroup+') '+r.trainer+'/'+r.jockey+' OR:'+r.or+' SP:'+r.sp+' Style:'+r.style+' '+ped+(r.notes?' Note:'+r.notes:'')
-      +'\n   SCORES: Style='+res.scores.style+' Draw='+res.scores.draw+' OR='+res.scores.or+' SP='+res.scores.sp+' Pedigree='+Math.round(res.scores.pedigree||50)+' Trainer='+res.scores.trainer+' Jockey='+res.scores.jockey+' COMPOSITE='+res.composite
-      +'\n   DETAILS: '+Object.keys(res.details).map(function(k){return k+': '+res.details[k];}).join(' | ');
+    var ped=r.ped?('SI:'+(r.ped.si||'?')+' DSI:'+(r.ped.dsi||'?')+' JSI:'+(r.ped.jsi||'?')+' DI:'+(r.ped.di!==null?r.ped.di:'?')+' COD:'+(r.ped.cod!==null?r.ped.cod:'?')):'no-pedigree';
+    var formStr=r.form||'not entered';
+    var grpStr=r.grpWin==='yes'?'Group win: YES':r.grpWin==='no'?'Group win: NO':'Group win: unknown';
+    return (i+1)+'. '+r.name+' ('+r.bred+') Stall:'+r.draw+'('+res.drawGroup+') '+r.trainer+'/'+r.jockey
+      +' OR:'+r.or+' SP:'+r.sp+' Style:'+r.style+' Form:'+formStr+' '+grpStr+' '+ped
+      +(r.notes?' Note:'+r.notes:'')
+      +'\n   COMPOSITE:'+res.composite+'/100 | Style:'+res.scores.style+' Draw:'+res.scores.draw+' OR:'+res.scores.or+' SP:'+res.scores.sp+' Form:'+res.scores.form+' Pedigree:'+Math.round(res.scores.pedigree)+' Trainer:'+res.scores.trainer+' Jockey:'+res.scores.jockey
+      +'\n   '+Object.keys(res.details).map(function(k){return k+': '+res.details[k];}).join(' | ');
   }).join('\n\n');
 
   var prompt='FLAT RACING ANALYSER - PHASE 3 - 2000 GUINEAS\n'
-    +'2019-2025 sample: 99 runners, 7 winners.\n\n'
-    +'STATISTICAL SCORES (pre-calculated from IV/AE/PRB data — use these to drive the prediction):\n'
-    +scoreSummary+'\n\n'
-    +'RUNNER DETAILS WITH SCORES:\n'+runnerDetailsFixed+'\n\n'
-    +'SCORING WEIGHTS: Style 25%, Draw 18%, OR 16%, SP 15%, Pedigree 14%, Trainer 6%, Jockey 6%\n\n'
-    +'INSTRUCTIONS:\n'
-    +'- The composite scores are statistically derived from the ICP. The prediction ranking MUST follow the composite score order.\n'
-    +'- For BREEDING: informational only. Use 🟢 USA, 🟡 IRE/GB, 🔴 unusually weak. Do not score.\n'
-    +'- For TRAINER: 🟢 Appleby/Balding, 🔴 A P O\'Brien, 🟡 all others.\n'
-    +'- For JOCKEY: 🟢 Buick/Doyle, 🔴 R Moore, 🟡 all others.\n'
-    +'- Use ✅ ⚠️ ❌ only for Style, Draw, OR, SP and pedigree metrics.\n'
-    +'- Write a 2-3 sentence Assessment per runner — analytical insight beyond the table.\n\n'
-    +'OUTPUT using EXACTLY these section headers:\n\n'
+    +'Sample: 2019-2025 · 99 runners · 7 winners\n\n'
+    +'STATISTICAL SCORES (pre-calculated — prediction ranking MUST follow composite score order):\n'
+    +scoreSummary+'\n\n'+weightNote+'\n\n'
+    +'RUNNER DETAILS:\n'+runnerDetails+'\n\n'
+    +'KEY FORM RULES FOR THIS RACE:\n'
+    +'- 3 of 7 winners went fresh (0 runs this season) — valid route, not a negative\n'
+    +'- 6 of 7 winners won their most recent run (regardless of season)\n'
+    +'- Sweet spot: 0 or 1 prep run this season. 4+ runs: 0 winners\n'
+    +'- Last 2 winners had no Group win — unbeaten record compensates\n'
+    +'- Favs shorter than 5/2: 0 wins from 5 runners — flag any runner at 5/2 or shorter\n'
+    +'- OR 120+: 0 wins from 8 runners — flag any runner rated 120+\n'
+    +'- Middle draw: IV 0.42 — flag any runner in the middle draw band\n\n'
+    +'SCORING: Breeding is informational only (not scored). For trainer: 🟢 Appleby/Balding · 🔴 AO Brien · 🟡 others. For jockey: 🟢 Buick/Doyle · 🔴 R Moore · 🟡 others. Use ✅⚠️❌ for Style/Draw/OR/SP/pedigree metrics only.\n\n'
+    +'OUTPUT — use EXACTLY these section headers:\n\n'
     +'## RUNNER ANALYSIS\n'
-    +'For each runner (in composite score order):\n'
-    +'### [NAME] - [SP] | [Trainer]/[Jockey] | Stall:[X] ([Draw Group]) | Score: [composite]/100\n'
-    +'**Pedigree:** 2-3 sentences on dosage metrics. If no data say so.\n'
-    +'**Trip Verdict: [emoji verdict]** - one line reason\n'
+    +'For each runner in composite score order:\n'
+    +'### [NAME] - [SP] | [Trainer]/[Jockey] | Stall:[X] ([Group]) | Score:[composite]/100\n'
+    +'**Form:** Interpret the form string. Note runs this season, last run result, freshness, Group win status. Flag if 4+ runs this season or if last run was not a win.\n'
+    +'**Pedigree:** 2-3 sentences on dosage metrics vs sweet spots. If no data, say so.\n'
+    +'**Trip Verdict: [emoji verdict]** — one line.\n'
     +'**Profile Match:**\n'
     +'| Factor | Ideal | This Runner | Match |\n|---|---|---|---|\n'
     +'| Running Style | MIDFIELD | x | ✅/⚠️/❌ |\n'
     +'| Draw | High/Low | x | ✅/⚠️/❌ |\n'
+    +'| OR | 110-119 | x | ✅/⚠️/❌ |\n'
+    +'| SP | 9/2-8/1 | x | ✅/⚠️/❌ |\n'
+    +'| Runs This Season | 0 or 1 | x | ✅/⚠️/❌ |\n'
+    +'| Last Run | 1st | x | ✅/⚠️/❌ |\n'
+    +'| Group Win | Preferred | x | 🟢/🟡 |\n'
     +'| Breeding | Informational | x | 🟢/🟡/🔴 |\n'
     +'| Trainer | Appleby/Balding | x | 🟢/🟡/🔴 |\n'
     +'| Jockey | Buick/Doyle | x | 🟢/🟡/🔴 |\n'
-    +'| OR | 110-119 | x | ✅/⚠️/❌ |\n'
-    +'| SP | 9/2-8/1 | x | ✅/⚠️/❌ |\n'
     +'| Sire Index | 9.0-11.0 | x | ✅/⚠️/❌/— |\n'
     +'| Damsire Index | 7.5-11.5 | x | ✅/⚠️/❌/— |\n'
     +'| Joint Sire Index | 18.0-21.0 | x | ✅/⚠️/❌/— |\n'
     +'| Dosage Index | 0.60-1.60 | x | ✅/⚠️/❌/— |\n'
     +'| COD Index | -0.20 to +0.35 | x | ✅/⚠️/❌/— |\n'
-    +'**Assessment:** 2-3 sentences of analytical insight. Reference the composite score and key factors.\n\n'
+    +'| Runs this season | 0 or 1 | x | ✅/⚠️/❌ |\n'
+    +'| Last run result | 1st | x | ✅/⚠️/❌ |\n'
+    +'| Group Win | Yes (not essential) | x | 🟢/🟡 |\n'
+    +'**Assessment:** 2-3 sentences of analytical insight referencing composite score and key factors.\n\n'
     +'## PREDICTION\n'
     +'| Position | Horse | Stall | Score | Rating | SP | Key Reason |\n|---|---|---|---|---|---|---|\n\n'
     +'## PREDICTION NARRATIVE\n'
-    +'4-5 sentences. Explain the race shape, how the statistical scores translate to a race outcome, and why the top selection wins.\n\n'
+    +'4-5 sentences. Race shape, how scores translate to outcome, why top selection wins.\n\n'
     +'## FLAGS & CAVEATS\n'
     +'One per line: Flag Type: detail.';
 
   fetch('https://racing-proxy.danmigo.workers.dev', {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({
-      model: 'claude-sonnet-4-20250514',
-      max_tokens: 8000,
-      messages: [{role:'user', content:prompt}]
-    })
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:8000,messages:[{role:'user',content:prompt}]})
   }).then(function(r){
     if (!r.ok) return r.text().then(function(t){throw new Error('HTTP '+r.status+': '+t.slice(0,200));});
     return r.json();
@@ -890,10 +996,9 @@ function runAnalysis(key) {
     var text='';
     if (data.content&&Array.isArray(data.content)) {
       text=data.content.filter(function(b){return b.type==='text';}).map(function(b){return b.text;}).join('');
-    } else { throw new Error('Unexpected response: '+JSON.stringify(data).slice(0,200)); }
+    } else { throw new Error('Unexpected response'); }
     if (!text.trim()) throw new Error('Empty response');
-    // Render score summary at top then structured output
-    renderWithScores(scored, text, fieldSize);
+    renderWithScores(scored, text);
   }).catch(function(err){
     loading.style.display='none';
     console.error('Error:',err);
@@ -904,38 +1009,36 @@ function runAnalysis(key) {
 // ─────────────────────────────────────────────
 // RENDER
 // ─────────────────────────────────────────────
-function renderWithScores(scored, text, fieldSize) {
+function renderWithScores(scored, text) {
   var out=document.getElementById('analysis-out');
   out.innerHTML='';
 
-  // Score summary bar chart
-  var maxScore=Math.max.apply(null,scored.map(function(s){return s.result.composite;}));
-  var summaryHTML='<div class="out-sec"><div class="out-hdr"><span class="out-num">◎</span>Statistical Score Summary</div><div class="out-body">';
-  summaryHTML+='<div style="font-family:IBM Plex Mono,monospace;font-size:9px;color:var(--mid);margin-bottom:12px;letter-spacing:.1em">COMPOSITE SCORE — weighted from IV · A/E · PRB data · Style 25% · Draw 18% · OR 16% · SP 15% · Pedigree 14% · Trainer/Jockey 12%</div>';
+  // Score bar summary
+  var W=RACE.weights;
+  var weightNote='Style '+W.style+'% · Draw '+W.draw+'% · OR '+W.or+'% · SP '+W.sp+'% · Form '+W.form+'% · Pedigree '+W.pedigree+'% · Trainer '+W.trainer+'% · Jockey '+W.jockey+'%';
+  var sumHTML='<div class="out-sec"><div class="out-hdr"><span class="out-num">◎</span>Statistical Score Summary</div><div class="out-body">';
+  sumHTML+='<div style="font-family:IBM Plex Mono,monospace;font-size:9px;color:var(--mid);margin-bottom:14px;letter-spacing:.08em">'+weightNote+'</div>';
   scored.forEach(function(s){
     var stars=starsFromScore(s.result.composite);
-    var starStr='';
-    for(var i=0;i<5;i++) starStr+=(i<stars?'<span class="sf">★</span>':'<span class="se">☆</span>');
-    summaryHTML+='<div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">'
-      +'<div style="font-family:Playfair Display,serif;font-size:14px;font-weight:700;min-width:160px">'+s.runner.name+'</div>'
+    var st='';
+    for(var i=0;i<5;i++) st+=(i<stars?'<span class="sf">★</span>':'<span class="se">☆</span>');
+    sumHTML+='<div class="score-bar-wrap"><div style="font-family:Playfair Display,serif;font-size:14px;font-weight:700;min-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+s.runner.name+'</div>'
       +'<div class="score-bar-bg"><div class="score-bar" style="width:'+s.result.composite+'%"></div></div>'
       +'<div class="score-val">'+s.result.composite+'</div>'
-      +'<div class="stars" style="font-size:13px">'+starStr+'</div>'
-      +'</div>';
+      +'<div class="stars" style="font-size:13px;min-width:80px">'+st+'</div></div>';
   });
-  summaryHTML+='</div></div>';
-  out.innerHTML=summaryHTML;
+  sumHTML+='</div></div>';
+  out.innerHTML=sumHTML;
 
-  // Parse and render sections
   var sections=text.split(/^## /m).filter(function(s){return s.trim();});
   sections.forEach(function(sec){
     var lines=sec.split('\n');
     var title=lines[0].trim();
     var body=lines.slice(1).join('\n').trim();
-    if (title.indexOf('RUNNER')>=0) renderRunnersSec(out, body, scored);
-    else if (title==='PREDICTION') renderPredSec(out, body, scored);
-    else if (title.indexOf('NARRATIVE')>=0) renderNarrativeSec(out, body);
-    else if (title.indexOf('FLAGS')>=0) renderFlagsSec(out, body);
+    if (title.indexOf('RUNNER')>=0) renderRunnersSec(out,body,scored);
+    else if (title==='PREDICTION') renderPredSec(out,body);
+    else if (title.indexOf('NARRATIVE')>=0) renderNarrativeSec(out,body);
+    else if (title.indexOf('FLAGS')>=0) renderFlagsSec(out,body);
   });
 }
 
@@ -944,39 +1047,27 @@ function renderRunnersSec(out, body, scored) {
   wrap.className='out-sec';
   wrap.innerHTML='<div class="out-hdr"><span class="out-num">2</span>Runner-by-Runner Analysis</div>';
   out.appendChild(wrap);
-
   body.split(/^### /m).filter(function(s){return s.trim();}).forEach(function(block){
-    var lines=block.split('\n');
-    var hdr=lines[0].trim();
-    var rest=lines.slice(1).join('\n');
-    var card=document.createElement('div');
-    card.className='scorecard';
-
+    var lines=block.split('\n'); var hdr=lines[0].trim(); var rest=lines.slice(1).join('\n');
+    var card=document.createElement('div'); card.className='scorecard';
     var namePart=hdr.split(' - ')[0].trim();
     var spM=hdr.match(/ - ([^|]+)\|/); var sp=spM?spM[1].trim():'';
     var trM=hdr.match(/\| *([^/]+)\//); var tr=trM?trM[1].trim():'';
     var jkM=hdr.match(/\/ *([^|]+)\|/); var jk=jkM?jkM[1].trim():'';
     var drM=hdr.match(/Stall:([^\s|]+)/); var dr=drM?drM[1].trim():'';
-    var scM=hdr.match(/Score: *(\d+)/); var sc=scM?parseInt(scM[1]):null;
-
-    var stM=rest.match(/Predicted Style:\s*([A-Z ]+)/); var style=stM?stM[1].trim():'';
+    var scM=hdr.match(/Score:(\d+)/); var sc=scM?parseInt(scM[1]):null;
     var stars=sc!==null?starsFromScore(sc):3;
-    var starStr='';
-    for(var i=0;i<5;i++) starStr+=(i<stars?'<span class="sf">★</span>':'<span class="se">☆</span>');
-
+    var st=''; for(var i=0;i<5;i++) st+=(i<stars?'<span class="sf">★</span>':'<span class="se">☆</span>');
     var tripM=rest.match(/\*\*Trip Verdict:([^*]+)\*\*/); var trip=tripM?tripM[1].trim():'';
-    var pedM=rest.match(/\*\*Pedigree:\*\*\n?([\s\S]*?)(?=\*\*Trip Verdict|\*\*Profile Match|$)/); var ped=pedM?pedM[1].trim():'';
+    var pedM=rest.match(/\*\*Pedigree:\*\*\n?([\s\S]*?)(?=\*\*Trip Verdict|\*\*Profile|\*\*Form|$)/); var ped=pedM?pedM[1].trim():'';
+    var formM=rest.match(/\*\*Form:\*\*\n?([\s\S]*?)(?=\*\*Pedigree|\*\*Trip|\*\*Profile|$)/); var formText=formM?formM[1].trim():'';
     var assessM=rest.match(/\*\*Assessment:\*\*\n?([\s\S]*?)(?=\*\*Overall|$)/); var assess=assessM?assessM[1].trim():'';
     var tableM=rest.match(/\*\*Profile Match:\*\*\n?([\s\S]*?)(?=\*\*Assessment|\*\*Overall|$)/);
-    var sk=style.replace(' ','');
-
-    card.innerHTML='<div class="sc-hdr">'
-      +'<div><div class="sc-name">'+namePart+'</div>'
-      +'<div class="sc-meta"><span>'+tr+' / '+jk+'</span><span>Stall: '+dr+'</span><span>SP: '+sp+'</span>'
-      +(style?'<span><span class="pbadge p'+sk+'">'+style+'</span></span>':'')+'</div></div>'
-      +'<div class="sc-right"><div class="stars">'+starStr+'</div>'
-      +(sc!==null?'<div class="score-chip">'+sc+'/100</div>':'')+'</div>'
-      +'</div><div class="sc-body">'
+    card.innerHTML='<div class="sc-hdr"><div><div class="sc-name">'+namePart+'</div>'
+      +'<div class="sc-meta"><span>'+tr+' / '+jk+'</span><span>Stall: '+dr+'</span><span>SP: '+sp+'</span></div></div>'
+      +'<div class="sc-right"><div class="stars">'+st+'</div>'+(sc!==null?'<div class="score-chip">'+sc+'/100</div>':'')+'</div></div>'
+      +'<div class="sc-body">'
+      +(formText?'<div class="ped-box" style="border-left-color:#4a4035"><div class="ped-box-lbl" style="color:#4a4035">Form</div>'+formText.replace(/\n/g,'<br>')+'</div>':'')
       +((ped||trip)?'<div class="ped-box"><div class="ped-box-lbl">Pedigree Assessment</div>'+(ped?ped.replace(/\n/g,'<br>'):'')+(trip?'<div class="trip-line">'+trip+'</div>':'')+'</div>':'')
       +(tableM?mdTable(tableM[1]):'')
       +(assess?'<div class="assessment-box">'+assess+'</div>':'')
@@ -985,7 +1076,7 @@ function renderRunnersSec(out, body, scored) {
   });
 }
 
-function renderPredSec(out, body, scored) {
+function renderPredSec(out, body) {
   var s=makeSec('3','Statistical Prediction'); out.appendChild(s);
   document.getElementById('ob-3').innerHTML=mdTable(body,true);
 }
@@ -997,8 +1088,7 @@ function renderNarrativeSec(out, body) {
 
 function renderFlagsSec(out, body) {
   var s=makeSec('5','Flags & Caveats'); out.appendChild(s);
-  var bd=document.getElementById('ob-5');
-  var html='';
+  var bd=document.getElementById('ob-5'); var html='';
   body.split('\n').filter(function(l){return l.trim();}).forEach(function(line){
     var ci=line.indexOf(':');
     if (ci>0&&ci<40) html+='<div class="flag-card"><div class="flag-type">'+line.slice(0,ci).replace(/^[-*] */,'').trim()+'</div><div class="flag-text">'+line.slice(ci+1).trim()+'</div></div>';
@@ -1008,8 +1098,7 @@ function renderFlagsSec(out, body) {
 }
 
 function makeSec(num, title) {
-  var d=document.createElement('div');
-  d.className='out-sec';
+  var d=document.createElement('div'); d.className='out-sec';
   d.innerHTML='<div class="out-hdr"><span class="out-num">'+num+'</span>'+title+'</div><div class="out-body" id="ob-'+num+'"></div>';
   return d;
 }
@@ -1017,9 +1106,7 @@ function makeSec(num, title) {
 function mdTable(text, isPred) {
   var lines=text.trim().split('\n').filter(function(l){return l.includes('|');});
   if (lines.length<2) return '<pre style="font-size:11px;font-family:IBM Plex Mono,monospace;white-space:pre-wrap">'+text+'</pre>';
-  var cls=isPred?'pred-tbl':'md-tbl';
-  var html='<table class="'+cls+'">';
-  var inBody=false;
+  var cls=isPred?'pred-tbl':'md-tbl'; var html='<table class="'+cls+'">'; var inBody=false;
   lines.forEach(function(line,i){
     if (/^\|[-\s|]+\|$/.test(line.trim())) return;
     var cells=line.split('|').slice(1,-1);
@@ -1050,6 +1137,7 @@ function mdTable(text, isPred) {
 // ─────────────────────────────────────────────
 updateKeyStatus();
 renderProfile();
+buildFormBoxes();
 </script>
 </body>
 </html>
