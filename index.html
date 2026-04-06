@@ -219,7 +219,7 @@ textarea{resize:vertical;min-height:52px}
 
   <div class="field-size-row">
     <label>Total Field Size</label>
-    <input type="number" id="field-size" min="1" max="30" placeholder="e.g. 12" style="width:80px">
+    <input type="number" id="field-size" min="1" max="30" placeholder="" style="width:80px">
     <span class="fsr-hint">Declared runners — used for draw groupings.</span>
   </div>
 
@@ -228,20 +228,19 @@ textarea{resize:vertical;min-height:52px}
 
     <div class="fsec">Race Details</div>
     <div class="g2">
-      <div class="fg"><label>Horse Name</label><input id="f-name" placeholder="e.g. Rosallion"></div>
+      <div class="fg"><label>Horse Name</label><input id="f-name" placeholder=""></div>
       <div class="fg"><label>Country of Breeding</label>
         <select id="f-bred"><option>IRE</option><option>GB</option><option>USA</option><option>FR</option><option>Other</option></select>
       </div>
-      <div class="fg"><label>Draw (Stall)</label><input id="f-draw" type="number" min="1" max="30" placeholder="e.g. 4"></div>
-      <div class="fg"><label>SP (Odds)</label><input id="f-sp" placeholder="e.g. 7/2"></div>
-      <div class="fg"><label>Trainer</label><input id="f-trainer" placeholder="e.g. Charlie Appleby"></div>
-      <div class="fg"><label>Jockey</label><input id="f-jockey" placeholder="e.g. William Buick"></div>
-      <div class="fg"><label>Official Rating (OR)</label><input id="f-or" placeholder="e.g. 115"></div>
+      <div class="fg"><label>Draw (Stall)</label><input id="f-draw" type="number" min="1" max="30" placeholder=""></div>
+      <div class="fg"><label>SP (Odds)</label><input id="f-sp" placeholder=""></div>
+      <div class="fg"><label>Trainer</label><input id="f-trainer" placeholder=""></div>
+      <div class="fg"><label>Jockey</label><input id="f-jockey" placeholder=""></div>
+      <div class="fg"><label>Official Rating (OR)</label><input id="f-or" placeholder=""></div>
       <div class="fg"><label>Running Style</label>
         <select id="f-style"><option>LED</option><option>PROMINENT</option><option selected>MIDFIELD</option><option value="HOLD UP">HOLD UP</option></select>
       </div>
     </div>
-    <div class="hint">Trainer &amp; Jockey: full name or surname both work.</div>
 
 
     <div class="fsec">Form &amp; Race Record</div>
@@ -252,23 +251,22 @@ textarea{resize:vertical;min-height:52px}
         <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#aaa;margin-top:3px;display:block">Oldest → most recent · 1-3 = finish pos · 0 = outside top 10 · - = season break</span>
       </div>
       <div class="fg">
-        <label>Group Win (Flat) / Grade Win (Jumps)</label>
+        <label>Group Win</label>
         <select id="f-grp">
           <option value="">— Select —</option>
           <option value="yes">Yes</option>
           <option value="no">No</option>
         </select>
-        <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#aaa;margin-top:3px;display:block">Career win at Group/Grade level (G1–G3)</span>
       </div>
     </div>
 
     <div class="fsec">Pedigree / Dosage <span style="font-weight:300;letter-spacing:0;text-transform:none;font-family:'IBM Plex Sans',sans-serif;font-size:10px;color:#aaa">(optional)</span></div>
     <div class="g5">
-      <div class="fg"><label>Sire Index</label><input id="f-si" placeholder="e.g. 9.6" oninput="calcJSI()"></div>
-      <div class="fg"><label>Damsire Index</label><input id="f-dsi" placeholder="e.g. 10.9" oninput="calcJSI()"></div>
+      <div class="fg"><label>Sire Index</label><input id="f-si" placeholder="" oninput="calcJSI()"></div>
+      <div class="fg"><label>Damsire Index</label><input id="f-dsi" placeholder="" oninput="calcJSI()"></div>
       <div class="fg"><label>JSI <span style="color:var(--gold);font-size:8px">AUTO</span></label><input id="f-jsi" placeholder="auto" style="background:#f0ece0;color:var(--gold-dim)" readonly></div>
-      <div class="fg"><label>Dosage Index (DI)</label><input id="f-di" placeholder="e.g. 1.00"></div>
-      <div class="fg"><label>COD Index</label><input id="f-cod" placeholder="e.g. 0.12"></div>
+      <div class="fg"><label>Dosage Index (DI)</label><input id="f-di" placeholder=""></div>
+      <div class="fg"><label>COD Index</label><input id="f-cod" placeholder=""></div>
     </div>
 
     <div class="fg" style="margin-top:12px"><label>Notes (optional)</label><textarea id="f-notes" placeholder="Course form, fitness, jockey booking context, going preferences..."></textarea></div>
@@ -297,7 +295,7 @@ textarea{resize:vertical;min-height:52px}
   <hr class="rule">
   <div class="sec-label" style="margin-bottom:9px">Winner History</div>
   <table class="wtable">
-    <thead><tr><th>Year</th><th>Winner</th><th>Bred</th><th>Draw</th><th>Style</th><th>Trainer</th><th>OR</th><th>SP</th><th>Form</th><th>Last Run</th><th>Grp Win</th><th>DI</th><th>COD</th><th>JSI</th><th>Field</th></tr></thead>
+    <thead><tr><th>Year</th><th>Winner</th><th>Bred</th><th>Draw</th><th>Style</th><th>Trainer</th><th>OR</th><th>Wgt</th><th>SP</th><th>Form</th><th>Last Run</th><th>Grp Win</th><th>DI</th><th>COD</th><th>JSI</th><th>Field</th></tr></thead>
     <tbody id="winner-tbody"></tbody>
   </table>
 </div>
@@ -716,6 +714,7 @@ function renderRunners() {
 // PROFILE RENDER
 // ─────────────────────────────────────────────
 var PROFILE_FACTORS = [
+  {label:'Weight', ideal:'Level weights — no advantage', stats:'All runners carry 9st 0lb (colts) / 8st 11lb (fillies).\nNo weight advantage in this race.\nWeight is not a scoring factor for the 2000 Guineas.'},
   {label:'Running Style', ideal:'MIDFIELD', stats:'IV 1.49 · A/E 1.26 · 4W/38R\nPROMINENT: IV 1.09 · A/E 0.72 overbet\nLED / HOLD UP: 0 wins'},
   {label:'Draw', ideal:'High or Low — avoid Middle', stats:'High: IV 1.37 · A/E 1.02 · 3 wins\nLow: IV 1.25 · A/E 0.94 · 3 wins\nMiddle: IV 0.42 · 1 win only'},
   {label:'OR Band', ideal:'110–119 primary · 100–109 value', stats:'110-119: IV 1.39 · A/E 1.06 · 5 of 7 wins\n100-109: A/E 2.17 — underrated by market\n120+: 0W/8R — avoid'},
@@ -749,7 +748,7 @@ function renderProfile() {
   tbody.innerHTML=WINNERS.map(function(w){
     return '<tr><td><strong>'+w.year+'</strong></td><td>'+w.winner+'</td><td>'+w.bred+'</td>'
       +'<td>'+w.draw+' ('+w.drawGrp+')</td><td>'+w.style+'</td><td>'+w.trainer+'</td>'
-      +'<td>'+w.or+'</td><td>'+w.sp+'</td><td style="font-family:IBM Plex Mono,monospace;letter-spacing:.05em">'+w.form+'</td>'
+      +'<td>'+w.or+'</td><td>'+(w.wgt||'9-0')+'</td><td>'+w.sp+'</td><td style="font-family:IBM Plex Mono,monospace;letter-spacing:.05em">'+w.form+'</td>'
       +'<td>'+w.lastRun+'</td><td>'+(w.grpWin==='yes'?'✓':'✗')+'</td>'
       +'<td>'+(w.di!==null?w.di:'—')+'</td><td>'+(w.cod!==null?w.cod:'—')+'</td>'
       +'<td>'+(w.jsi!==null?w.jsi:'—')+'</td><td>'+w.field+'</td></tr>';
