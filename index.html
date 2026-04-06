@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Racing Analyser — M11GOX</title>
+<title>Racing Analyser — 2000 Guineas</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=IBM+Plex+Mono:wght@300;400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -23,12 +23,9 @@
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'IBM Plex Sans',sans-serif;background:var(--paper);color:var(--ink);min-height:100vh}
-
-/* HEADER */
 header{background:var(--ink);position:relative;overflow:hidden}
 header::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent,transparent 80px,rgba(184,151,42,.04) 80px,rgba(184,151,42,.04) 81px);pointer-events:none}
 .hdr{max-width:1140px;margin:0 auto;padding:24px 32px 20px;display:flex;align-items:flex-end;justify-content:space-between;gap:20px;position:relative}
-.hdr-left{}
 .hdr-eyebrow{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);margin-bottom:6px}
 .hdr-race{font-family:'Playfair Display',serif;font-size:28px;font-weight:900;color:var(--paper);line-height:1}
 .hdr-sub{font-family:'IBM Plex Mono',monospace;font-size:10px;color:#666;margin-top:6px;letter-spacing:.06em}
@@ -38,39 +35,29 @@ header::before{content:'';position:absolute;inset:0;background:repeating-linear-
 .api-status{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.1em;padding:5px 10px}
 .api-ok{color:#2d6a4f;background:#d8f3dc;border:1px solid #95d5b2}
 .api-missing{color:#9b2335;background:#fde8e8;border:1px solid #f5a5a5}
-
-/* TABS */
 .tabs-bar{background:var(--ink);border-top:1px solid #1a1a1a}
 .tabs{max-width:1140px;margin:0 auto;padding:0 32px;display:flex}
 .tab{background:none;border:none;color:#555;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.15em;text-transform:uppercase;padding:13px 18px;cursor:pointer;border-bottom:2px solid transparent;transition:all .2s}
 .tab:hover{color:#888}
 .tab.active{color:var(--gold);border-bottom-color:var(--gold)}
-
-/* SETTINGS MODAL */
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:1000;align-items:center;justify-content:center}
 .modal-overlay.open{display:flex}
-.modal{background:var(--paper);padding:32px;max-width:480px;width:90%;position:relative}
+.modal{background:var(--paper);padding:32px;max-width:500px;width:90%;position:relative}
 .modal-title{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;margin-bottom:6px}
 .modal-sub{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--mid);margin-bottom:20px;line-height:1.6}
-.modal input{width:100%;font-family:'IBM Plex Mono',monospace;font-size:12px;background:var(--ink);color:var(--gold);border:1px solid #333;padding:10px 12px;outline:none;letter-spacing:.05em}
+.modal input{width:100%;font-family:'IBM Plex Mono',monospace;font-size:12px;background:var(--ink);color:var(--gold);border:1px solid #333;padding:10px 12px;outline:none}
 .modal input:focus{border-color:var(--gold)}
 .modal-actions{display:flex;gap:10px;margin-top:16px}
-.modal-close{position:absolute;top:12px;right:14px;background:none;border:none;color:#888;font-size:18px;cursor:pointer;line-height:1}
+.modal-close{position:absolute;top:12px;right:14px;background:none;border:none;color:#888;font-size:18px;cursor:pointer}
 .modal-close:hover{color:var(--ink)}
-
-/* MAIN */
 .main{max-width:1140px;margin:0 auto;padding:28px 32px 80px}
 .panel{display:none}
 .panel.active{display:block}
-
-/* TYPOGRAPHY HELPERS */
 .sec-label{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.25em;text-transform:uppercase;color:var(--gold);margin-bottom:6px}
 .panel-title{font-family:'Playfair Display',serif;font-size:22px;font-weight:700}
 .panel-hdr{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:22px;flex-wrap:wrap;gap:10px}
 .rule{border:none;border-top:1px solid var(--rule);margin:22px 0}
-
-/* BUTTONS */
-.btn{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.15em;text-transform:uppercase;padding:10px 20px;cursor:pointer;border:none;transition:all .18s;display:inline-block}
+.btn{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.15em;text-transform:uppercase;padding:10px 20px;cursor:pointer;border:none;transition:all .18s}
 .btn-ink{background:var(--ink);color:var(--paper)}
 .btn-ink:hover{background:#222}
 .btn-gold{background:var(--gold);color:var(--ink);font-weight:500}
@@ -80,13 +67,10 @@ header::before{content:'';position:absolute;inset:0;background:repeating-linear-
 .btn-ghost:hover{border-color:var(--ink);color:var(--ink)}
 .btn-danger{background:none;color:var(--red);border:1px solid #d4a0a0;font-size:9px;padding:6px 10px}
 .btn-danger:hover{background:var(--red);color:#fff;border-color:var(--red)}
-
-/* FORMS */
 .form-card{background:var(--card);border:1px solid var(--rule);padding:22px;margin-bottom:18px}
 .form-card-title{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;margin-bottom:14px}
 .fsec{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin:16px 0 10px;padding-bottom:4px;border-bottom:1px solid var(--rule-light)}
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:10px 18px}
-.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px 18px}
 .g5{display:grid;grid-template-columns:repeat(5,1fr);gap:10px 14px}
 .fg{display:flex;flex-direction:column;gap:4px}
 label{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--mid)}
@@ -95,16 +79,17 @@ input:focus,select:focus,textarea:focus{border-color:var(--gold)}
 select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23888'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:28px}
 textarea{resize:vertical;min-height:52px}
 .fa{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap}
-.hint{font-family:'IBM Plex Mono',monospace;font-size:9px;color:#aaa;margin-top:-2px;margin-bottom:10px}
-
-/* RUNNER CARDS */
+.hint{font-family:'IBM Plex Mono',monospace;font-size:9px;color:#aaa;margin-top:-4px;margin-bottom:8px}
+.field-size-row{display:flex;align-items:center;gap:10px;background:var(--cream);border:1px solid var(--rule);padding:12px 16px;margin-bottom:18px}
+.field-size-row label{white-space:nowrap;margin-bottom:0}
+.field-size-row input{width:80px;font-family:'IBM Plex Mono',monospace;font-size:14px}
+.fsr-hint{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--mid)}
 .runners-list{display:flex;flex-direction:column;gap:7px;margin-bottom:18px}
 .rc{background:var(--card);border:1px solid var(--rule);padding:11px 15px;display:flex;align-items:center;gap:12px;transition:border-color .18s}
 .rc:hover{border-color:var(--gold)}
 .rc-draw{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--gold);min-width:28px;text-align:center}
 .rc-info{flex:1;min-width:0}
 .rc-name{font-family:'Playfair Display',serif;font-size:15px;font-weight:700}
-.rc-bred{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--mid)}
 .rc-meta{font-family:'IBM Plex Mono',monospace;font-size:10px;color:#888;margin-top:2px;display:flex;gap:10px;flex-wrap:wrap}
 .rc-meta b{color:var(--mid)}
 .rc-badges{display:flex;gap:5px;align-items:center;flex-wrap:wrap}
@@ -118,14 +103,6 @@ textarea{resize:vertical;min-height:52px}
 .pedbadge.none{background:#e8e4d8;color:var(--mid)}
 .gen-row{display:flex;align-items:center;gap:14px;padding:18px 0;border-top:1px solid var(--rule);flex-wrap:wrap}
 .gen-info{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--mid)}
-
-/* FIELD SIZE */
-.field-size-row{display:flex;align-items:center;gap:10px;background:var(--cream);border:1px solid var(--rule);padding:12px 16px;margin-bottom:18px}
-.field-size-row label{white-space:nowrap;margin-bottom:0}
-.field-size-row input{width:80px;font-family:'IBM Plex Mono',monospace;font-size:14px}
-.field-size-row .fsr-hint{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--mid)}
-
-/* PROFILE TAB */
 .icp-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--rule);border:1px solid var(--rule);margin-bottom:22px}
 .icp-cell{background:var(--card);padding:15px}
 .icp-label{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:4px}
@@ -141,19 +118,11 @@ textarea{resize:vertical;min-height:52px}
 .wtable th{background:var(--ink);color:var(--gold);padding:7px 9px;text-align:left;letter-spacing:.07em;font-weight:400}
 .wtable td{padding:7px 9px;border-bottom:1px solid var(--rule-light);background:var(--card)}
 .wtable tr:hover td{background:var(--cream)}
-.add-year{background:var(--ink);padding:22px;margin-top:26px}
-.ay-title{font-family:'Playfair Display',serif;font-size:16px;color:var(--paper);margin-bottom:4px}
-.ay-sub{font-family:'IBM Plex Mono',monospace;font-size:9px;color:#666;margin-bottom:12px;letter-spacing:.04em;line-height:1.6}
-.add-year textarea{background:#161616;border-color:#2a2a2a;color:var(--paper);font-size:11px;min-height:80px}
-.add-year textarea:focus{border-color:var(--gold)}
-.ay-result{margin-top:8px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--gold);min-height:16px}
-
-/* ANALYSIS TAB */
 .analysis-empty{text-align:center;padding:70px 20px}
 .ae-icon{font-size:32px;opacity:.2;margin-bottom:12px}
 .ae-title{font-family:'Playfair Display',serif;font-size:18px;color:var(--mid);margin-bottom:5px}
 .ae-sub{font-family:'IBM Plex Mono',monospace;font-size:10px;color:#aaa}
-.stream-row{display:flex;align-items:center;gap:8px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--gold);padding:6px 0 14px}
+.loading-row{display:flex;align-items:center;gap:8px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--gold);padding:6px 0 14px}
 .dot{width:6px;height:6px;background:var(--gold);border-radius:50%;animation:blink 1s infinite}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.15}}
 #analysis-out{display:flex;flex-direction:column;gap:18px}
@@ -165,23 +134,20 @@ textarea{resize:vertical;min-height:52px}
 .sc-hdr{background:var(--cream);border-bottom:1px solid var(--rule);padding:13px 17px;display:flex;align-items:flex-start;justify-content:space-between;gap:10px;flex-wrap:wrap}
 .sc-name{font-family:'Playfair Display',serif;font-size:17px;font-weight:700}
 .sc-meta{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--mid);margin-top:3px;display:flex;gap:12px;flex-wrap:wrap}
+.sc-right{display:flex;flex-direction:column;align-items:flex-end;gap:4px}
 .stars{font-size:15px;letter-spacing:2px}
 .sf{color:var(--gold)}.se{color:#ccc}
+.score-chip{font-family:'IBM Plex Mono',monospace;font-size:10px;background:var(--ink);color:var(--gold);padding:3px 8px;letter-spacing:.1em}
 .sc-body{padding:15px 17px}
 .ped-box{background:#f0ece0;border-left:3px solid var(--gold);padding:11px 13px;margin-bottom:13px;font-family:'IBM Plex Mono',monospace;font-size:10px;line-height:1.6}
 .ped-box-lbl{color:var(--gold-dim);font-size:9px;letter-spacing:.18em;text-transform:uppercase;margin-bottom:4px}
 .trip-line{margin-top:5px;font-weight:500}
-.ft{width:100%;border-collapse:collapse;margin-bottom:13px;font-size:12px}
+.assessment-box{background:#f5f1e8;border-left:3px solid var(--gold);padding:12px 15px;margin-top:12px;font-family:'IBM Plex Sans',sans-serif;font-size:13px;line-height:1.65;color:var(--ink)}
+.ft{width:100%;border-collapse:collapse;margin-bottom:4px;font-size:12px}
 .ft th{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.13em;text-transform:uppercase;color:var(--mid);padding:5px 7px;text-align:left;border-bottom:1px solid var(--rule)}
 .ft td{padding:6px 7px;border-bottom:1px solid var(--rule-light);font-family:'IBM Plex Sans',sans-serif}
 .ft tr:last-child td{border-bottom:none}
 .ft .fn{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--mid);white-space:nowrap}
-.pc-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:11px}
-.pros{background:#f0f7f3;border-left:3px solid var(--green);padding:11px 13px}
-.cons{background:#fdf3f3;border-left:3px solid var(--red);padding:11px 13px}
-.pc-lbl{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:4px;font-weight:500}
-.pros .pc-lbl{color:var(--green)}.cons .pc-lbl{color:var(--red)}
-.pc-body{font-family:'IBM Plex Sans',sans-serif;font-size:12px;line-height:1.5}
 .pred-tbl{width:100%;border-collapse:collapse}
 .pred-tbl th{background:var(--ink);color:var(--gold);font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.13em;text-transform:uppercase;padding:8px 11px;text-align:left}
 .pred-tbl td{padding:11px 11px;border-bottom:1px solid var(--rule-light);font-size:13px}
@@ -189,6 +155,10 @@ textarea{resize:vertical;min-height:52px}
 .pred-tbl tr:nth-child(1) td{background:#fffbf0}
 .pred-tbl tr:nth-child(2) td{background:#faf8f5}
 .pred-tbl tr:nth-child(3) td,.pred-tbl tr:nth-child(4) td{background:var(--card)}
+.score-bar-wrap{display:flex;align-items:center;gap:8px}
+.score-bar{height:6px;background:var(--gold);border-radius:2px;transition:width .3s}
+.score-bar-bg{flex:1;background:var(--rule-light);border-radius:2px;overflow:hidden}
+.score-val{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--mid);min-width:32px;text-align:right}
 .narrative-box{background:var(--ink);color:var(--paper);padding:22px;font-family:'IBM Plex Sans',sans-serif;font-size:14px;line-height:1.75;font-weight:300}
 .narrative-box em{color:var(--gold);font-style:normal}
 .flag-card{background:#fffbf0;border:1px solid #e8d88a;border-left:4px solid var(--gold);padding:10px 13px;margin-bottom:8px}
@@ -200,8 +170,7 @@ textarea{resize:vertical;min-height:52px}
 .md-tbl td{padding:7px 9px;border-bottom:1px solid var(--rule-light);font-size:12px}
 @media(max-width:760px){
   .icp-grid{grid-template-columns:1fr 1fr}
-  .dos-grid,.g2,.g3,.g5{grid-template-columns:1fr 1fr}
-  .pc-grid{grid-template-columns:1fr}
+  .dos-grid,.g2,.g5{grid-template-columns:1fr 1fr}
   .hdr{flex-direction:column;align-items:flex-start}
   .main{padding:18px 14px 60px}
   .tabs{padding:0 14px}
@@ -212,10 +181,10 @@ textarea{resize:vertical;min-height:52px}
 
 <header>
 <div class="hdr">
-  <div class="hdr-left">
+  <div>
     <div class="hdr-eyebrow">Racing Analyser · Phase 3</div>
-    <div class="hdr-race" id="hdr-race">2000 Guineas</div>
-    <div class="hdr-sub" id="hdr-sub">Newmarket · 1 Mile · 3yo · Group 1 · 2019–2025 Sample</div>
+    <div class="hdr-race">2000 Guineas</div>
+    <div class="hdr-sub">Newmarket · 1 Mile · 3yo · Group 1 · 2019–2025 Sample · 99 runners · 7 winners</div>
   </div>
   <div class="hdr-right">
     <span class="api-status" id="api-status">⚠ No API Key</span>
@@ -232,12 +201,11 @@ textarea{resize:vertical;min-height:52px}
 </div>
 </div>
 
-<!-- SETTINGS MODAL -->
 <div class="modal-overlay" id="settings-modal">
 <div class="modal">
   <button class="modal-close" onclick="closeSettings()">✕</button>
-  <div class="modal-title">Settings</div>
-  <div class="modal-sub">Your Anthropic API key is stored locally in your browser only. It is never sent anywhere except directly to api.anthropic.com.</div>
+  <div class="modal-title">API Settings</div>
+  <div class="modal-sub">Your Anthropic API key is stored in your browser only. It is never sent anywhere except to your Cloudflare Worker proxy, which forwards it securely to Anthropic.</div>
   <div class="fg">
     <label>Anthropic API Key</label>
     <input type="password" id="api-key-input" placeholder="sk-ant-api03-...">
@@ -251,7 +219,7 @@ textarea{resize:vertical;min-height:52px}
 
 <div class="main">
 
-<!-- RUNNERS PANEL -->
+<!-- RUNNERS -->
 <div id="panel-runners" class="panel active">
   <div class="panel-hdr">
     <div><div class="sec-label">Step One</div><div class="panel-title">Enter This Year's Runners</div></div>
@@ -261,7 +229,7 @@ textarea{resize:vertical;min-height:52px}
   <div class="field-size-row">
     <label>Total Field Size</label>
     <input type="number" id="field-size" min="1" max="30" placeholder="e.g. 12">
-    <span class="fsr-hint">Enter the actual number of runners in the race — used to calculate draw groupings correctly.</span>
+    <span class="fsr-hint">Actual number of runners declared — used for draw groupings.</span>
   </div>
 
   <div class="form-card" id="runner-form">
@@ -281,8 +249,7 @@ textarea{resize:vertical;min-height:52px}
         <select id="f-style"><option>LED</option><option>PROMINENT</option><option selected>MIDFIELD</option><option value="HOLD UP">HOLD UP</option></select>
       </div>
     </div>
-    <div class="hint">Trainer &amp; Jockey: full name or surname both work. Typos are tolerated.</div>
-
+    <div class="hint">Trainer &amp; Jockey: full name or surname both work.</div>
     <div class="fsec">Pedigree / Dosage <span style="font-weight:300;letter-spacing:0;text-transform:none;font-family:'IBM Plex Sans',sans-serif;font-size:10px;color:#aaa">(optional)</span></div>
     <div class="g5">
       <div class="fg"><label>Sire Index</label><input id="f-si" placeholder="e.g. 9.6" oninput="calcJSI()"></div>
@@ -291,7 +258,6 @@ textarea{resize:vertical;min-height:52px}
       <div class="fg"><label>Dosage Index (DI)</label><input id="f-di" placeholder="e.g. 1.00"></div>
       <div class="fg"><label>COD Index</label><input id="f-cod" placeholder="e.g. 0.12"></div>
     </div>
-
     <div class="fg" style="margin-top:12px"><label>Notes (optional)</label><textarea id="f-notes" placeholder="Course form, fitness, jockey booking context, going preferences..."></textarea></div>
     <div class="fa">
       <button class="btn btn-ink" onclick="addRunner()">Add Runner</button>
@@ -302,53 +268,35 @@ textarea{resize:vertical;min-height:52px}
   <div class="runners-list" id="runners-list"></div>
 
   <div class="gen-row" id="gen-row" style="display:none">
-    <button class="btn btn-gold" style="padding:12px 28px;font-size:11px" id="gen-btn" onclick="goGenerate()">Generate Phase 3 Analysis →</button>
+    <button class="btn btn-gold" style="padding:12px 28px;font-size:11px" onclick="goGenerate()">Generate Phase 3 Analysis →</button>
     <span class="gen-info" id="gen-info"></span>
   </div>
 </div>
 
-<!-- PROFILE PANEL -->
+<!-- PROFILE -->
 <div id="panel-profile" class="panel">
   <div class="panel-hdr">
     <div><div class="sec-label">Ideal Contestant Profile</div><div class="panel-title">2019–2025 · 99 Runners · 7 Winners</div></div>
-    <button class="btn btn-ghost" onclick="toggleEdit()">Edit Profile</button>
   </div>
-  <div id="profile-view">
-    <div class="sec-label" style="margin-bottom:9px">Race Factors</div>
-    <div class="icp-grid" id="icp-grid"></div>
-    <div class="sec-label" style="margin-bottom:9px">Pedigree / Dosage Sweet Spots</div>
-    <div class="dos-grid" id="dos-grid"></div>
-    <hr class="rule">
-    <div class="sec-label" style="margin-bottom:9px">Winner History</div>
-    <table class="wtable">
-      <thead><tr><th>Year</th><th>Winner</th><th>Bred</th><th>Draw</th><th>Style</th><th>Trainer</th><th>OR</th><th>SP</th><th>DI</th><th>COD</th><th>JSI</th><th>Field</th></tr></thead>
-      <tbody id="winner-tbody"></tbody>
-    </table>
-  </div>
-  <div id="profile-edit" style="display:none">
-    <div class="form-card">
-      <div class="form-card-title">Edit ICP Factors</div>
-      <div id="edit-fields"></div>
-      <div class="fa"><button class="btn btn-ink" onclick="saveEdit()">Save</button><button class="btn btn-ghost" onclick="toggleEdit()">Cancel</button></div>
-    </div>
-  </div>
-  <div class="add-year">
-    <div class="ay-title">Add New Year — Rolling Update</div>
-    <div class="ay-sub">Paste the race result in plain text (same Racing Post format used throughout Phase 1). Include pedigree data if available. Claude will extract the winner row and update the profile.</div>
-    <textarea id="ay-text" placeholder="Paste result text here..."></textarea>
-    <div class="fa" style="margin-top:10px"><button class="btn btn-gold" onclick="processYear()">Process & Update</button></div>
-    <div class="ay-result" id="ay-result"></div>
-  </div>
+  <div class="sec-label" style="margin-bottom:9px">Race Factors</div>
+  <div class="icp-grid" id="icp-grid"></div>
+  <div class="sec-label" style="margin-bottom:9px">Pedigree / Dosage Sweet Spots</div>
+  <div class="dos-grid" id="dos-grid"></div>
+  <hr class="rule">
+  <div class="sec-label" style="margin-bottom:9px">Winner History</div>
+  <table class="wtable">
+    <thead><tr><th>Year</th><th>Winner</th><th>Bred</th><th>Draw</th><th>Style</th><th>Trainer</th><th>OR</th><th>SP</th><th>DI</th><th>COD</th><th>JSI</th><th>Field</th></tr></thead>
+    <tbody id="winner-tbody"></tbody>
+  </table>
 </div>
 
-<!-- ANALYSIS PANEL -->
+<!-- ANALYSIS -->
 <div id="panel-analysis" class="panel">
   <div class="panel-hdr">
     <div><div class="sec-label">Phase 3 Output</div><div class="panel-title">Statistical Prediction</div></div>
-    <div id="analysis-status"></div>
   </div>
   <div id="analysis-loading" style="display:none">
-    <div class="stream-row"><div class="dot"></div>Generating analysis — please wait 20-40 seconds</div>
+    <div class="loading-row"><div class="dot"></div>Generating analysis — please wait</div>
   </div>
   <div id="analysis-out">
     <div class="analysis-empty">
@@ -359,287 +307,294 @@ textarea{resize:vertical;min-height:52px}
   </div>
 </div>
 
-</div><!-- /main -->
+</div>
 
 <script>
 // ─────────────────────────────────────────────
-// PROFILE DATA
+// PROFILE DATA — update this section each year
+// To update: paste new result in chat, Claude gives updated data block
 // ─────────────────────────────────────────────
-var profile = {
-  sampleYears: '2019-2025',
-  factors: {
-    style:   { label:'Running Style',  ideal:'MIDFIELD',                         stats:'IV 1.49 · A/E 1.26 · 4W/38R · Win% 10.5%\nPROMINENT: IV 1.09 · A/E 0.72 overbet\nHOLD UP & LED: 0 wins' },
-    draw:    { label:'Draw',           ideal:'High or Low — avoid Middle',        stats:'High: IV 1.37 · A/E 1.02 · 3 wins\nLow: IV 1.25 · A/E 0.94 · 3 wins\nMiddle: IV 0.42 · 1 win only' },
-    bred:    { label:'Breeding',       ideal:'USA (indicative) · IRE & GB below expectation', stats:'USA: IV 4.72 · A/E 2.11 ⚠ small sample\nIRE: IV 0.79 · A/E 0.59 overbet\nGB: IV 0.76 · A/E 0.88' },
-    trainer: { label:'Trainer',        ideal:'Charlie Appleby / Andrew Balding',  stats:'Appleby: IV 3.54 · A/E 1.49 · 3W/12R\nBalding: IV 7.07 · A/E 4.86 · 2W/4R ⚠\nA P O\'Brien: A/E 0.39 avoid' },
-    jockey:  { label:'Jockey',         ideal:'William Buick / James Doyle',       stats:'Buick: 2W/4R · PRB 0.95\nDoyle: 1W/4R · PRB 0.83\nR. Moore: 0W/6R incl 3 favs ❌' },
-    or:      { label:'OR Band',        ideal:'110-119 primary · 100-109 value',   stats:'110-119: IV 1.39 · A/E 1.06 · 5 of 7 wins\n100-109: A/E 2.17 market underrates\n120+: 0W/8R avoid' },
-    sp:      { label:'Starting Price', ideal:'9/2-8/1 primary · 9/1-20/1 strong', stats:'9/2-8/1: IV 2.65 · A/E 1.24 · 3 wins\n9/1-20/1: IV 1.70 · A/E 1.72 · 3 wins\nShorter than 5/2: 0W/5R never won' },
-    insight: { label:'Key Insight',    ideal:'Dismiss the jolly. Back the traveller.', stats:'Favs shorter than 5/2 have never won.\nMIDFIELD + Appleby/Balding + OR 109-119\n= the winning template.' }
-  },
-  dosage: {
-    si:  { label:'Sire Index',        sweet:'9.0 – 11.0',   lo:9.0,   hi:11.0,  alo:7.0,  ahi:12.0, note:'Amber: 7.0-8.9 | Red: <7.0' },
-    dsi: { label:'Damsire Index',     sweet:'7.5 – 11.5',   lo:7.5,   hi:11.5,  alo:7.0,  ahi:12.5, note:'Amber: 7.0-7.4 | Red: <7.0' },
-    jsi: { label:'Joint Sire Index',  sweet:'18.0 – 21.0',  lo:18.0,  hi:21.0,  alo:17.0, ahi:22.0, note:'Amber: 17.0-17.9 | Red: <17.0' },
-    di:  { label:'Dosage Index',      sweet:'0.60 – 1.60',  lo:0.60,  hi:1.60,  alo:0.50, ahi:2.20, note:'Amber: 0.50-0.59 or 1.61-2.20 | Red: extremes' },
-    cod: { label:'COD Index',         sweet:'-0.20 – +0.35',lo:-0.20, hi:0.35,  alo:-0.40,ahi:0.55, note:'Amber: -0.40 to -0.21 or +0.36 to +0.55' }
-  },
-  winners: [
-    {year:2019,winner:'Magna Grecia',   bred:'IRE',draw:'17 (High)',style:'PROMINENT',trainer:'A P O\'Brien',   or:113,sp:'11/2',di:1.00, cod:0.12, jsi:18.8,field:19},
-    {year:2020,winner:'Kameko',         bred:'USA',draw:'15 (High)',style:'MIDFIELD', trainer:'Andrew Balding', or:118,sp:'10/1',di:2.64, cod:0.70, jsi:18.8,field:15},
-    {year:2021,winner:'Poetic Flare',   bred:'IRE',draw:'4 (Low)',  style:'PROMINENT',trainer:'J S Bolger',     or:109,sp:'16/1',di:1.46, cod:0.31, jsi:18.3,field:14},
-    {year:2022,winner:'Coroebus',       bred:'IRE',draw:'1 (Low)',  style:'MIDFIELD', trainer:'Charlie Appleby',or:115,sp:'5/1', di:0.76, cod:-0.13,jsi:20.5,field:15},
-    {year:2023,winner:'Chaldean',       bred:'GB', draw:'3 (Low)',  style:'PROMINENT',trainer:'Andrew Balding', or:119,sp:'7/2', di:0.67, cod:-0.15,jsi:18.3,field:14},
-    {year:2024,winner:'Notable Speech', bred:'GB', draw:'6 (Mid)',  style:'MIDFIELD', trainer:'Charlie Appleby',or:109,sp:'16/1',di:1.26, cod:0.12, jsi:17.1,field:11},
-    {year:2025,winner:'Ruling Court',   bred:'USA',draw:'11 (High)',style:'MIDFIELD', trainer:'Charlie Appleby',or:112,sp:'9/2', di:1.00, cod:0.11, jsi:20.5,field:11}
-  ]
+var WINNERS = [
+  {year:2019,winner:'Magna Grecia',   bred:'IRE',draw:17,drawGrp:'High',style:'PROMINENT',trainer:'A P O\'Brien',   jockey:'D O\'Brien',  or:113,sp:'11/2',spDec:5.5,  di:1.00, cod:0.12, jsi:18.8,field:19},
+  {year:2020,winner:'Kameko',         bred:'USA',draw:15,drawGrp:'High',style:'MIDFIELD', trainer:'Andrew Balding', jockey:'O Murphy',    or:118,sp:'10/1',spDec:10.0, di:2.64, cod:0.70, jsi:18.8,field:15},
+  {year:2021,winner:'Poetic Flare',   bred:'IRE',draw:4, drawGrp:'Low', style:'PROMINENT',trainer:'J S Bolger',     jockey:'K Manning',   or:109,sp:'16/1',spDec:16.0, di:1.46, cod:0.31, jsi:18.3,field:14},
+  {year:2022,winner:'Coroebus',       bred:'IRE',draw:1, drawGrp:'Low', style:'MIDFIELD', trainer:'C Appleby',     jockey:'J Doyle',     or:115,sp:'5/1', spDec:5.0,  di:0.76, cod:-0.13,jsi:20.5,field:15},
+  {year:2023,winner:'Chaldean',       bred:'GB', draw:3, drawGrp:'Low', style:'PROMINENT',trainer:'Andrew Balding', jockey:'F Dettori',   or:119,sp:'7/2', spDec:3.5,  di:0.67, cod:-0.15,jsi:18.3,field:14},
+  {year:2024,winner:'Notable Speech', bred:'GB', draw:6, drawGrp:'Mid', style:'MIDFIELD', trainer:'C Appleby',     jockey:'W Buick',     or:109,sp:'16/1',spDec:16.0, di:1.26, cod:0.12, jsi:17.1,field:11},
+  {year:2025,winner:'Ruling Court',   bred:'USA',draw:11,drawGrp:'High',style:'MIDFIELD', trainer:'C Appleby',     jockey:'W Buick',     or:112,sp:'9/2', spDec:4.5,  di:1.00, cod:0.11, jsi:20.5,field:11}
+];
+
+// ─────────────────────────────────────────────
+// DERIVED ICP — calculated from WINNERS
+// ─────────────────────────────────────────────
+var ICP = (function() {
+  var n = WINNERS.length;
+  // Style wins
+  var styleW = {LED:0,PROMINENT:0,MIDFIELD:0,'HOLD UP':0};
+  WINNERS.forEach(function(w){ styleW[w.style] = (styleW[w.style]||0)+1; });
+  // Draw wins
+  var drawW = {Low:0,Mid:0,High:0};
+  WINNERS.forEach(function(w){ drawW[w.drawGrp] = (drawW[w.drawGrp]||0)+1; });
+  // Bred wins
+  var bredW = {};
+  WINNERS.forEach(function(w){ bredW[w.bred] = (bredW[w.bred]||0)+1; });
+  // Trainer wins
+  var trainerW = {};
+  WINNERS.forEach(function(w){
+    var t = w.trainer.toLowerCase();
+    if (t.indexOf('appleby')>=0) trainerW['Appleby'] = (trainerW['Appleby']||0)+1;
+    else if (t.indexOf('balding')>=0) trainerW['Balding'] = (trainerW['Balding']||0)+1;
+    else if (t.indexOf('o\'brien')>=0 || t.indexOf('obrien')>=0) trainerW['OBrien'] = (trainerW['OBrien']||0)+1;
+  });
+  // Jockey wins
+  var jockeyW = {};
+  WINNERS.forEach(function(w){
+    var j = w.jockey.toLowerCase();
+    if (j.indexOf('buick')>=0) jockeyW['Buick'] = (jockeyW['Buick']||0)+1;
+    else if (j.indexOf('doyle')>=0) jockeyW['Doyle'] = (jockeyW['Doyle']||0)+1;
+    else if (j.indexOf('moore')>=0) jockeyW['Moore'] = (jockeyW['Moore']||0)+1;
+  });
+  // OR bands
+  var orBands = {'100-109':0,'110-119':0,'120+':0};
+  WINNERS.forEach(function(w){
+    if (w.or>=120) orBands['120+']++;
+    else if (w.or>=110) orBands['110-119']++;
+    else if (w.or>=100) orBands['100-109']++;
+  });
+  // SP bands
+  var spBands = {'u5/2':0,'9/2-8/1':0,'9/1-20/1':0,'20/1+':0};
+  WINNERS.forEach(function(w){
+    if (w.spDec<2.5) spBands['u5/2']++;
+    else if (w.spDec<=8) spBands['9/2-8/1']++;
+    else if (w.spDec<=20) spBands['9/1-20/1']++;
+    else spBands['20/1+']++;
+  });
+  // Dosage averages
+  var diVals = WINNERS.filter(function(w){return w.di!==null;}).map(function(w){return w.di;});
+  var codVals = WINNERS.filter(function(w){return w.cod!==null;}).map(function(w){return w.cod;});
+  var jsiVals = WINNERS.filter(function(w){return w.jsi!==null;}).map(function(w){return w.jsi;});
+
+  return {
+    n: n,
+    styleW: styleW,
+    drawW: drawW,
+    bredW: bredW,
+    trainerW: trainerW,
+    jockeyW: jockeyW,
+    orBands: orBands,
+    spBands: spBands,
+    diRange: [Math.min.apply(null,diVals), Math.max.apply(null,diVals)],
+    codRange: [Math.min.apply(null,codVals), Math.max.apply(null,codVals)],
+    jsiRange: [Math.min.apply(null,jsiVals), Math.max.apply(null,jsiVals)],
+    jsiMin: Math.min.apply(null,jsiVals)
+  };
+})();
+
+// ─────────────────────────────────────────────
+// STATISTICAL SCORING ENGINE
+// Weights derived from IV strength in Phase 2 data
+// ─────────────────────────────────────────────
+var WEIGHTS = {
+  style:   25,   // IV 1.49 — strongest signal
+  draw:    18,   // IV 1.37 High / 1.25 Low
+  or:      16,   // IV 1.39 for 110-119
+  sp:      15,   // IV 2.65 for 9/2-8/1
+  pedigree:14,   // composite of 5 dosage metrics
+  trainer:  6,   // modifier — positive/negative signal
+  jockey:   6    // modifier — positive/negative signal
+  // bred: informational only, not scored
 };
 
-// ─────────────────────────────────────────────
-// STATE
-// ─────────────────────────────────────────────
-var runners = [];
-var editIdx = -1;
+function scoreRunner(r, fieldSize) {
+  var scores = {};
+  var details = {};
 
-// ─────────────────────────────────────────────
-// SETTINGS / API KEY
-// ─────────────────────────────────────────────
-function getKey() { return localStorage.getItem('ra_api_key') || ''; }
+  // STYLE (0-100)
+  var styleMap = {MIDFIELD:100, PROMINENT:70, LED:20, 'HOLD UP':20};
+  scores.style = styleMap[r.style] || 0;
+  details.style = r.style === 'MIDFIELD' ? '✅ IV 1.49 A/E 1.26' : r.style === 'PROMINENT' ? '⚠️ IV 1.09 A/E 0.72' : '❌ 0 wins in sample';
 
-function updateKeyStatus() {
-  var k = getKey();
-  var el = document.getElementById('api-status');
-  if (k && k.startsWith('sk-')) {
-    el.textContent = '✓ API Key Set';
-    el.className = 'api-status api-ok';
+  // DRAW (0-100)
+  var dg = getDrawGroup(r.draw, fieldSize);
+  var drawScoreMap = {Low:80, High:85, Mid:20};
+  scores.draw = drawScoreMap[dg] || 50;
+  details.draw = dg === 'Mid' ? '❌ IV 0.42 — weakest group' : dg === 'High' ? '✅ IV 1.37 A/E 1.02' : '✅ IV 1.25 A/E 0.94';
+
+  // OR (0-100)
+  var orVal = parseInt(r.or);
+  if (isNaN(orVal)) {
+    scores.or = 30;
+    details.or = '⚠️ Unrated — 0 wins from unrated runners';
+  } else if (orVal >= 120) {
+    scores.or = 0;
+    details.or = '❌ OR 120+ — 0W/8R in sample';
+  } else if (orVal >= 110) {
+    scores.or = 100;
+    details.or = '✅ 110-119 — 5 of 7 winners, IV 1.39';
+  } else if (orVal >= 100) {
+    scores.or = 70;
+    details.or = '✅ 100-109 — A/E 2.17, market underrates';
   } else {
-    el.textContent = '⚠ No API Key';
-    el.className = 'api-status api-missing';
+    scores.or = 20;
+    details.or = '⚠️ Below 100 — limited sample';
   }
-}
 
-function openSettings() {
-  document.getElementById('api-key-input').value = getKey();
-  document.getElementById('settings-modal').classList.add('open');
-}
+  // SP (0-100)
+  var spDec = parseSP(r.sp);
+  if (spDec === null) {
+    scores.sp = 50;
+    details.sp = '⚠️ SP not parseable';
+  } else if (spDec < 2.5) {
+    scores.sp = 0;
+    details.sp = '❌ Shorter than 5/2 — 0W/5R, never won';
+  } else if (spDec <= 8) {
+    scores.sp = 100;
+    details.sp = '✅ 9/2-8/1 — 3W, IV 2.65 A/E 1.24';
+  } else if (spDec <= 20) {
+    scores.sp = 80;
+    details.sp = '✅ 9/1-20/1 — 3W, IV 1.70 A/E 1.72';
+  } else if (spDec <= 33) {
+    scores.sp = 20;
+    details.sp = '⚠️ 25/1-33/1 — 0 wins in sample';
+  } else {
+    scores.sp = 5;
+    details.sp = '❌ 40/1+ — 0 wins in sample';
+  }
 
-function closeSettings() {
-  document.getElementById('settings-modal').classList.remove('open');
-}
-
-function saveKey() {
-  var k = document.getElementById('api-key-input').value.trim();
-  localStorage.setItem('ra_api_key', k);
-  updateKeyStatus();
-  closeSettings();
-}
-
-function clearKey() {
-  localStorage.removeItem('ra_api_key');
-  document.getElementById('api-key-input').value = '';
-  updateKeyStatus();
-}
-
-// ─────────────────────────────────────────────
-// TABS
-// ─────────────────────────────────────────────
-function switchTab(name, btn) {
-  document.querySelectorAll('.panel').forEach(function(p) { p.classList.remove('active'); });
-  document.querySelectorAll('.tab').forEach(function(b) { b.classList.remove('active'); });
-  document.getElementById('panel-' + name).classList.add('active');
-  btn.classList.add('active');
-  if (name === 'profile') renderProfile();
-}
-
-// ─────────────────────────────────────────────
-// JSI AUTO-CALC
-// ─────────────────────────────────────────────
-function calcJSI() {
-  try {
-    var si = parseFloat(document.getElementById('f-si').value);
-    var dsi = parseFloat(document.getElementById('f-dsi').value);
-    var jsiEl = document.getElementById('f-jsi');
-    if (!isNaN(si) && !isNaN(dsi)) {
-      jsiEl.value = (si + dsi).toFixed(1);
-    } else {
-      jsiEl.value = '';
-    }
-  } catch(e) {}
-}
-
-// ─────────────────────────────────────────────
-// RUNNERS
-// ─────────────────────────────────────────────
-function addRunner() {
-  var name = document.getElementById('f-name').value.trim();
-  if (!name) { alert('Please enter a horse name.'); return; }
-  var si  = parseFloat(document.getElementById('f-si').value);
-  var dsi = parseFloat(document.getElementById('f-dsi').value);
-  var jsi = parseFloat(document.getElementById('f-jsi').value);
-  var di  = parseFloat(document.getElementById('f-di').value);
-  var cod = parseFloat(document.getElementById('f-cod').value);
-  var hasPed = !isNaN(si) || !isNaN(dsi) || !isNaN(jsi) || !isNaN(di) || !isNaN(cod);
-  var runner = {
-    name:    name,
-    bred:    document.getElementById('f-bred').value,
-    draw:    parseInt(document.getElementById('f-draw').value) || 0,
-    sp:      document.getElementById('f-sp').value.trim() || '---',
-    trainer: document.getElementById('f-trainer').value.trim() || '---',
-    jockey:  document.getElementById('f-jockey').value.trim() || '---',
-    or:      document.getElementById('f-or').value.trim() || '---',
-    style:   document.getElementById('f-style').value,
-    notes:   document.getElementById('f-notes').value.trim(),
-    ped: hasPed ? {
-      si:  isNaN(si)  ? null : si,
-      dsi: isNaN(dsi) ? null : dsi,
-      jsi: isNaN(jsi) ? null : jsi,
-      di:  isNaN(di)  ? null : di,
-      cod: isNaN(cod) ? null : cod
-    } : null
-  };
-  if (editIdx >= 0) { runners[editIdx] = runner; editIdx = -1; document.getElementById('form-title').textContent = 'Add Runner'; }
-  else runners.push(runner);
-  clearForm();
-  renderRunners();
-}
-
-function editRunner(i) {
-  var r = runners[i];
-  document.getElementById('f-name').value    = r.name;
-  document.getElementById('f-bred').value    = r.bred;
-  document.getElementById('f-draw').value    = r.draw;
-  document.getElementById('f-sp').value      = r.sp;
-  document.getElementById('f-trainer').value = r.trainer;
-  document.getElementById('f-jockey').value  = r.jockey;
-  document.getElementById('f-or').value      = r.or;
-  document.getElementById('f-style').value   = r.style;
-  document.getElementById('f-notes').value   = r.notes || '';
+  // PEDIGREE (0-100) — composite of up to 5 metrics
+  var pedScore = null;
+  var pedDetails = [];
   if (r.ped) {
-    document.getElementById('f-si').value  = r.ped.si  !== null ? r.ped.si  : '';
-    document.getElementById('f-dsi').value = r.ped.dsi !== null ? r.ped.dsi : '';
-    document.getElementById('f-di').value  = r.ped.di  !== null ? r.ped.di  : '';
-    document.getElementById('f-cod').value = r.ped.cod !== null ? r.ped.cod : '';
-    calcJSI();
+    var metrics = [];
+    if (r.ped.si !== null) {
+      var siS = scoreInRange(r.ped.si, 9.0, 11.0, 7.0, 12.0);
+      metrics.push(siS);
+      pedDetails.push('SI ' + r.ped.si + ' ' + (siS>=80?'✅':siS>=40?'⚠️':'❌'));
+    }
+    if (r.ped.dsi !== null) {
+      var dsiS = scoreInRange(r.ped.dsi, 7.5, 11.5, 7.0, 12.5);
+      metrics.push(dsiS);
+      pedDetails.push('DSI ' + r.ped.dsi + ' ' + (dsiS>=80?'✅':dsiS>=40?'⚠️':'❌'));
+    }
+    if (r.ped.jsi !== null) {
+      var jsiS = scoreInRange(r.ped.jsi, 18.0, 21.0, 17.0, 22.0);
+      metrics.push(jsiS);
+      pedDetails.push('JSI ' + r.ped.jsi + ' ' + (jsiS>=80?'✅':jsiS>=40?'⚠️':'❌'));
+    }
+    if (r.ped.di !== null) {
+      var diS = scoreInRange(r.ped.di, 0.60, 1.60, 0.50, 2.20);
+      metrics.push(diS);
+      pedDetails.push('DI ' + r.ped.di + ' ' + (diS>=80?'✅':diS>=40?'⚠️':'❌'));
+    }
+    if (r.ped.cod !== null) {
+      var codS = scoreInRange(r.ped.cod, -0.20, 0.35, -0.40, 0.55);
+      metrics.push(codS);
+      pedDetails.push('COD ' + r.ped.cod + ' ' + (codS>=80?'✅':codS>=40?'⚠️':'❌'));
+    }
+    if (metrics.length > 0) {
+      pedScore = metrics.reduce(function(a,b){return a+b;},0) / metrics.length;
+      scores.pedigree = pedScore;
+    } else {
+      scores.pedigree = 50;
+    }
+  } else {
+    scores.pedigree = 50; // neutral when no data
   }
-  editIdx = i;
-  document.getElementById('form-title').textContent = 'Edit — ' + r.name;
-  document.getElementById('runner-form').scrollIntoView({behavior:'smooth'});
-}
+  details.pedigree = pedDetails.length ? pedDetails.join(' | ') : 'No data — neutral score applied';
 
-function removeRunner(i) { runners.splice(i, 1); renderRunners(); }
+  // TRAINER modifier (0-100)
+  var tl = r.trainer.toLowerCase();
+  if (tl.indexOf('appleby')>=0) {
+    scores.trainer = 100;
+    details.trainer = '🟢 Appleby — 3W/12R IV 3.54 A/E 1.49';
+  } else if (tl.indexOf('balding')>=0) {
+    scores.trainer = 100;
+    details.trainer = '🟢 Balding — 2W/4R IV 7.07 A/E 4.86';
+  } else if (tl.indexOf('o\'brien')>=0 || tl.indexOf('obrien')>=0 || tl.indexOf('aidan')>=0) {
+    scores.trainer = 10;
+    details.trainer = '🔴 A P O\'Brien — A/E 0.39, 14R, avoid';
+  } else {
+    scores.trainer = 50;
+    details.trainer = '🟡 ' + r.trainer + ' — no historical edge in this race';
+  }
 
-function clearForm() {
-  ['f-name','f-draw','f-sp','f-trainer','f-jockey','f-or','f-notes','f-si','f-dsi','f-jsi','f-di','f-cod'].forEach(function(id) {
-    var el = document.getElementById(id); if (el) el.value = '';
+  // JOCKEY modifier (0-100)
+  var jl = r.jockey.toLowerCase();
+  if (jl.indexOf('buick')>=0) {
+    scores.jockey = 100;
+    details.jockey = '🟢 Buick — 2W/4R, Mean PRB 0.95';
+  } else if (jl.indexOf('doyle')>=0) {
+    scores.jockey = 90;
+    details.jockey = '🟢 Doyle — 1W/4R, Mean PRB 0.83';
+  } else if (jl.indexOf('moore')>=0) {
+    scores.jockey = 5;
+    details.jockey = '🔴 R. Moore — 0W/6R incl 3 favs, negative signal';
+  } else {
+    scores.jockey = 50;
+    details.jockey = '🟡 ' + r.jockey + ' — neutral, no historical record in this race';
+  }
+
+  // COMPOSITE SCORE (weighted)
+  var total = 0;
+  var totalW = 0;
+  Object.keys(WEIGHTS).forEach(function(k) {
+    if (scores[k] !== undefined) {
+      total += scores[k] * WEIGHTS[k];
+      totalW += WEIGHTS[k];
+    }
   });
-  document.getElementById('f-bred').value  = 'IRE';
-  document.getElementById('f-style').value = 'MIDFIELD';
-  editIdx = -1;
-  document.getElementById('form-title').textContent = 'Add Runner';
+  var composite = Math.round(total / totalW);
+
+  // BRED — informational only
+  var bredInfo = {
+    USA: '🟢 USA — IV 4.72 A/E 2.11 (small sample)',
+    IRE: '🟡 IRE — A/E 0.59, overbet by market',
+    GB:  '🟡 GB — A/E 0.88, slightly below expectation',
+    FR:  '🟡 FR — 2 runners, no wins in sample'
+  };
+  details.bred = bredInfo[r.bred] || '🟡 ' + r.bred + ' — no specific data';
+
+  // TRIP VERDICT from DI + COD
+  var tripVerdict = null;
+  if (r.ped && r.ped.di !== null && r.ped.cod !== null) {
+    var di = r.ped.di; var cod = r.ped.cod;
+    if (di > 2.20 || cod > 0.55) tripVerdict = {icon:'🔴',text:'Trip too short — speed-biased pedigree. Only Kameko (2.64/0.70) won with a similar profile.'};
+    else if (cod < -0.40) tripVerdict = {icon:'🔴',text:'Trip too long — staying pedigree, optimal distance likely 10f+.'};
+    else if (di >= 0.60 && di <= 1.60 && cod >= -0.20 && cod <= 0.35) tripVerdict = {icon:'🟢',text:'Ideal trip — DI and COD both in the winning sweet spot.'};
+    else if (di > 1.60) tripVerdict = {icon:'🟡',text:'Slightly sharp — mild speed bias, fine in a truly-run mile.'};
+    else if (cod < -0.20) tripVerdict = {icon:'🟡',text:'Slightly long — stamina lean, may prefer stronger pace.'};
+    else tripVerdict = {icon:'🟢',text:'Within acceptable range for the Guineas mile.'};
+  }
+
+  return {
+    composite: composite,
+    scores: scores,
+    details: details,
+    tripVerdict: tripVerdict,
+    drawGroup: dg
+  };
 }
 
-function renderRunners() {
-  var list  = document.getElementById('runners-list');
-  var count = document.getElementById('runner-count');
-  var genRow = document.getElementById('gen-row');
-  var genInfo = document.getElementById('gen-info');
-  count.textContent = runners.length + ' runner' + (runners.length !== 1 ? 's' : '');
-  if (!runners.length) { list.innerHTML = ''; genRow.style.display = 'none'; return; }
-  var sorted = runners.map(function(r,i){return {r:r,i:i};}).sort(function(a,b){return a.r.draw - b.r.draw;});
-  list.innerHTML = sorted.map(function(item) {
-    var r = item.r; var i = item.i;
-    var sk = r.style.replace(' ','');
-    var pedBadge = r.ped ? '<span class="pedbadge ok">Pedigree ✓</span>' : '<span class="pedbadge none">No pedigree</span>';
-    return '<div class="rc">'
-      + '<div class="rc-draw">' + (r.draw || '?') + '</div>'
-      + '<div class="rc-info">'
-      + '<div class="rc-name">' + r.name + ' <span style="font-family:\'IBM Plex Mono\',monospace;font-size:10px;font-weight:400;color:var(--mid)">(' + r.bred + ')</span></div>'
-      + '<div class="rc-meta"><span><b>T:</b> ' + r.trainer + '</span><span><b>J:</b> ' + r.jockey + '</span><span><b>OR:</b> ' + r.or + '</span><span><b>SP:</b> ' + r.sp + '</span></div>'
-      + '</div>'
-      + '<div class="rc-badges"><span class="pbadge p' + sk + '">' + r.style + '</span>' + pedBadge + '</div>'
-      + '<div style="display:flex;gap:6px;margin-left:8px">'
-      + '<button class="btn btn-ghost" style="padding:5px 10px;font-size:9px" onclick="editRunner(' + i + ')">Edit</button>'
-      + '<button class="btn btn-danger" onclick="removeRunner(' + i + ')">✕</button>'
-      + '</div></div>';
-  }).join('');
-  genRow.style.display = 'flex';
-  var withPed = runners.filter(function(r){return r.ped;}).length;
-  genInfo.textContent = runners.length + ' runners · ' + withPed + ' with pedigree data';
+function scoreInRange(val, lo, hi, alo, ahi) {
+  if (val >= lo && val <= hi) return 100;
+  if (val >= alo && val < lo) return 40 + 40*((val-alo)/(lo-alo));
+  if (val > hi && val <= ahi) return 40 + 40*((ahi-val)/(ahi-hi));
+  return 5;
 }
 
-// ─────────────────────────────────────────────
-// PROFILE RENDER
-// ─────────────────────────────────────────────
-function renderProfile() {
-  // ICP cards
-  var grid = document.getElementById('icp-grid');
-  grid.innerHTML = Object.entries(profile.factors).map(function(e) {
-    return '<div class="icp-cell"><div class="icp-label">' + e[1].label + '</div><div class="icp-value">' + e[1].ideal + '</div><div class="icp-stats">' + e[1].stats.replace(/\n/g,'<br>') + '</div></div>';
-  }).join('');
-  // Dosage cells
-  var dgrid = document.getElementById('dos-grid');
-  dgrid.innerHTML = Object.entries(profile.dosage).map(function(e) {
-    return '<div class="dos-cell"><div class="dos-metric">' + e[1].label + '</div><div class="dos-sweet">' + e[1].sweet + '</div><div class="dos-note">' + e[1].note + '</div></div>';
-  }).join('');
-  // Winner table
-  var tbody = document.getElementById('winner-tbody');
-  tbody.innerHTML = profile.winners.map(function(w) {
-    return '<tr><td><strong>' + w.year + '</strong></td><td>' + w.winner + '</td><td>' + w.bred + '</td><td>' + w.draw + '</td><td>' + w.style + '</td><td>' + w.trainer + '</td><td>' + w.or + '</td><td>' + w.sp + '</td><td>' + (w.di !== null && w.di !== undefined ? w.di : '—') + '</td><td>' + (w.cod !== null && w.cod !== undefined ? w.cod : '—') + '</td><td>' + (w.jsi !== null && w.jsi !== undefined ? w.jsi : '—') + '</td><td>' + w.field + '</td></tr>';
-  }).join('');
-  // Edit fields
-  document.getElementById('edit-fields').innerHTML = Object.entries(profile.factors).map(function(e) {
-    return '<div style="margin-bottom:13px"><div class="sec-label" style="margin-bottom:5px">' + e[1].label + '</div><input type="text" id="ei-ideal-' + e[0] + '" value="' + e[1].ideal + '" style="margin-bottom:5px"><textarea id="ei-stats-' + e[0] + '" style="min-height:46px">' + e[1].stats + '</textarea></div>';
-  }).join('');
+function parseSP(sp) {
+  if (!sp || sp === '---') return null;
+  sp = sp.trim().toLowerCase().replace('f','').replace('j','');
+  if (sp === 'evs' || sp === 'evens') return 1.0;
+  var parts = sp.split('/');
+  if (parts.length === 2) {
+    var n = parseFloat(parts[0]); var d = parseFloat(parts[1]);
+    if (!isNaN(n) && !isNaN(d) && d > 0) return n/d;
+  }
+  var f = parseFloat(sp);
+  return isNaN(f) ? null : f;
 }
 
-function toggleEdit() {
-  var v = document.getElementById('profile-view');
-  var e = document.getElementById('profile-edit');
-  var showing = e.style.display !== 'none';
-  e.style.display = showing ? 'none' : 'block';
-  v.style.display = showing ? 'block' : 'none';
-}
-
-function saveEdit() {
-  Object.keys(profile.factors).forEach(function(k) {
-    var i = document.getElementById('ei-ideal-' + k);
-    var s = document.getElementById('ei-stats-' + k);
-    if (i) profile.factors[k].ideal = i.value;
-    if (s) profile.factors[k].stats = s.value;
-  });
-  toggleEdit();
-  renderProfile();
-}
-
-// ─────────────────────────────────────────────
-// PROCESS NEW YEAR
-// ─────────────────────────────────────────────
-function processYear() {
-  var text = document.getElementById('ay-text').value.trim();
-  if (!text) { alert('Please paste the race result.'); return; }
-  var res = document.getElementById('ay-result');
-  var key = getKey();
-  if (!key) { res.textContent = 'No API key set — open Settings first.'; return; }
-  res.textContent = 'Processing...';
-  var prompt = 'Extract the 2000 Guineas winner from this result text. Return ONLY valid JSON with: year(number), winner(string), bred(IRE/GB/USA/FR/Other), draw(string e.g. "5 (Low)"), style(LED/PROMINENT/MIDFIELD/HOLD UP), trainer(string), or(number), sp(string), field(number), di(number or null), cod(number or null), jsi(number or null).\n\nText:\n' + text;
-  fetch('https://racing-proxy.danmigo.workers.dev', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'x-api-key': key, 'anthropic-version': '2023-06-01' },
-    body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 500, messages: [{ role: 'user', content: prompt }] })
-  }).then(function(r) { return r.json(); }).then(function(data) {
-    var raw = data.content.filter(function(b){return b.type==='text';}).map(function(b){return b.text;}).join('');
-    var extracted = JSON.parse(raw.replace(/```json|```/g,'').trim());
-    profile.winners.push(extracted);
-    profile.winners.sort(function(a,b){return a.year-b.year;});
-    document.getElementById('ay-text').value = '';
-    renderProfile();
-    res.textContent = 'Added ' + extracted.year + ' — ' + extracted.winner + ' (' + extracted.bred + ')';
-  }).catch(function(e) { res.textContent = 'Error: ' + e.message; });
-}
-
-// ─────────────────────────────────────────────
-// DRAW GROUPINGS
-// ─────────────────────────────────────────────
 function getDrawGroup(stall, fieldSize) {
   var lo, mid;
   if (fieldSize <= 8)       { lo=2; mid=5; }
@@ -647,293 +602,447 @@ function getDrawGroup(stall, fieldSize) {
   else if (fieldSize <= 16) { lo=5; mid=10; }
   else if (fieldSize <= 20) { lo=6; mid=13; }
   else { lo=Math.round(fieldSize/3); mid=Math.round(fieldSize*2/3); }
-  if (stall <= lo) return 'Low';
+  if (!stall || stall <= lo) return 'Low';
   if (stall <= mid) return 'Mid';
   return 'High';
 }
 
-// ─────────────────────────────────────────────
-// BUILD PROMPT
-// ─────────────────────────────────────────────
-function buildPrompt(fieldSize) {
-  var dLo, dMid, dHi;
-  if (fieldSize <= 8)       { dLo='1-2'; dMid='3-5'; dHi='6-'+fieldSize; }
-  else if (fieldSize <= 12) { dLo='1-4'; dMid='5-8'; dHi='9-'+fieldSize; }
-  else if (fieldSize <= 16) { dLo='1-5'; dMid='6-10'; dHi='11-'+fieldSize; }
-  else if (fieldSize <= 20) { dLo='1-6'; dMid='7-13'; dHi='14-'+fieldSize; }
-  else { var t=Math.round(fieldSize/3); dLo='1-'+t; dMid=(t+1)+'-'+(t*2); dHi=(t*2+1)+'-'+fieldSize; }
-
-  var icp = [
-    'STYLE: MIDFIELD 4W/38R IV1.49 A/E1.26 best. PROMINENT 3W A/E0.72 overbet. LED/HOLDUP 0 wins.',
-    'DRAW Low='+dLo+' Mid='+dMid+' High='+dHi+': High 3W IV1.37, Low 3W IV1.25, Mid 1W IV0.42 AVOID.',
-    'BRED: USA IV4.72 A/E2.11. IRE A/E0.59 overbet. GB A/E0.88.',
-    'TRAINER: Appleby 3W/12R IV3.54 A/E1.49. Balding 2W/4R IV7.07. AO Brien 14R A/E0.39 AVOID.',
-    'JOCKEY: Buick 2W/4R. Doyle 1W/4R. R Moore 0W/6R incl 3 favs NEGATIVE.',
-    'OR: 110-119=5W IV1.39. 100-109=2W A/E2.17. 120plus=0W AVOID.',
-    'SP: 9/2-8/1=3W IV2.65. 9/1-20/1=3W IV1.72. Under 5/2=0W NEVER WON.',
-    'DOSAGE sweet: SI 9.0-11.0, DSI 7.5-11.5, JSI 18.0-21.0 floor 17.0, DI 0.60-1.60, COD -0.20 to +0.35.',
-    'TRIP: DI+COD both sweet=ideal. COD>0.55 or DI>2.20=sprint concern. COD<-0.40=stayer.',
-    'WINNERS: 2019 MagnaGrecia(IRE,H,PROM,11/2,113) 2020 Kameko(USA,H,MID,10/1,118) 2021 PoeticFlare(IRE,L,PROM,16/1,109) 2022 Coroebus(IRE,L,MID,5/1,115) 2023 Chaldean(GB,L,PROM,7/2,119) 2024 NotableSpeech(GB,M,MID,16/1,109) 2025 RulingCourt(USA,H,MID,9/2,112).',
-    'KEY: Favs under 5/2 never win. Winner travels through pack. Appleby/Balding + MIDFIELD + OR 109-119 = template.'
-  ].join(' | ');
-
-  var runnerLines = '';
-  for (var i = 0; i < runners.length; i++) {
-    var r = runners[i];
-    var dg = getDrawGroup(r.draw, fieldSize);
-    var ped = r.ped
-      ? ('SI:' + (r.ped.si!==null?r.ped.si:'?') + ' DSI:' + (r.ped.dsi!==null?r.ped.dsi:'?') + ' JSI:' + (r.ped.jsi!==null?r.ped.jsi:'?') + ' DI:' + (r.ped.di!==null?r.ped.di:'?') + ' COD:' + (r.ped.cod!==null?r.ped.cod:'?'))
-      : 'no-pedigree-data';
-    runnerLines += (i+1) + '. ' + r.name + ' (' + r.bred + ') Stall:' + r.draw + '(' + dg + ') ' + r.trainer + '/' + r.jockey + ' OR:' + r.or + ' SP:' + r.sp + ' Style:' + r.style + ' ' + ped + (r.notes ? ' Note:'+r.notes : '') + '\n';
-  }
-
-  return 'FLAT RACING ANALYSER - PHASE 3 - 2000 GUINEAS\n'
-    + '2019-2025 sample: 99 runners, 7 winners.\n\n'
-    + 'ICP: ' + icp + '\n\n'
-    + 'RUNNERS (' + runners.length + ' of ' + fieldSize + '):\n' + runnerLines + '\n'
-    + 'Score each runner vs ICP. Accept pre-assigned running styles. Score pedigree metrics vs sweet spots when provided.\n'
-    + 'For BREEDING: use 🟢 for USA, 🟡 for IRE or GB (with their A/E noted), 🔴 only for unusually weak breeding.\n'
-    + 'For TRAINER: use 🟢 for Appleby or Balding, 🔴 for A P O Brien (A/E 0.39), 🟡 for all others (neutral).\n'
-    + 'For JOCKEY: use 🟢 for Buick or Doyle, 🔴 for R Moore (0W/6R), 🟡 for all others (neutral).\n'
-    + 'Use ✅ ⚠️ ❌ only for objective factors: Style, Draw, OR, SP, and pedigree metrics.\n\n'
-    + 'OUTPUT - use EXACTLY these section headers:\n\n'
-    + '## STYLE DERIVATION TABLE\n'
-    + '| Horse | Stall | Draw Group | Style | Profile Match |\n\n'
-    + '## RUNNER ANALYSIS\n'
-    + 'For each runner:\n'
-    + '### [NAME] - [SP] | [Trainer]/[Jockey] | Stall:[X] ([Draw Group])\n'
-    + '**Pedigree:** 2-3 sentences. If data: score each metric vs sweet spot + trip verdict. If no data: note absence and infer from breeding.\n'
-    + '**Trip Verdict: [emoji Ideal/Slightly sharp/Slightly long/Too short/Too long]** - one line.\n'
-    + '**Profile Match:**\n'
-    + '| Factor | Ideal | This Runner | Match |\n|---|---|---|---|\n'
-    + '| Running Style | MIDFIELD | x | emoji |\n'
-    + '| Draw | High/Low | x | emoji |\n'
-    + '| Breeding | USA>IRE/GB | x | emoji |\n'
-    + '| Trainer | Appleby/Balding | x | emoji |\n'
-    + '| Jockey | Buick/Doyle | x | emoji |\n'
-    + '| OR | 110-119 | x | emoji |\n'
-    + '| SP | 9/2-8/1 | x | emoji |\n'
-    + '| Sire Index | 9.0-11.0 | x | emoji |\n'
-    + '| Damsire Index | 7.5-11.5 | x | emoji |\n'
-    + '| Joint Sire Index | 18.0-21.0 | x | emoji |\n'
-    + '| Dosage Index | 0.60-1.60 | x | emoji |\n'
-    + '| COD Index | -0.20 to +0.35 | x | emoji |\n'
-    + '**Assessment:** 2-3 sentence narrative summarising the key strengths, concerns and overall verdict for this runner. Reference the most important matching and non-matching factors. End with a clear view on whether this runner fits the winning profile.\n\n'
-    + '**Overall Rating: stars**\n\n'
-    + '## PREDICTION\n'
-    + '| Position | Horse | Stall | Rating | SP | Key Reason |\n|---|---|---|---|---|---|\n\n'
-    + '## PREDICTION NARRATIVE\n'
-    + '4-5 sentences on race shape, pace, why selection wins.\n\n'
-    + '## FLAGS & CAVEATS\n'
-    + 'One per line: Flag Type: detail.';
+function starsFromScore(score) {
+  if (score >= 80) return 5;
+  if (score >= 65) return 4;
+  if (score >= 50) return 3;
+  if (score >= 35) return 2;
+  return 1;
 }
 
 // ─────────────────────────────────────────────
-// GENERATE ANALYSIS
+// SETTINGS
+// ─────────────────────────────────────────────
+function getKey() { return localStorage.getItem('ra_api_key') || ''; }
+function updateKeyStatus() {
+  var k = getKey();
+  var el = document.getElementById('api-status');
+  if (k && k.length > 10) { el.textContent = '✓ API Key Set'; el.className = 'api-status api-ok'; }
+  else { el.textContent = '⚠ No API Key'; el.className = 'api-status api-missing'; }
+}
+function openSettings() { document.getElementById('api-key-input').value = getKey(); document.getElementById('settings-modal').classList.add('open'); }
+function closeSettings() { document.getElementById('settings-modal').classList.remove('open'); }
+function saveKey() { localStorage.setItem('ra_api_key', document.getElementById('api-key-input').value.trim()); updateKeyStatus(); closeSettings(); }
+function clearKey() { localStorage.removeItem('ra_api_key'); document.getElementById('api-key-input').value = ''; updateKeyStatus(); }
+
+// ─────────────────────────────────────────────
+// TABS
+// ─────────────────────────────────────────────
+function switchTab(name, btn) {
+  document.querySelectorAll('.panel').forEach(function(p){ p.classList.remove('active'); });
+  document.querySelectorAll('.tab').forEach(function(b){ b.classList.remove('active'); });
+  document.getElementById('panel-' + name).classList.add('active');
+  btn.classList.add('active');
+  if (name === 'profile') renderProfile();
+}
+
+// ─────────────────────────────────────────────
+// JSI AUTO
+// ─────────────────────────────────────────────
+function calcJSI() {
+  try {
+    var si = parseFloat(document.getElementById('f-si').value);
+    var dsi = parseFloat(document.getElementById('f-dsi').value);
+    var el = document.getElementById('f-jsi');
+    el.value = (!isNaN(si) && !isNaN(dsi)) ? (si+dsi).toFixed(1) : '';
+  } catch(e) {}
+}
+
+// ─────────────────────────────────────────────
+// RUNNERS
+// ─────────────────────────────────────────────
+var runners = [];
+var editIdx = -1;
+
+function addRunner() {
+  var name = document.getElementById('f-name').value.trim();
+  if (!name) { alert('Please enter a horse name.'); return; }
+  var si=parseFloat(document.getElementById('f-si').value);
+  var dsi=parseFloat(document.getElementById('f-dsi').value);
+  var jsi=parseFloat(document.getElementById('f-jsi').value);
+  var di=parseFloat(document.getElementById('f-di').value);
+  var cod=parseFloat(document.getElementById('f-cod').value);
+  var hasPed = !isNaN(si)||!isNaN(dsi)||!isNaN(jsi)||!isNaN(di)||!isNaN(cod);
+  var runner = {
+    name: name,
+    bred: document.getElementById('f-bred').value,
+    draw: parseInt(document.getElementById('f-draw').value)||0,
+    sp: document.getElementById('f-sp').value.trim()||'---',
+    trainer: document.getElementById('f-trainer').value.trim()||'---',
+    jockey: document.getElementById('f-jockey').value.trim()||'---',
+    or: document.getElementById('f-or').value.trim()||'---',
+    style: document.getElementById('f-style').value,
+    notes: document.getElementById('f-notes').value.trim(),
+    ped: hasPed ? {si:isNaN(si)?null:si, dsi:isNaN(dsi)?null:dsi, jsi:isNaN(jsi)?null:jsi, di:isNaN(di)?null:di, cod:isNaN(cod)?null:cod} : null
+  };
+  if (editIdx>=0) { runners[editIdx]=runner; editIdx=-1; document.getElementById('form-title').textContent='Add Runner'; }
+  else runners.push(runner);
+  clearForm(); renderRunners();
+}
+
+function editRunner(i) {
+  var r=runners[i];
+  document.getElementById('f-name').value=r.name;
+  document.getElementById('f-bred').value=r.bred;
+  document.getElementById('f-draw').value=r.draw;
+  document.getElementById('f-sp').value=r.sp;
+  document.getElementById('f-trainer').value=r.trainer;
+  document.getElementById('f-jockey').value=r.jockey;
+  document.getElementById('f-or').value=r.or;
+  document.getElementById('f-style').value=r.style;
+  document.getElementById('f-notes').value=r.notes||'';
+  if (r.ped) {
+    document.getElementById('f-si').value=r.ped.si!==null?r.ped.si:'';
+    document.getElementById('f-dsi').value=r.ped.dsi!==null?r.ped.dsi:'';
+    document.getElementById('f-di').value=r.ped.di!==null?r.ped.di:'';
+    document.getElementById('f-cod').value=r.ped.cod!==null?r.ped.cod:'';
+    calcJSI();
+  }
+  editIdx=i;
+  document.getElementById('form-title').textContent='Edit — '+r.name;
+  document.getElementById('runner-form').scrollIntoView({behavior:'smooth'});
+}
+
+function removeRunner(i) { runners.splice(i,1); renderRunners(); }
+
+function clearForm() {
+  ['f-name','f-draw','f-sp','f-trainer','f-jockey','f-or','f-notes','f-si','f-dsi','f-jsi','f-di','f-cod'].forEach(function(id){
+    var el=document.getElementById(id); if(el) el.value='';
+  });
+  document.getElementById('f-bred').value='IRE';
+  document.getElementById('f-style').value='MIDFIELD';
+  editIdx=-1;
+  document.getElementById('form-title').textContent='Add Runner';
+}
+
+function renderRunners() {
+  var list=document.getElementById('runners-list');
+  var count=document.getElementById('runner-count');
+  var genRow=document.getElementById('gen-row');
+  var genInfo=document.getElementById('gen-info');
+  count.textContent=runners.length+' runner'+(runners.length!==1?'s':'');
+  if (!runners.length) { list.innerHTML=''; genRow.style.display='none'; return; }
+  var sorted=runners.map(function(r,i){return {r:r,i:i};}).sort(function(a,b){return a.r.draw-b.r.draw;});
+  list.innerHTML=sorted.map(function(item){
+    var r=item.r; var i=item.i;
+    var sk=r.style.replace(' ','');
+    var pb=r.ped?'<span class="pedbadge ok">Pedigree ✓</span>':'<span class="pedbadge none">No pedigree</span>';
+    return '<div class="rc"><div class="rc-draw">'+(r.draw||'?')+'</div>'
+      +'<div class="rc-info"><div class="rc-name">'+r.name+' <span style="font-family:\'IBM Plex Mono\',monospace;font-size:10px;font-weight:400;color:var(--mid)">('+r.bred+')</span></div>'
+      +'<div class="rc-meta"><span><b>T:</b> '+r.trainer+'</span><span><b>J:</b> '+r.jockey+'</span><span><b>OR:</b> '+r.or+'</span><span><b>SP:</b> '+r.sp+'</span></div></div>'
+      +'<div class="rc-badges"><span class="pbadge p'+sk+'">'+r.style+'</span>'+pb+'</div>'
+      +'<div style="display:flex;gap:6px;margin-left:8px">'
+      +'<button class="btn btn-ghost" style="padding:5px 10px;font-size:9px" onclick="editRunner('+i+')">Edit</button>'
+      +'<button class="btn btn-danger" onclick="removeRunner('+i+')">✕</button>'
+      +'</div></div>';
+  }).join('');
+  genRow.style.display='flex';
+  var wp=runners.filter(function(r){return r.ped;}).length;
+  genInfo.textContent=runners.length+' runners · '+wp+' with pedigree data';
+}
+
+// ─────────────────────────────────────────────
+// PROFILE RENDER
+// ─────────────────────────────────────────────
+var PROFILE_FACTORS = [
+  {label:'Running Style', ideal:'MIDFIELD', stats:'IV 1.49 · A/E 1.26 · 4W/38R\nPROMINENT: IV 1.09 · A/E 0.72 overbet\nLED / HOLD UP: 0 wins'},
+  {label:'Draw', ideal:'High or Low — avoid Middle', stats:'High: IV 1.37 · A/E 1.02 · 3 wins\nLow: IV 1.25 · A/E 0.94 · 3 wins\nMiddle: IV 0.42 · 1 win only'},
+  {label:'OR Band', ideal:'110–119 primary · 100–109 value', stats:'110-119: IV 1.39 · A/E 1.06 · 5 of 7 wins\n100-109: A/E 2.17 — underrated by market\n120+: 0W/8R — avoid'},
+  {label:'Starting Price', ideal:'9/2–8/1 · 9/1–20/1 strong', stats:'9/2-8/1: IV 2.65 · A/E 1.24 · 3 wins\n9/1-20/1: IV 1.70 · A/E 1.72 · 3 wins\nShorter than 5/2: 0W/5R — never won'},
+  {label:'Trainer', ideal:'Appleby · Balding', stats:'Appleby: 3W/12R IV 3.54 A/E 1.49\nBalding: 2W/4R IV 7.07 A/E 4.86\nA P O\'Brien: 14R A/E 0.39 — negative'},
+  {label:'Jockey', ideal:'Buick · Doyle', stats:'Buick: 2W/4R PRB 0.95\nDoyle: 1W/4R PRB 0.83\nR. Moore: 0W/6R incl 3 favs — negative'},
+  {label:'Breeding', ideal:'USA indicative · IRE & GB below expectation', stats:'USA: IV 4.72 · A/E 2.11 (small sample)\nIRE: IV 0.79 · A/E 0.59 — overbet\nGB: IV 0.76 · A/E 0.88'},
+  {label:'Key Insight', ideal:'Dismiss the jolly. Back the traveller.', stats:'Favs shorter than 5/2 have never won.\nMIDFIELD + Appleby/Balding + OR 109-119\n= the winning template.'}
+];
+
+var DOSAGE_CELLS = [
+  {label:'Sire Index', sweet:'9.0 – 11.0', note:'Amber: 7.0-8.9 | Red: <7.0'},
+  {label:'Damsire Index', sweet:'7.5 – 11.5', note:'Amber: 7.0-7.4 | Red: <7.0'},
+  {label:'Joint Sire Index', sweet:'18.0 – 21.0', note:'Amber: 17.0-17.9 | Red: <17.0'},
+  {label:'Dosage Index', sweet:'0.60 – 1.60', note:'Amber: 0.50-0.59 or 1.61-2.20'},
+  {label:'COD Index', sweet:'-0.20 – +0.35', note:'Amber: -0.40 to -0.21 or +0.36 to +0.55'}
+];
+
+function renderProfile() {
+  var grid=document.getElementById('icp-grid');
+  grid.innerHTML=PROFILE_FACTORS.map(function(f){
+    return '<div class="icp-cell"><div class="icp-label">'+f.label+'</div><div class="icp-value">'+f.ideal+'</div><div class="icp-stats">'+f.stats.replace(/\n/g,'<br>')+'</div></div>';
+  }).join('');
+  var dgrid=document.getElementById('dos-grid');
+  dgrid.innerHTML=DOSAGE_CELLS.map(function(d){
+    return '<div class="dos-cell"><div class="dos-metric">'+d.label+'</div><div class="dos-sweet">'+d.sweet+'</div><div class="dos-note">'+d.note+'</div></div>';
+  }).join('');
+  var tbody=document.getElementById('winner-tbody');
+  tbody.innerHTML=WINNERS.map(function(w){
+    return '<tr><td><strong>'+w.year+'</strong></td><td>'+w.winner+'</td><td>'+w.bred+'</td><td>'+w.draw+' ('+w.drawGrp+')</td><td>'+w.style+'</td><td>'+w.trainer+'</td><td>'+w.or+'</td><td>'+w.sp+'</td><td>'+(w.di!==null?w.di:'—')+'</td><td>'+(w.cod!==null?w.cod:'—')+'</td><td>'+(w.jsi!==null?w.jsi:'—')+'</td><td>'+w.field+'</td></tr>';
+  }).join('');
+}
+
+// ─────────────────────────────────────────────
+// GENERATE
 // ─────────────────────────────────────────────
 function goGenerate() {
-  var key = getKey();
-  if (!key || !key.startsWith('sk-')) { openSettings(); return; }
-  document.querySelectorAll('.panel').forEach(function(p) { p.classList.remove('active'); });
-  document.querySelectorAll('.tab').forEach(function(b) { b.classList.remove('active'); });
+  var key=getKey();
+  if (!key||key.length<10) { openSettings(); return; }
+  document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('active');});
+  document.querySelectorAll('.tab').forEach(function(b){b.classList.remove('active');});
   document.getElementById('panel-analysis').classList.add('active');
   document.querySelectorAll('.tab')[2].classList.add('active');
   runAnalysis(key);
 }
 
 function runAnalysis(key) {
-  var out = document.getElementById('analysis-out');
-  var loading = document.getElementById('analysis-loading');
-  out.innerHTML = '';
-  loading.style.display = 'block';
+  var out=document.getElementById('analysis-out');
+  var loading=document.getElementById('analysis-loading');
+  out.innerHTML=''; loading.style.display='block';
 
-  var fsEl = document.getElementById('field-size');
-  var fieldSize = (fsEl && parseInt(fsEl.value) > 0) ? parseInt(fsEl.value) : runners.length;
-  var prompt = buildPrompt(fieldSize);
-  console.log('Prompt chars:', prompt.length, '| Field size:', fieldSize);
+  // Score all runners statistically first
+  var fsEl=document.getElementById('field-size');
+  var fieldSize=(fsEl&&parseInt(fsEl.value)>0)?parseInt(fsEl.value):runners.length;
+  var scored=runners.map(function(r){
+    var s=scoreRunner(r,fieldSize);
+    return {runner:r, result:s};
+  });
+  // Sort by composite score descending
+  scored.sort(function(a,b){return b.result.composite-a.result.composite;});
 
-  // Show a waiting message
-  var waitEl = document.createElement('div');
-  waitEl.style.cssText = 'font-family:IBM Plex Mono,monospace;font-size:11px;color:var(--mid);padding:12px 0';
-  waitEl.textContent = 'Sending request... this takes 20-40 seconds for a full field.';
-  out.appendChild(waitEl);
+  // Build prompt with pre-computed scores
+  var scoreSummary=scored.map(function(s,i){
+    return (i+1)+'. '+s.runner.name+' — composite score '+s.result.composite+'/100 ('+starsFromScore(s.result.composite)+'★)';
+  }).join('\n');
+
+  var runnerDetails=scored.map(function(s,i){
+    var r=s.runner; var res=s.result;
+    var ped=r.ped?('SI:'+(r.ped.si||'?')+' DSI:'+(r.ped.dsi||'?')+' JSI:'+(r.ped.jsi||'?')+' DI:'+(r.ped.di!==null?r.ped.di:'?')+' COD:'+(r.ped.cod!==null?r.ped.cod:'?')):'no pedigree data';
+    return (i+1)+'. '+r.name+' ('+r.bred+') Stall:'+r.draw+'('+res.drawGroup+') '+r.trainer+'/'+r.jockey+' OR:'+r.or+' SP:'+r.sp+' Style:'+r.style+' '+ped+(r.notes?' Note:'+r.notes:'')
+      +'\n   SCORES: Style='+res.scores.style+' Draw='+res.scores.draw+' OR='+res.scores.or+' SP='+res.scores.sp+' Pedigree='+Math.round(res.scores.pedigree||50)+' Trainer='+res.scores.trainer+' Jockey='+res.scores.jockey+' COMPOSITE='+res.result
+      +'\n   DETAILS: '+Object.keys(res.details).map(function(k){return k+': '+res.details[k];}).join(' | ');
+  }).join('\n\n');
+
+  // Fix the result reference issue
+  var runnerDetailsFixed=scored.map(function(s,i){
+    var r=s.runner; var res=s.result;
+    var ped=r.ped?('SI:'+(r.ped.si||'?')+' DSI:'+(r.ped.dsi||'?')+' JSI:'+(r.ped.jsi||'?')+' DI:'+(r.ped.di!==null?r.ped.di:'?')+' COD:'+(r.ped.cod!==null?r.ped.cod:'?')):'no pedigree data';
+    return (i+1)+'. '+r.name+' ('+r.bred+') Stall:'+r.draw+'('+res.drawGroup+') '+r.trainer+'/'+r.jockey+' OR:'+r.or+' SP:'+r.sp+' Style:'+r.style+' '+ped+(r.notes?' Note:'+r.notes:'')
+      +'\n   SCORES: Style='+res.scores.style+' Draw='+res.scores.draw+' OR='+res.scores.or+' SP='+res.scores.sp+' Pedigree='+Math.round(res.scores.pedigree||50)+' Trainer='+res.scores.trainer+' Jockey='+res.scores.jockey+' COMPOSITE='+res.composite
+      +'\n   DETAILS: '+Object.keys(res.details).map(function(k){return k+': '+res.details[k];}).join(' | ');
+  }).join('\n\n');
+
+  var prompt='FLAT RACING ANALYSER - PHASE 3 - 2000 GUINEAS\n'
+    +'2019-2025 sample: 99 runners, 7 winners.\n\n'
+    +'STATISTICAL SCORES (pre-calculated from IV/AE/PRB data — use these to drive the prediction):\n'
+    +scoreSummary+'\n\n'
+    +'RUNNER DETAILS WITH SCORES:\n'+runnerDetailsFixed+'\n\n'
+    +'SCORING WEIGHTS: Style 25%, Draw 18%, OR 16%, SP 15%, Pedigree 14%, Trainer 6%, Jockey 6%\n\n'
+    +'INSTRUCTIONS:\n'
+    +'- The composite scores are statistically derived from the ICP. The prediction ranking MUST follow the composite score order.\n'
+    +'- For BREEDING: informational only. Use 🟢 USA, 🟡 IRE/GB, 🔴 unusually weak. Do not score.\n'
+    +'- For TRAINER: 🟢 Appleby/Balding, 🔴 A P O\'Brien, 🟡 all others.\n'
+    +'- For JOCKEY: 🟢 Buick/Doyle, 🔴 R Moore, 🟡 all others.\n'
+    +'- Use ✅ ⚠️ ❌ only for Style, Draw, OR, SP and pedigree metrics.\n'
+    +'- Write a 2-3 sentence Assessment per runner — analytical insight beyond the table.\n\n'
+    +'OUTPUT using EXACTLY these section headers:\n\n'
+    +'## RUNNER ANALYSIS\n'
+    +'For each runner (in composite score order):\n'
+    +'### [NAME] - [SP] | [Trainer]/[Jockey] | Stall:[X] ([Draw Group]) | Score: [composite]/100\n'
+    +'**Pedigree:** 2-3 sentences on dosage metrics. If no data say so.\n'
+    +'**Trip Verdict: [emoji verdict]** - one line reason\n'
+    +'**Profile Match:**\n'
+    +'| Factor | Ideal | This Runner | Match |\n|---|---|---|---|\n'
+    +'| Running Style | MIDFIELD | x | ✅/⚠️/❌ |\n'
+    +'| Draw | High/Low | x | ✅/⚠️/❌ |\n'
+    +'| Breeding | Informational | x | 🟢/🟡/🔴 |\n'
+    +'| Trainer | Appleby/Balding | x | 🟢/🟡/🔴 |\n'
+    +'| Jockey | Buick/Doyle | x | 🟢/🟡/🔴 |\n'
+    +'| OR | 110-119 | x | ✅/⚠️/❌ |\n'
+    +'| SP | 9/2-8/1 | x | ✅/⚠️/❌ |\n'
+    +'| Sire Index | 9.0-11.0 | x | ✅/⚠️/❌/— |\n'
+    +'| Damsire Index | 7.5-11.5 | x | ✅/⚠️/❌/— |\n'
+    +'| Joint Sire Index | 18.0-21.0 | x | ✅/⚠️/❌/— |\n'
+    +'| Dosage Index | 0.60-1.60 | x | ✅/⚠️/❌/— |\n'
+    +'| COD Index | -0.20 to +0.35 | x | ✅/⚠️/❌/— |\n'
+    +'**Assessment:** 2-3 sentences of analytical insight. Reference the composite score and key factors.\n\n'
+    +'## PREDICTION\n'
+    +'| Position | Horse | Stall | Score | Rating | SP | Key Reason |\n|---|---|---|---|---|---|---|\n\n'
+    +'## PREDICTION NARRATIVE\n'
+    +'4-5 sentences. Explain the race shape, how the statistical scores translate to a race outcome, and why the top selection wins.\n\n'
+    +'## FLAGS & CAVEATS\n'
+    +'One per line: Flag Type: detail.';
 
   fetch('https://racing-proxy.danmigo.workers.dev', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
+    headers: {'Content-Type': 'application/json'},
     body: JSON.stringify({
       model: 'claude-sonnet-4-20250514',
       max_tokens: 8000,
-      messages: [{ role: 'user', content: prompt }]
+      messages: [{role:'user', content:prompt}]
     })
-  }).then(function(response) {
-    console.log('Response status:', response.status);
-    if (!response.ok) {
-      return response.text().then(function(t) {
-        console.error('Error body:', t);
-        throw new Error('HTTP ' + response.status + ': ' + t.slice(0,300));
-      });
-    }
-    return response.json();
-  }).then(function(data) {
-    console.log('Response keys:', Object.keys(data).join(','));
-    loading.style.display = 'none';
-    var fullText = '';
-    if (data.content && Array.isArray(data.content)) {
-      fullText = data.content.filter(function(b){return b.type==='text';}).map(function(b){return b.text;}).join('');
-    } else {
-      throw new Error('Unexpected response format: ' + JSON.stringify(data).slice(0,200));
-    }
-    if (!fullText.trim()) throw new Error('Empty response from API');
-    out.innerHTML = '';
-    renderStructured(fullText);
-  }).catch(function(err) {
-    loading.style.display = 'none';
-    console.error('Analysis error:', err.name, err.message);
-    out.innerHTML = '<div class="err-box"><strong>Error generating analysis</strong><br><br>'
-      + '<strong>' + err.name + ':</strong> ' + err.message + '<br><br>'
-      + 'Check browser console (F12) for details.</div>';
+  }).then(function(r){
+    if (!r.ok) return r.text().then(function(t){throw new Error('HTTP '+r.status+': '+t.slice(0,200));});
+    return r.json();
+  }).then(function(data){
+    loading.style.display='none';
+    var text='';
+    if (data.content&&Array.isArray(data.content)) {
+      text=data.content.filter(function(b){return b.type==='text';}).map(function(b){return b.text;}).join('');
+    } else { throw new Error('Unexpected response: '+JSON.stringify(data).slice(0,200)); }
+    if (!text.trim()) throw new Error('Empty response');
+    // Render score summary at top then structured output
+    renderWithScores(scored, text, fieldSize);
+  }).catch(function(err){
+    loading.style.display='none';
+    console.error('Error:',err);
+    out.innerHTML='<div class="err-box"><strong>Error generating analysis</strong><br><br>'+err.message+'</div>';
   });
 }
 
 // ─────────────────────────────────────────────
-// RENDER STRUCTURED OUTPUT
+// RENDER
 // ─────────────────────────────────────────────
-function renderStructured(text) {
-  var out = document.getElementById('analysis-out');
-  out.innerHTML = '';
-  var sections = text.split(/^## /m).filter(function(s){return s.trim();});
-  sections.forEach(function(sec) {
-    var lines = sec.split('\n');
-    var title = lines[0].trim();
-    var body  = lines.slice(1).join('\n').trim();
-    if (title.indexOf('STYLE') >= 0)      renderTableSec(out, '1', 'Style Derivation Table', body);
-    else if (title.indexOf('RUNNER') >= 0) renderRunnersSec(out, body);
-    else if (title === 'PREDICTION')       renderPredSec(out, body);
-    else if (title.indexOf('NARRATIVE') >= 0) renderNarrativeSec(out, body);
-    else if (title.indexOf('FLAGS') >= 0)  renderFlagsSec(out, body);
-    else {
-      var s = document.createElement('div');
-      s.className = 'out-sec';
-      s.innerHTML = '<div class="out-hdr">' + title + '</div><div class="out-body"><pre style="font-size:11px;font-family:IBM Plex Mono,monospace;white-space:pre-wrap">' + body + '</pre></div>';
-      out.appendChild(s);
-    }
+function renderWithScores(scored, text, fieldSize) {
+  var out=document.getElementById('analysis-out');
+  out.innerHTML='';
+
+  // Score summary bar chart
+  var maxScore=Math.max.apply(null,scored.map(function(s){return s.result.composite;}));
+  var summaryHTML='<div class="out-sec"><div class="out-hdr"><span class="out-num">◎</span>Statistical Score Summary</div><div class="out-body">';
+  summaryHTML+='<div style="font-family:IBM Plex Mono,monospace;font-size:9px;color:var(--mid);margin-bottom:12px;letter-spacing:.1em">COMPOSITE SCORE — weighted from IV · A/E · PRB data · Style 25% · Draw 18% · OR 16% · SP 15% · Pedigree 14% · Trainer/Jockey 12%</div>';
+  scored.forEach(function(s){
+    var stars=starsFromScore(s.result.composite);
+    var starStr='';
+    for(var i=0;i<5;i++) starStr+=(i<stars?'<span class="sf">★</span>':'<span class="se">☆</span>');
+    summaryHTML+='<div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">'
+      +'<div style="font-family:Playfair Display,serif;font-size:14px;font-weight:700;min-width:160px">'+s.runner.name+'</div>'
+      +'<div class="score-bar-bg"><div class="score-bar" style="width:'+s.result.composite+'%"></div></div>'
+      +'<div class="score-val">'+s.result.composite+'</div>'
+      +'<div class="stars" style="font-size:13px">'+starStr+'</div>'
+      +'</div>';
+  });
+  summaryHTML+='</div></div>';
+  out.innerHTML=summaryHTML;
+
+  // Parse and render sections
+  var sections=text.split(/^## /m).filter(function(s){return s.trim();});
+  sections.forEach(function(sec){
+    var lines=sec.split('\n');
+    var title=lines[0].trim();
+    var body=lines.slice(1).join('\n').trim();
+    if (title.indexOf('RUNNER')>=0) renderRunnersSec(out, body, scored);
+    else if (title==='PREDICTION') renderPredSec(out, body, scored);
+    else if (title.indexOf('NARRATIVE')>=0) renderNarrativeSec(out, body);
+    else if (title.indexOf('FLAGS')>=0) renderFlagsSec(out, body);
   });
 }
 
-function makeSec(num, title) {
-  var d = document.createElement('div');
-  d.className = 'out-sec';
-  d.innerHTML = '<div class="out-hdr"><span class="out-num">' + num + '</span>' + title + '</div><div class="out-body" id="ob-' + num + '"></div>';
-  return d;
-}
-
-function renderTableSec(out, num, title, body) {
-  var s = makeSec(num, title); out.appendChild(s);
-  document.getElementById('ob-' + num).innerHTML = mdTable(body);
-}
-
-function renderRunnersSec(out, body) {
-  var wrap = document.createElement('div');
-  wrap.className = 'out-sec';
-  wrap.innerHTML = '<div class="out-hdr"><span class="out-num">2</span>Runner-by-Runner Analysis</div>';
+function renderRunnersSec(out, body, scored) {
+  var wrap=document.createElement('div');
+  wrap.className='out-sec';
+  wrap.innerHTML='<div class="out-hdr"><span class="out-num">2</span>Runner-by-Runner Analysis</div>';
   out.appendChild(wrap);
-  body.split(/^### /m).filter(function(s){return s.trim();}).forEach(function(block) {
-    var lines = block.split('\n');
-    var hdr   = lines[0].trim();
-    var rest  = lines.slice(1).join('\n');
-    var card  = document.createElement('div');
-    card.className = 'scorecard';
-    var namePart = hdr.split(' - ')[0].trim();
-    var spM  = hdr.match(/ - ([^|]+)\|/);    var sp = spM  ? spM[1].trim()  : '';
-    var trM  = hdr.match(/\| *([^/]+)\//);   var tr = trM  ? trM[1].trim()  : '';
-    var jkM  = hdr.match(/\/ *([^|]+)\|/);   var jk = jkM  ? jkM[1].trim()  : '';
-    var drM  = hdr.match(/Stall:([^\s)]+(?:\s*\([^)]+\))?)/); var dr = drM ? drM[1].trim() : '';
-    var stM  = rest.match(/Predicted Style:\s*([A-Z ]+)/); var style = stM ? stM[1].trim() : '';
-    var starM = rest.match(/Overall Rating:\s*([★☆]+)/); var stars = starM ? starM[1] : '';
-    var filled = (stars.match(/★/g)||[]).length;
-    var starsHTML = '★'.repeat(filled).split('').map(function(){return '<span class="sf">★</span>';}).join('') + '☆'.repeat(5-filled).split('').map(function(){return '<span class="se">☆</span>';}).join('');
-    var tripM = rest.match(/\*\*Trip Verdict:([^*]+)\*\*/); var trip = tripM ? tripM[1].trim() : '';
-    var pedM  = rest.match(/\*\*Pedigree:\*\*\n([\s\S]*?)(?=\*\*Trip Verdict|$)/);var ped = pedM ? pedM[1].trim() : '';
-    var sk = style.replace(' ','');
-    card.innerHTML = '<div class="sc-hdr"><div>'
-      + '<div class="sc-name">' + namePart + '</div>'
-      + '<div class="sc-meta"><span>' + tr + ' / ' + jk + '</span><span>Stall: ' + dr + '</span><span>SP: ' + sp + '</span>'
-      + (style ? '<span><span class="pbadge p' + sk + '">' + style + '</span></span>' : '')
-      + '</div></div><div class="stars">' + starsHTML + '</div></div>'
-      + '<div class="sc-body">'
-      + (ped||trip ? '<div class="ped-box"><div class="ped-box-lbl">Pedigree Assessment</div>' + (ped?ped.replace(/\n/g,'<br>'):'') + (trip?'<div class="trip-line">'+trip+'</div>':'') + '</div>' : '')
-      + renderRunnerBody(rest)
-      + '</div>';
+
+  body.split(/^### /m).filter(function(s){return s.trim();}).forEach(function(block){
+    var lines=block.split('\n');
+    var hdr=lines[0].trim();
+    var rest=lines.slice(1).join('\n');
+    var card=document.createElement('div');
+    card.className='scorecard';
+
+    var namePart=hdr.split(' - ')[0].trim();
+    var spM=hdr.match(/ - ([^|]+)\|/); var sp=spM?spM[1].trim():'';
+    var trM=hdr.match(/\| *([^/]+)\//); var tr=trM?trM[1].trim():'';
+    var jkM=hdr.match(/\/ *([^|]+)\|/); var jk=jkM?jkM[1].trim():'';
+    var drM=hdr.match(/Stall:([^\s|]+)/); var dr=drM?drM[1].trim():'';
+    var scM=hdr.match(/Score: *(\d+)/); var sc=scM?parseInt(scM[1]):null;
+
+    var stM=rest.match(/Predicted Style:\s*([A-Z ]+)/); var style=stM?stM[1].trim():'';
+    var stars=sc!==null?starsFromScore(sc):3;
+    var starStr='';
+    for(var i=0;i<5;i++) starStr+=(i<stars?'<span class="sf">★</span>':'<span class="se">☆</span>');
+
+    var tripM=rest.match(/\*\*Trip Verdict:([^*]+)\*\*/); var trip=tripM?tripM[1].trim():'';
+    var pedM=rest.match(/\*\*Pedigree:\*\*\n?([\s\S]*?)(?=\*\*Trip Verdict|\*\*Profile Match|$)/); var ped=pedM?pedM[1].trim():'';
+    var assessM=rest.match(/\*\*Assessment:\*\*\n?([\s\S]*?)(?=\*\*Overall|$)/); var assess=assessM?assessM[1].trim():'';
+    var tableM=rest.match(/\*\*Profile Match:\*\*\n?([\s\S]*?)(?=\*\*Assessment|\*\*Overall|$)/);
+    var sk=style.replace(' ','');
+
+    card.innerHTML='<div class="sc-hdr">'
+      +'<div><div class="sc-name">'+namePart+'</div>'
+      +'<div class="sc-meta"><span>'+tr+' / '+jk+'</span><span>Stall: '+dr+'</span><span>SP: '+sp+'</span>'
+      +(style?'<span><span class="pbadge p'+sk+'">'+style+'</span></span>':'')+'</div></div>'
+      +'<div class="sc-right"><div class="stars">'+starStr+'</div>'
+      +(sc!==null?'<div class="score-chip">'+sc+'/100</div>':'')+'</div>'
+      +'</div><div class="sc-body">'
+      +((ped||trip)?'<div class="ped-box"><div class="ped-box-lbl">Pedigree Assessment</div>'+(ped?ped.replace(/\n/g,'<br>'):'')+(trip?'<div class="trip-line">'+trip+'</div>':'')+'</div>':'')
+      +(tableM?mdTable(tableM[1]):'')
+      +(assess?'<div class="assessment-box">'+assess+'</div>':'')
+      +'</div>';
     wrap.appendChild(card);
   });
 }
 
-function renderRunnerBody(text) {
-  var tableContent = text.match(/\*\*Profile Match:\*\*(\n\|[\s\S]*?)(?=\*\*Assessment:|\*\*Overall|$)/);
-  var assessM = text.match(/\*\*Assessment:\*\*([\s\S]*?)(?=\*\*Overall|$)/);
-  var assessment = assessM ? assessM[1].trim() : '';
-  return (tableContent ? mdTable(tableContent[1]) : '')
-    + (assessment ? '<div style="background:#f5f1e8;border-left:3px solid var(--gold);padding:12px 15px;margin-top:12px;font-family:IBM Plex Sans,sans-serif;font-size:13px;line-height:1.65;color:var(--ink)">' + assessment + '</div>' : '');
-}
-
-function renderPredSec(out, body) {
-  var s = makeSec('3','Statistical Prediction'); out.appendChild(s);
-  document.getElementById('ob-3').innerHTML = mdTable(body, true);
+function renderPredSec(out, body, scored) {
+  var s=makeSec('3','Statistical Prediction'); out.appendChild(s);
+  document.getElementById('ob-3').innerHTML=mdTable(body,true);
 }
 
 function renderNarrativeSec(out, body) {
-  var s = makeSec('4','Prediction Narrative'); out.appendChild(s);
-  document.getElementById('ob-4').innerHTML = '<div class="narrative-box">' + body.replace(/\n\n/g,'</p><p>').replace(/\*([^*]+)\*/g,'<em>$1</em>') + '</div>';
+  var s=makeSec('4','Prediction Narrative'); out.appendChild(s);
+  document.getElementById('ob-4').innerHTML='<div class="narrative-box">'+body.replace(/\n\n/g,'</p><p>').replace(/\*([^*]+)\*/g,'<em>$1</em>')+'</div>';
 }
 
 function renderFlagsSec(out, body) {
-  var s = makeSec('5','Flags & Caveats'); out.appendChild(s);
-  var bd = document.getElementById('ob-5');
-  var html = '';
-  body.split('\n').filter(function(l){return l.trim();}).forEach(function(line) {
-    var ci = line.indexOf(':');
-    if (ci > 0 && ci < 40) {
-      html += '<div class="flag-card"><div class="flag-type">' + line.slice(0,ci).replace(/^[-*•] */,'').trim() + '</div><div class="flag-text">' + line.slice(ci+1).trim() + '</div></div>';
-    } else if (line.trim()) {
-      html += '<div class="flag-card"><div class="flag-text">' + line.replace(/^[-*•] */,'') + '</div></div>';
-    }
+  var s=makeSec('5','Flags & Caveats'); out.appendChild(s);
+  var bd=document.getElementById('ob-5');
+  var html='';
+  body.split('\n').filter(function(l){return l.trim();}).forEach(function(line){
+    var ci=line.indexOf(':');
+    if (ci>0&&ci<40) html+='<div class="flag-card"><div class="flag-type">'+line.slice(0,ci).replace(/^[-*] */,'').trim()+'</div><div class="flag-text">'+line.slice(ci+1).trim()+'</div></div>';
+    else if (line.trim()) html+='<div class="flag-card"><div class="flag-text">'+line.replace(/^[-*] */,'')+'</div></div>';
   });
-  bd.innerHTML = html || '<pre style="font-size:11px;font-family:IBM Plex Mono,monospace">' + body + '</pre>';
+  bd.innerHTML=html||'<pre style="font-size:11px;font-family:IBM Plex Mono,monospace">'+body+'</pre>';
+}
+
+function makeSec(num, title) {
+  var d=document.createElement('div');
+  d.className='out-sec';
+  d.innerHTML='<div class="out-hdr"><span class="out-num">'+num+'</span>'+title+'</div><div class="out-body" id="ob-'+num+'"></div>';
+  return d;
 }
 
 function mdTable(text, isPred) {
-  var lines = text.trim().split('\n').filter(function(l){return l.includes('|');});
-  if (lines.length < 2) return '<pre style="font-size:11px;font-family:IBM Plex Mono,monospace;white-space:pre-wrap">' + text + '</pre>';
-  var cls = isPred ? 'pred-tbl' : 'md-tbl';
-  var html = '<table class="' + cls + '">';
-  var inBody = false;
-  lines.forEach(function(line, i) {
+  var lines=text.trim().split('\n').filter(function(l){return l.includes('|');});
+  if (lines.length<2) return '<pre style="font-size:11px;font-family:IBM Plex Mono,monospace;white-space:pre-wrap">'+text+'</pre>';
+  var cls=isPred?'pred-tbl':'md-tbl';
+  var html='<table class="'+cls+'">';
+  var inBody=false;
+  lines.forEach(function(line,i){
     if (/^\|[-\s|]+\|$/.test(line.trim())) return;
-    var cells = line.split('|').slice(1,-1);
-    if (i === 0) {
-      html += '<thead><tr>' + cells.map(function(c){return '<th>'+c.trim()+'</th>';}).join('') + '</tr></thead><tbody>';
-      inBody = true;
-    } else {
-      var rs = (isPred && i===1) ? ' style="background:#fffbf0"' : '';
-      html += '<tr' + rs + '>' + cells.map(function(c,ci) {
-        var v = c.trim()
+    var cells=line.split('|').slice(1,-1);
+    if (i===0) { html+='<thead><tr>'+cells.map(function(c){return '<th>'+c.trim()+'</th>';}).join('')+'</tr></thead><tbody>'; inBody=true; }
+    else {
+      var rs=(isPred&&i===1)?' style="background:#fffbf0"':'';
+      html+='<tr'+rs+'>'+cells.map(function(c,ci){
+        var v=c.trim()
           .replace(/✅/g,'<span style="color:var(--green);font-size:13px">✅</span>')
           .replace(/⚠️/g,'<span style="color:var(--amber);font-size:13px">⚠️</span>')
           .replace(/❌/g,'<span style="color:var(--red);font-size:13px">❌</span>')
-          .replace(/🔴/g,'<span style="font-size:12px">🔴</span>')
+          .replace(/🟢/g,'<span style="font-size:13px">🟢</span>')
+          .replace(/🟡/g,'<span style="font-size:13px">🟡</span>')
+          .replace(/🔴/g,'<span style="font-size:13px">🔴</span>')
           .replace(/★/g,'<span style="color:var(--gold)">★</span>')
           .replace(/☆/g,'<span style="color:#ccc">☆</span>');
-        if (isPred && ci===0) return '<td><span class="pn">'+v+'</span></td>';
-        return '<td>' + v + '</td>';
-      }).join('') + '</tr>';
+        if (isPred&&ci===0) return '<td><span class="pn">'+v+'</span></td>';
+        return '<td>'+v+'</td>';
+      }).join('')+'</tr>';
     }
   });
-  if (inBody) html += '</tbody>';
-  html += '</table>';
-  return html;
+  if (inBody) html+='</tbody>';
+  return html+'</table>';
 }
 
 // ─────────────────────────────────────────────
