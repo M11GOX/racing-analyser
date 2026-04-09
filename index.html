@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Racing Analyser — 2000 Guineas</title>
+<title>Racing Analyser</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=IBM+Plex+Mono:wght@300;400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 :root{--ink:#0e0e0e;--paper:#f5f0e8;--cream:#ede7d4;--gold:#b8972a;--gold-light:#d4b044;--gold-dim:#8a7020;--red:#8b1a1a;--green:#1a5c2e;--amber:#856404;--mid:#4a4035;--rule:#c8b98a;--rule-light:#e0d8c4;--card:#faf6ee}
@@ -162,7 +162,23 @@ textarea{resize:vertical;min-height:52px}
 .md-tbl{width:100%;border-collapse:collapse}
 .md-tbl th{background:var(--ink);color:var(--gold);font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;padding:7px 9px;text-align:left}
 .md-tbl td{padding:7px 9px;border-bottom:1px solid var(--rule-light);font-size:12px}
-@media(max-width:760px){
+/* RACE SELECTOR */
+.race-selector-bar{background:#111;border-bottom:1px solid #1c1c1c;padding:0 32px}
+.race-selector-inner{max-width:1140px;margin:0 auto;display:flex;align-items:center;gap:14px;padding:10px 0}
+.race-selector-label{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:#555;white-space:nowrap}
+.race-pill{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;padding:6px 14px;border:1px solid #2a2a2a;background:none;color:#555;cursor:pointer;transition:all .18s}
+.race-pill:hover{border-color:#444;color:#888}
+.race-pill.active{border-color:var(--gold);color:var(--gold);background:rgba(184,151,42,.08)}
+.race-pill-grp{display:flex;gap:0}
+.race-pill-grp .race-pill{border-right:none}
+.race-pill-grp .race-pill:last-child{border-right:1px solid #2a2a2a}
+.race-pill-grp .race-pill.active{border-right:1px solid var(--gold)}
+/* NH specific */
+.nh-badge{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:9px;padding:2px 7px;border:1px solid;margin-right:4px}
+.nh-badge.fence{background:#f8d7da;color:#58151c;border-color:#f5a5a5}
+.nh-badge.hurdle{background:#d1e7dd;color:#0a3622;border-color:#a3cfbb}
+.nh-badge.weight{background:#fff3cd;color:#856404;border-color:#ffe69c}
+
   .icp-grid{grid-template-columns:1fr 1fr}
   .dos-grid,.g2,.g3,.g5{grid-template-columns:1fr 1fr}
   .hdr{flex-direction:column;align-items:flex-start}
@@ -177,8 +193,8 @@ textarea{resize:vertical;min-height:52px}
 <div class="hdr">
   <div>
     <div class="hdr-eyebrow">Racing Analyser · Phase 3</div>
-    <div class="hdr-race">2000 Guineas</div>
-    <div class="hdr-sub">Newmarket · 1 Mile · 3yo · Group 1 · 2019–2025 · 99 runners · 7 winners</div>
+    <div class="hdr-race" id="hdr-race-name">2000 Guineas</div>
+    <div class="hdr-sub" id="hdr-race-sub">Newmarket · 1 Mile · 3yo · Group 1 · 2011–2025 · 15 winners</div>
   </div>
   <div class="hdr-right">
     <span class="api-status" id="api-status">⚠ No API Key</span>
@@ -186,6 +202,16 @@ textarea{resize:vertical;min-height:52px}
   </div>
 </div>
 </header>
+
+<div class="race-selector-bar">
+<div class="race-selector-inner">
+  <span class="race-selector-label">Race</span>
+  <div class="race-pill-grp">
+    <button class="race-pill active" id="pill-guineas" onclick="selectRace('guineas')">2000 Guineas · Flat</button>
+    <button class="race-pill" id="pill-national" onclick="selectRace('national')">Grand National · NH</button>
+  </div>
+</div>
+</div>
 
 <div class="tabs-bar">
 <div class="tabs">
@@ -218,9 +244,9 @@ textarea{resize:vertical;min-height:52px}
   </div>
 
   <div class="field-size-row">
-    <label>Total Field Size</label>
-    <input type="number" id="field-size" min="1" max="30" placeholder="" style="width:80px">
-    <span class="fsr-hint">Declared runners — used for draw groupings.</span>
+    <label id="field-size-label">Total Field Size</label>
+    <input type="number" id="field-size" min="1" max="50" placeholder="" style="width:80px">
+    <span class="fsr-hint" id="field-size-hint">Declared runners — used for draw groupings.</span>
   </div>
 
   <div class="form-card" id="runner-form">
@@ -232,41 +258,54 @@ textarea{resize:vertical;min-height:52px}
       <div class="fg"><label>Country of Breeding</label>
         <select id="f-bred"><option>IRE</option><option>GB</option><option>USA</option><option>FR</option><option>Other</option></select>
       </div>
-      <div class="fg"><label>Draw (Stall)</label><input id="f-draw" type="number" min="1" max="30" placeholder=""></div>
+      <!-- FLAT ONLY -->
+      <div class="fg flat-only"><label>Draw (Stall)</label><input id="f-draw" type="number" min="1" max="30" placeholder=""></div>
+      <!-- NH ONLY -->
+      <div class="fg nh-only" style="display:none"><label>Age</label><input id="f-age" type="number" min="5" max="14" placeholder="e.g. 9"></div>
+      <div class="fg nh-only" style="display:none"><label>Weight <span style="color:var(--gold);font-size:8px">FORMAT: 11st8lb</span></label><input id="f-weight" placeholder="e.g. 11st8lb" style="font-family:'IBM Plex Mono',monospace"></div>
       <div class="fg"><label>SP (Odds)</label><input id="f-sp" placeholder=""></div>
       <div class="fg"><label>Trainer</label><input id="f-trainer" placeholder=""></div>
       <div class="fg"><label>Jockey</label><input id="f-jockey" placeholder=""></div>
-      <div class="fg"><label>Official Rating (OR)</label><input id="f-or" placeholder=""></div>
-      <div class="fg"><label>Running Style</label>
+      <div class="fg flat-only"><label>Official Rating (OR)</label><input id="f-or" placeholder=""></div>
+      <div class="fg nh-only" style="display:none"><label>Official Rating (OR)</label><input id="f-or-nh" placeholder=""></div>
+      <div class="fg flat-only"><label>Running Style</label>
         <select id="f-style"><option>LED</option><option>PROMINENT</option><option selected>MIDFIELD</option><option value="HOLD UP">HOLD UP</option></select>
+      </div>
+      <div class="fg nh-only" style="display:none"><label>Running Style</label>
+        <select id="f-style-nh"><option>LED</option><option>PROMINENT</option><option selected>MIDFIELD</option><option value="HOLD UP">HOLD UP</option></select>
       </div>
     </div>
 
+    <!-- NH SPECIFIC BLOCK -->
+    <div id="nh-block" style="display:none">
+      <div class="fsec">National Hunt Details</div>
+      <div class="g3">
+        <div class="fg"><label>Chase Runs (total)</label><input id="f-chase-runs" type="number" min="0" max="50" placeholder="e.g. 9"></div>
+        <div class="fg"><label>Chase Wins (total)</label><input id="f-chase-wins" type="number" min="0" max="30" placeholder="e.g. 3"></div>
+        <div class="fg"><label>24f+ Win (over 3m)?</label>
+          <select id="f-distwn"><option value="">— Select —</option><option value="yes">Yes — won over 3m+</option><option value="no">No 3m+ win</option></select>
+        </div>
+        <div class="fg"><label>Grade Win?</label>
+          <select id="f-grp-nh"><option value="">— Select —</option><option value="yes">Yes</option><option value="no">No</option></select>
+        </div>
+      </div>
+    </div>
 
     <div class="fsec">Form &amp; Race Record</div>
     <div class="g2">
       <div class="fg">
         <label>Previous Form <span style="color:var(--gold);font-size:8px">MAX 6 RUNS · USE - TO SEPARATE SEASONS</span></label>
         <input id="f-form" placeholder="e.g. 121-1 or 13-1 or 111" maxlength="13" style="font-family:'IBM Plex Mono',monospace;font-size:15px;letter-spacing:.12em" oninput="validateForm(this)">
-        <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#aaa;margin-top:3px;display:block">Oldest → most recent · 1-3 = finish pos · 0 = outside top 10 · - = season break</span>
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#aaa;margin-top:3px;display:block">Oldest → most recent · 1-3 = finish pos · 0 = outside top 10 · - = season/year break · F/U/R/P = falls/unseated/refused/pulled up</span>
       </div>
-      <div class="fg">
-        <label>Group Win</label>
+      <div class="fg flat-only">
+        <label id="grp-label">Group Win</label>
         <select id="f-grp">
           <option value="">— Select —</option>
           <option value="yes">Yes</option>
           <option value="no">No</option>
         </select>
       </div>
-    </div>
-
-    <div class="fsec">Pedigree / Dosage <span style="font-weight:300;letter-spacing:0;text-transform:none;font-family:'IBM Plex Sans',sans-serif;font-size:10px;color:#aaa">(optional)</span></div>
-    <div class="g5">
-      <div class="fg"><label>Sire Index</label><input id="f-si" placeholder="" oninput="calcJSI()"></div>
-      <div class="fg"><label>Damsire Index</label><input id="f-dsi" placeholder="" oninput="calcJSI()"></div>
-      <div class="fg"><label>JSI <span style="color:var(--gold);font-size:8px">AUTO</span></label><input id="f-jsi" placeholder="auto" style="background:#f0ece0;color:var(--gold-dim)" readonly></div>
-      <div class="fg"><label>Dosage Index (DI)</label><input id="f-di" placeholder=""></div>
-      <div class="fg"><label>COD Index</label><input id="f-cod" placeholder=""></div>
     </div>
 
     <div class="fg" style="margin-top:12px"><label>Notes (optional)</label><textarea id="f-notes" placeholder="Course form, fitness, jockey booking context, going preferences..."></textarea></div>
@@ -374,8 +413,58 @@ var WINNERS = [
 ];
 
 // ─────────────────────────────────────────────
-// PARSE FORM STRING
+// RACE MODE
 // ─────────────────────────────────────────────
+var CURRENT_RACE = 'guineas'; // 'guineas' | 'national'
+
+// ─────────────────────────────────────────────
+// GRAND NATIONAL WINNER DATA (2006–2025, 19 winners — corrected from official source)
+// ─────────────────────────────────────────────
+var GN_WINNERS = [
+  {year:2025,winner:'Nick Rockett',      bred:'IRE',age:8, weight:'11st8lb', or_:163,sp:'33/1',  trainer:'W P Mullins',   jockey:'Mr P Mullins',  style:'MIDFIELD', form:'273-411', days:42,field:34},
+  {year:2024,winner:'I Am Maximus',      bred:'FR', age:8, weight:'11st6lb', or_:159,sp:'7/1',   trainer:'W P Mullins',   jockey:'P Townend',     style:'MIDFIELD', form:'41-1431', days:49,field:32},
+  {year:2023,winner:'Corach Rambler',    bred:'IRE',age:9, weight:'10st5lb', or_:146,sp:'8/1',   trainer:'L Russell',     jockey:'D Fox',         style:'MIDFIELD', form:'4U1-541', days:32,field:39},
+  {year:2022,winner:'Noble Yeats',       bred:'IRE',age:7, weight:'10st10lb',or_:147,sp:'50/1',  trainer:'E Mullins',     jockey:'S Waley-Cohen', style:'HOLD UP',  form:'469P29',  days:25,field:40},
+  {year:2021,winner:'Minella Times',     bred:'IRE',age:8, weight:'10st3lb', or_:146,sp:'11/1',  trainer:'H De Bromhead', jockey:'R Blackmore',   style:'MIDFIELD', form:'120-122', days:62,field:40},
+  {year:2019,winner:'Tiger Roll',        bred:'IRE',age:9, weight:'11st5lb', or_:159,sp:'4/1F',  trainer:'G Elliott',     jockey:'D Russell',     style:'MIDFIELD', form:'511-411', days:24,field:40},
+  {year:2018,winner:'Tiger Roll',        bred:'IRE',age:8, weight:'10st13lb',or_:150,sp:'10/1',  trainer:'G Elliott',     jockey:'D Russell',     style:'MIDFIELD', form:'1P-2P51', days:31,field:38},
+  {year:2017,winner:'One For Arthur',    bred:'IRE',age:8, weight:'10st11lb',or_:148,sp:'14/1',  trainer:'L Russell',     jockey:'D Fox',         style:'HOLD UP',  form:'243-151', days:84,field:40},
+  {year:2016,winner:'Rule The World',    bred:'GB', age:9, weight:'10st7lb', or_:148,sp:'33/1',  trainer:'M F Morris',    jockey:'D Mullins',     style:'PROMINENT',form:'S32254',  days:34,field:39},
+  {year:2015,winner:'Many Clouds',       bred:'IRE',age:8, weight:'11st9lb', or_:160,sp:'25/1',  trainer:'O Sherwood',    jockey:'L Aspell',      style:'PROMINENT',form:'B4-1116', days:29,field:39},
+  {year:2014,winner:'Pineau De Re',      bred:'FR', age:11,weight:'10st6lb', or_:143,sp:'25/1',  trainer:'R Newland',     jockey:'L Aspell',      style:'HOLD UP',  form:'5F2713',  days:23,field:40},
+  {year:2013,winner:"Auroras Encore",    bred:'IRE',age:11,weight:'10st3lb', or_:137,sp:'66/1',  trainer:'S Smith',       jockey:'R Mania',       style:'HOLD UP',  form:'0P45F5',  days:35,field:40},
+  {year:2012,winner:'Neptune Collonges', bred:'FR', age:11,weight:'11st6lb', or_:157,sp:'33/1',  trainer:'P Nicholls',    jockey:'D Jacob',       style:'PROMINENT',form:'86-P422', days:56,field:40},
+  {year:2011,winner:'Ballabriggs',       bred:'IRE',age:10,weight:'11st0lb', or_:150,sp:'14/1',  trainer:'D McCain Jnr',  jockey:'J Maguire',     style:'PROMINENT',form:'031-112', days:35,field:40},
+  {year:2010,winner:"Don't Push It",     bred:'IRE',age:10,weight:'11st5lb', or_:153,sp:'10/1',  trainer:"J O'Neill",     jockey:'A P McCoy',     style:'PROMINENT',form:'71-423P', days:23,field:40},
+  {year:2009,winner:'Mon Mome',          bred:'IRE',age:9, weight:'11st0lb', or_:148,sp:'100/1', trainer:'V Williams',    jockey:'L Treadwell',   style:'HOLD UP',  form:'218278',  days:21,field:40},
+  {year:2008,winner:'Comply Or Die',     bred:'IRE',age:9, weight:'10st9lb', or_:139,sp:'7/1',   trainer:'D Pipe',        jockey:'T Murphy',      style:'PROMINENT',form:'4P-0P21', days:42,field:40},
+  {year:2007,winner:'Silver Birch',      bred:'IRE',age:10,weight:'10st6lb', or_:138,sp:'33/1',  trainer:'G Elliott',     jockey:'R Power',       style:'MIDFIELD', form:'F-38242', days:32,field:44},
+  {year:2006,winner:'Numbersixvalverde', bred:'IRE',age:10,weight:'10st8lb', or_:138,sp:'11/1',  trainer:'M Brassil',     jockey:'N Madden',      style:'HOLD UP',  form:'84B443',  days:27,field:40},
+];
+// Note: 2020 cancelled (COVID). Data corrected from official Racing Post records.
+
+var GN_PROFILE_FACTORS = [
+  {label:'Age',             ideal:'Age 8 dominant · 9 viable',             stats:'Age 8: 6/19 winners (2015-2025 dominant)\nAge 9: 5/19 · Age 7: 1/19 (Noble Yeats, 50/1)\nAge 10: 4/19 — all pre-2012 · Age 11: 3/19 — all pre-2015\nNo winner aged 12+ in 19-year sample'},
+  {label:'Official Rating', ideal:'145–149 or 160–164 · bimodal',          stats:'OR 145-149: 6/19 winners (5/10 modern era)\nOR 160-164: 2/19 but 2/4 most recent (highest IV)\nOR 150-159: 6/19 — viable, not a dead zone\nOR 135-144: 5/19 — all pre-2015, recency discounted\nOR 165+: 0/19 winners in corrected data'},
+  {label:'Running Style',   ideal:'MIDFIELD dominant (modern)',             stats:'MIDFIELD: 6/10 modern winners · IV 1.39\nAll 4 most recent winners raced midfield\nPROMINENT: 2/10 modern · HOLD UP: 2/10 modern\nLED: 0 winners in 19yr sample'},
+  {label:'Trainer',         ideal:'W P Mullins · G Elliott · L Russell',   stats:'L Russell: 2 wins from 4 runners (IV 18.95)\nW P Mullins & G Elliott: 2 wins each, IV 1.80 (42 runners)\nH De Bromhead: 1 win, IV 2.53\nP Nicholls: 23 runners, 0 wins — consistent negative'},
+  {label:'Grade Win',       ideal:'Yes — 8/10 modern winners',             stats:'Grade win: 8/10 modern winners\nOnly Noble Yeats & Minella Times won without a Grade win\nBoth were 50/1 and 11/1 — exceptional profiles needed'},
+  {label:'Chase Experience',ideal:'7–11 runs · 20%+ win rate',             stats:'Sweet spot 8-10 runs: 6/10 modern winners\n7 and 11 runs also included — 7/10 in 7-11 band\nChase win rate 20%+: 8/10 modern winners\nRule The World (0/13 wins) only exception below 20%'},
+  {label:'Form',            ideal:'Won last run · 2+ top-3 in last 4',     stats:'Last run = 1st: 7/19 winners (6/10 modern)\n2+ top-3 in last 4 runs: 9/10 modern winners\n3+ top-3 in last 4: 8/19 winners — dominant pattern\n10/10 modern winners had at least 1 top-3 in last 4'},
+  {label:'Weight Carried',  ideal:'11st 1lb – 11st 10lb (increasing)',     stats:'11st 6lb-11st 10lb: 2/2 most recent winners\nRecency trend: average weight increasing year on year\n12st 0lb+: 0 winners in 19yr corrected data\n10st 3lb-11st 10lb range covers all modern winners'},
+  {label:'Distance Form',   ideal:'At least one 24f+ win',                 stats:'7/10 modern winners had at least one 24f+ win\n3/10 without: Noble Yeats, Minella Times, Rule The World\nAll 3 were priced 11/1+ — not an elimination filter\nBut a 24f+ win is a meaningful positive signal'},
+  {label:'Breeding',        ideal:'IRE-bred dominant',                     stats:'IRE: 8/10 modern winners · IV 1.36 on 224 runners\nFR: 1/10 modern (I Am Maximus) · IV 0.33 — negative\nGB: 1/10 modern (Rule The World) · IV 1.03 — neutral\nMost reliable large-sample signal in the dataset'},
+];
+
+var GN_DOSAGE_CELLS = [
+  {label:'Age Sweet Spot',        sweet:'8 yrs (dominant)',      note:'Age 8: 6/19 wins. Age 9: 5/19. Age 10+: 0 wins since 2011 in modern era'},
+  {label:'OR Sweet Spots',        sweet:'145-149 or 160-164',    note:'Bimodal pattern. OR 165+ = 0 winners ever. OR 135-144 = pre-2015 era only'},
+  {label:'Chase Run Sweet Spot',  sweet:'7–11 runs',             note:'6/10 modern winners in 8-10 run band. 7 and 11 also valid. Less exposed = better'},
+  {label:'Chase Win Rate',        sweet:'20%+ strike rate',      note:'8/10 modern winners had 20%+ chase win rate. Quality over quantity of runs'},
+  {label:'Form Sweet Spot',       sweet:'2-3 top-3 in last 4',   note:'9/10 modern winners had 2+ top-3 in last 4 runs. 0 top-3 = heavy penalty'},
+];
+
+
 function parseForm(formStr) {
   if (!formStr || !formStr.trim()) {
     return {prevSeason:[], thisSeason:[], runsThisSeason:0, lastRun:'fresh', fresh:true, formDisplay:'—'};
@@ -411,7 +500,7 @@ function parseForm(formStr) {
   var lastRun = 'fresh';
   for (var i = allRuns.length - 1; i >= 0; i--) {
     var c = allRuns[i];
-    if (c === 'F' || c === 'P' || c === 'U') continue; // skip DNF for flat
+    if (CURRENT_RACE !== 'national' && (c === 'F' || c === 'P' || c === 'U')) continue; // skip DNF for flat only
     lastRun = c;
     break;
   }
@@ -619,6 +708,182 @@ function scoreRunner(r, fieldSize) {
   return {composite:composite, scores:scores, details:details, tripVerdict:tripVerdict, drawGroup:dg, formData:fd};
 }
 
+// ─────────────────────────────────────────────
+// GRAND NATIONAL SCORING ENGINE
+// Validated against 19 winners 2006-2025
+// Weights: Age20 OR18 Trainer12 Style8 GradeWin8 ChaseRuns7 ChaseWin%7 Weight7 Top3L45 LastRun4 RunsSeason3 DistWin1 = 100
+// ─────────────────────────────────────────────
+function gnParseWeightLbs(w) {
+  if (!w) return null;
+  var m = w.match(/(\d+)st(\d+)lb/i);
+  if (m) return parseInt(m[1])*14+parseInt(m[2]);
+  m = w.match(/(\d+)\s+(\d+)/);
+  if (m) return parseInt(m[1])*14+parseInt(m[2]);
+  return null;
+}
+function gnLbsToSt(lbs) {
+  return Math.floor(lbs/14)+'st'+(lbs%14)+'lb';
+}
+function gnParseLastN(form, n) {
+  var runs = form.toUpperCase().split('').filter(function(c){return c!=='-'&&c!==' ';});
+  return runs.slice(-n);
+}
+function gnCountTop3Last4(form) {
+  return gnParseLastN(form,4).filter(function(c){return '123'.includes(c);}).length;
+}
+function gnLastRunChar(form) {
+  var r = gnParseLastN(form,1);
+  return r.length ? r[0] : 'U';
+}
+function gnRunsSeason(form) {
+  var s = form.toUpperCase();
+  var thisSeason = s.includes('-') ? s.split('-').pop() : s;
+  return thisSeason.replace(/ /g,'').length;
+}
+
+function scoreRunnerGN(r) {
+  var scores = {}, details = {};
+
+  // ── AGE (20%) ──────────────────────────────────────────────────
+  var ageMap = {7:50,8:100,9:78,10:35,11:15};
+  scores.age = ageMap[r.age] || 0;
+  details.age = r.age===8 ? '✅ Age 8 — dominant (6/10 modern winners, IV 2.68)' :
+                r.age===9 ? '✅ Age 9 — 5/19 winners across all eras' :
+                r.age===7 ? '🟡 Age 7 — Noble Yeats only, exceptional 50/1 outlier' :
+                r.age===10? '⚠️ Age 10 — 4/19 all eras but 0/10 modern (pre-2012 era)' :
+                r.age===11? '⚠️ Age 11 — 3/19 but 0 wins since 2014 · declining sharply' :
+                            '❌ Age 12+ — 0 winners in 19-year sample';
+
+  // ── OR (18%) ───────────────────────────────────────────────────
+  var or_ = parseInt(r.or_) || parseInt(r.or) || 0;
+  if      (or_<=134)             { scores.or_=0;   details.or_='❌ OR below 135 — uncompetitive, 0 winners ever'; }
+  else if (or_<=144)             { scores.or_=25;  details.or_='⚠️ OR 135-144 — 5/19 winners but ALL pre-2015 (recency discounted)'; }
+  else if (or_<=149)             { scores.or_=75;  details.or_='✅ OR 145-149 — 6/19 winners, 5/10 modern era · high volume positive'; }
+  else if (or_<=154)             { scores.or_=55;  details.or_='🟡 OR 150-154 — viable (Tiger Roll 2018, Ballabriggs, Don\'t Push It)'; }
+  else if (or_<=159)             { scores.or_=65;  details.or_='✅ OR 155-159 — viable (Tiger Roll 2019, Neptune Collonges)'; }
+  else if (or_<=164)             { scores.or_=100; details.or_='✅ OR 160-164 — highest IV, 2/4 most recent winners (Rockett, Clouds)'; }
+  else                           { scores.or_=0;   details.or_='❌ OR 165+ — 0 winners in 19-year corrected dataset'; }
+
+  // ── TRAINER (12%) ─────────────────────────────────────────────
+  var tl = (r.trainer||'').toLowerCase();
+  if      (tl.includes('russell'))                          { scores.trainer=95;  details.trainer="🟢 L Russell — 2/4 runners = winners (IV 18.95) · One For Arthur, Corach Rambler"; }
+  else if (tl.includes('w p mullins')||tl.includes('willie mullins')) { scores.trainer=90;  details.trainer="🟢 W P Mullins — 2 wins, IV 1.80 · dominant volume operation (42 runners)"; }
+  else if (tl.includes('elliott'))                          { scores.trainer=90;  details.trainer="🟢 G Elliott — 2 wins, IV 1.80 · Tiger Roll ×2, Silver Birch (42 runners)"; }
+  else if (tl.includes('bromhead'))                         { scores.trainer=85;  details.trainer="🟢 H De Bromhead — 1 win (Minella Times), IV 2.53"; }
+  else if (tl.includes('e mullins')||tl.includes('emmet'))  { scores.trainer=80;  details.trainer="🟢 E Mullins — 1 win (Noble Yeats), IV 12.63 · tiny sample, score capped"; }
+  else if (tl.includes('nicholls'))                         { scores.trainer=20;  details.trainer="❌ P Nicholls — 23 runners, 0 wins · consistent strong negative"; }
+  else if (tl.includes('henderson'))                        { scores.trainer=30;  details.trainer="⚠️ N Henderson — 7 runners, 0 wins · negative signal"; }
+  else if (tl.includes('cromwell'))                         { scores.trainer=45;  details.trainer="🟡 G Cromwell — 8 runners, 0 wins · moderate negative"; }
+  else                                                      { scores.trainer=35;  details.trainer="🟡 "+(r.trainer||'Unknown')+" — outside top trainers (IV 0.32 for 'others' group)"; }
+
+  // ── RUNNING STYLE (8%) ────────────────────────────────────────
+  var styleVal = (r.styleNH||r.style||'MIDFIELD').toUpperCase().replace('_',' ');
+  var styleMap = {MIDFIELD:100,PROMINENT:60,'HOLD UP':45,LED:0};
+  scores.style = styleMap[styleVal] !== undefined ? styleMap[styleVal] : 35;
+  details.style = styleVal==='MIDFIELD'  ? '✅ MIDFIELD — IV 1.39, 6/10 modern winners · all 4 most recent winners' :
+                  styleVal==='PROMINENT' ? '🟡 PROMINENT — 2/10 modern winners, below par but viable' :
+                  styleVal==='HOLD UP'   ? '🟡 HOLD UP — 2/10 modern, below par (IV 0.63)' :
+                                           '❌ LED — 0 winners in 19-year sample';
+
+  // ── GRADE WIN (8%) ────────────────────────────────────────────
+  scores.grade_win = r.grpWin==='yes'||r.grade_win ? 100 : 35;
+  details.grade_win = (r.grpWin==='yes'||r.grade_win) ?
+    '✅ Grade/Listed win — 8/10 modern winners have one' :
+    '⚠️ No Grade win — only Noble Yeats (50/1) & Minella Times (11/1) won without';
+
+  // ── CHASE RUNS (7%) ───────────────────────────────────────────
+  var cr = parseInt(r.chase_runs) || 0;
+  if      (cr<=4)          { scores.chase_runs=20;  details.chase_runs='❌ '+cr+' chase runs — too inexperienced for Aintree fences'; }
+  else if (cr===5)          { scores.chase_runs=30;  details.chase_runs='⚠️ 5 chase runs — below minimum comfort zone'; }
+  else if (cr===6)          { scores.chase_runs=55;  details.chase_runs='🟡 6 chase runs — borderline (Noble Yeats had 7)'; }
+  else if (cr===7||cr===11) { scores.chase_runs=82;  details.chase_runs='✅ '+cr+' chase runs — within 7-11 sweet spot band'; }
+  else if (cr>=8&&cr<=10)   { scores.chase_runs=100; details.chase_runs='✅ '+cr+' chase runs — prime sweet spot (6/10 modern winners)'; }
+  else if (cr>=12&&cr<=13)  { scores.chase_runs=60;  details.chase_runs='🟡 '+cr+' chase runs — slightly exposed (Rule The World had 13)'; }
+  else if (cr>=14&&cr<=16)  { scores.chase_runs=45;  details.chase_runs='⚠️ '+cr+' chase runs — exposed (Tiger Roll 2018 had 16, exceptional)'; }
+  else if (cr>=17&&cr<=20)  { scores.chase_runs=30;  details.chase_runs='⚠️ '+cr+' chase runs — very exposed (Tiger Roll 2019 had 19, unique)'; }
+  else                      { scores.chase_runs=15;  details.chase_runs='❌ 21+ chase runs — over-exposed, no winner in sample'; }
+
+  // ── CHASE WIN RATE (7%) ───────────────────────────────────────
+  var cw = parseInt(r.chase_wins) || 0;
+  var cwpct = cr>0 ? Math.round(cw/cr*100) : 0;
+  if      (cwpct>=40)  { scores.chase_win=100; details.chase_win='✅ '+cw+'/'+cr+' = '+cwpct+'% — elite strike rate'; }
+  else if (cwpct>=30)  { scores.chase_win=85;  details.chase_win='✅ '+cw+'/'+cr+' = '+cwpct+'% — strong (30%+ threshold)'; }
+  else if (cwpct>=20)  { scores.chase_win=70;  details.chase_win='✅ '+cw+'/'+cr+' = '+cwpct+'% — meets 20% threshold (8/10 modern winners)'; }
+  else if (cwpct>=10)  { scores.chase_win=45;  details.chase_win='⚠️ '+cw+'/'+cr+' = '+cwpct+'% — below ideal 20% threshold'; }
+  else if (cwpct>0)    { scores.chase_win=25;  details.chase_win='⚠️ '+cw+'/'+cr+' = '+cwpct+'% — very low win rate'; }
+  else if (cr===0)     { scores.chase_win=50;  details.chase_win='🟡 Chase runs not entered — neutral score applied'; }
+  else                 { scores.chase_win=5;   details.chase_win='❌ 0/'+cr+' chase wins — Rule The World (0/13) only precedent · very rare winner'; }
+
+  // ── WEIGHT (7%) ───────────────────────────────────────────────
+  var wgt_str = r.weight||'';
+  var lbs = gnParseWeightLbs(wgt_str);
+  if (!lbs) { scores.weight=50; details.weight='🟡 Weight not entered — neutral score'; }
+  else if (lbs<=146)  { scores.weight=55;  details.weight='🟡 '+gnLbsToSt(lbs)+' — light end, 2/10 modern winners (Rambler, Minella)'; }
+  else if (lbs<=151)  { scores.weight=70;  details.weight='✅ '+gnLbsToSt(lbs)+' — solid band (3/10 modern: Yeats, Arthur, Rule)'; }
+  else if (lbs<=156)  { scores.weight=50;  details.weight='🟡 '+gnLbsToSt(lbs)+' — middle zone (Tiger Roll 2018, viable)'; }
+  else if (lbs<=161)  { scores.weight=80;  details.weight='✅ '+gnLbsToSt(lbs)+' — positive band (Tiger 2019, I Am Maximus)'; }
+  else if (lbs<=166)  { scores.weight=100; details.weight='✅ '+gnLbsToSt(lbs)+' — peak band · 2/4 most recent winners (recency trend)'; }
+  else                { scores.weight=0;   details.weight='❌ '+gnLbsToSt(lbs)+' — above 11st 10lb · 0 winners ever in corrected data'; }
+
+  // ── TOP-3 IN LAST 4 (5%) ─────────────────────────────────────
+  var form = r.form||'';
+  var t3 = gnCountTop3Last4(form);
+  var t3map = {0:10,1:60,2:80,3:95,4:100};
+  scores.top3_last4 = t3map[Math.min(t3,4)];
+  details.top3_last4 = t3===0 ? '❌ 0 top-3 in last 4 — 18/19 winners had at least one · ×0.65 penalty applied' :
+                       t3===1 ? '🟡 1 top-3 in last 4 — minimum threshold met (Noble Yeats, Mon Mome)' :
+                       t3===2 ? '✅ 2 top-3 in last 4 — good form (Corach Rambler, Tiger Roll 2018)' :
+                       t3>=3  ? '✅ '+t3+'/4 top-3 in last 4 — strong recent form · dominant pattern in winners' : '';
+
+  // ── LAST RUN RESULT (4%) ──────────────────────────────────────
+  var lr = gnLastRunChar(form);
+  if      (lr==='1') { scores.last_run=100; details.last_run='✅ Won last run — 7/19 winners (6/10 modern)'; }
+  else if (lr==='2') { scores.last_run=70;  details.last_run='🟡 2nd last run — viable'; }
+  else if (lr==='3') { scores.last_run=55;  details.last_run='🟡 3rd last run — viable'; }
+  else if (lr==='4') { scores.last_run=40;  details.last_run='⚠️ 4th last run — Rule The World precedent only'; }
+  else if ('56789'.includes(lr)) { scores.last_run=25; details.last_run='⚠️ Last run: '+lr+'th — poor (Noble Yeats 9th, Mon Mome 8th)'; }
+  else               { scores.last_run=10;  details.last_run='⚠️ Last run: '+lr+' — non-completion (fall/pulled up)'; }
+
+  // ── RUNS THIS SEASON (3%) ─────────────────────────────────────
+  var rs = gnRunsSeason(form);
+  var rsMap = {0:20,1:30,2:65,3:100,4:95,5:85,6:45};
+  scores.runs_season = rsMap[rs] !== undefined ? rsMap[rs] : 10;
+  details.runs_season = rs===3?'✅ 3 runs this season — most common winner profile (4/10 modern)':
+                        rs===4?'✅ 4 runs this season — Tiger Roll 2018, Many Clouds':
+                        rs===5?'✅ 5 runs this season — I Am Maximus, Rule The World':
+                        rs===2?'🟡 2 runs this season — slightly light (Nick Rockett)':
+                        rs===6?'⚠️ 6 runs this season — Noble Yeats only, over-campaigned risk':
+                        rs===1?'⚠️ 1 run this season — very light (not typical)':
+                               '⚠️ '+rs+' runs this season — outside 2-6 ideal range';
+
+  // ── DIST WIN (1%) ─────────────────────────────────────────────
+  scores.dist_win = (r.dist_win||r.distWin) ? 100 : 30;
+  details.dist_win = (r.dist_win||r.distWin) ?
+    '✅ 24f+ win — 7/10 modern winners have one' :
+    '⚠️ No 24f+ win — 3/10 won without (Noble Yeats, Minella Times, Rule The World)';
+
+  // ── COMPOSITE ─────────────────────────────────────────────────
+  var W = {age:20,or_:18,trainer:12,style:8,grade_win:8,chase_runs:7,chase_win:7,weight:7,top3_last4:5,last_run:4,runs_season:3,dist_win:1};
+  var tot = 0;
+  Object.keys(W).forEach(function(k){ tot += (scores[k]||0) * W[k]; });
+  var composite = Math.round(tot)/100;
+  var penalty = t3===0;
+  var final_ = penalty ? Math.round(composite*0.65*10)/10 : Math.round(composite*10)/10;
+
+  return {
+    composite: Math.round(composite*10)/10,
+    final_: final_,
+    scores: scores,
+    details: details,
+    t3: t3,
+    penalty: penalty,
+    lbs: lbs,
+    cwpct: cwpct,
+    rs: rs,
+    lr: lr
+  };
+}
+
 function scoreInRange(val, lo, hi, alo, ahi) {
   if (val >= lo && val <= hi) return 100;
   if (val >= alo && val < lo) return 40 + 40*((val-alo)/(lo-alo));
@@ -651,8 +916,53 @@ function getDrawGroup(stall, fieldSize) {
 function starsFromScore(s) { return s>=80?5:s>=65?4:s>=50?3:s>=35?2:1; }
 
 // ─────────────────────────────────────────────
-// SETTINGS
+// RACE SELECTOR
 // ─────────────────────────────────────────────
+function selectRace(mode) {
+  CURRENT_RACE = mode;
+  // Pills
+  document.getElementById('pill-guineas').className = 'race-pill'+(mode==='guineas'?' active':'');
+  document.getElementById('pill-national').className = 'race-pill'+(mode==='national'?' active':'');
+
+  var isNH = mode==='national';
+
+  // Header
+  if (isNH) {
+    document.getElementById('hdr-race-name').textContent = 'Grand National';
+    document.getElementById('hdr-race-sub').textContent = 'Aintree · 4m2½f · Open Handicap Chase · 2006–2025 · 19 winners';
+    document.getElementById('field-size-label').textContent = 'Total Declared';
+    document.getElementById('field-size-hint').textContent = 'Declared runners in the Grand National (typically 34-40).';
+  } else {
+    document.getElementById('hdr-race-name').textContent = '2000 Guineas';
+    document.getElementById('hdr-race-sub').textContent = 'Newmarket · 1 Mile · 3yo · Group 1 · 2011–2025 · 15 winners';
+    document.getElementById('field-size-label').textContent = 'Total Field Size';
+    document.getElementById('field-size-hint').textContent = 'Declared runners — used for draw groupings.';
+    document.getElementById('grp-label').textContent = 'Group Win';
+  }
+
+  // Show/hide form elements
+  document.querySelectorAll('.flat-only').forEach(function(el){el.style.display=isNH?'none':'flex';});
+  document.querySelectorAll('.nh-only').forEach(function(el){el.style.display=isNH?'flex':'none';});
+  document.getElementById('nh-block').style.display=isNH?'block':'none';
+
+  // Clear runners when switching race to avoid cross-contamination
+  if (runners.length > 0) {
+    if (confirm('Switch race? This will clear the current runners list.')) {
+      runners = []; renderRunners();
+    } else {
+      // Revert selection
+      CURRENT_RACE = mode==='national'?'guineas':'national';
+      document.getElementById('pill-guineas').className='race-pill'+(CURRENT_RACE==='guineas'?' active':'');
+      document.getElementById('pill-national').className='race-pill'+(CURRENT_RACE==='national'?' active':'');
+      return;
+    }
+  }
+
+  // Re-render profile
+  renderProfile();
+}
+
+
 function getKey() { return localStorage.getItem('ra_api_key') || ''; }
 function updateKeyStatus() {
   var k=getKey(); var el=document.getElementById('api-status');
@@ -697,14 +1007,6 @@ function validateForm(el) {
   el.value = val.toUpperCase();
 }
 
-function calcJSI() {
-  try {
-    var si=parseFloat(document.getElementById('f-si').value);
-    var dsi=parseFloat(document.getElementById('f-dsi').value);
-    var el=document.getElementById('f-jsi');
-    el.value=(!isNaN(si)&&!isNaN(dsi))?(si+dsi).toFixed(1):'';
-  } catch(e) {}
-}
 
 // ─────────────────────────────────────────────
 // RUNNERS
@@ -715,24 +1017,30 @@ var editIdx = -1;
 function addRunner() {
   var name = document.getElementById('f-name').value.trim();
   if (!name) { alert('Please enter a horse name.'); return; }
-  var si=parseFloat(document.getElementById('f-si').value);
-  var dsi=parseFloat(document.getElementById('f-dsi').value);
-  var jsi=parseFloat(document.getElementById('f-jsi').value);
-  var di=parseFloat(document.getElementById('f-di').value);
-  var cod=parseFloat(document.getElementById('f-cod').value);
-  var hasPed=!isNaN(si)||!isNaN(dsi)||!isNaN(jsi)||!isNaN(di)||!isNaN(cod);
+  var isNH = CURRENT_RACE==='national';
+
   var runner = {
-    name:name, bred:document.getElementById('f-bred').value,
+    name:name,
+    bred:document.getElementById('f-bred').value,
     draw:parseInt(document.getElementById('f-draw').value)||0,
+    weight:document.getElementById('f-weight').value.trim()||'',
     sp:document.getElementById('f-sp').value.trim()||'---',
     trainer:document.getElementById('f-trainer').value.trim()||'---',
     jockey:document.getElementById('f-jockey').value.trim()||'---',
-    or:document.getElementById('f-or').value.trim()||'---',
-    style:document.getElementById('f-style').value,
+    or_:isNH ? (document.getElementById('f-or-nh').value.trim()||'') : '',
+    or:isNH ? '' : (document.getElementById('f-or').value.trim()||'---'),
+    style:isNH ? document.getElementById('f-style-nh').value : document.getElementById('f-style').value,
+    styleNH:document.getElementById('f-style-nh').value,
     form:document.getElementById('f-form').value.trim(),
-    grpWin:document.getElementById('f-grp').value,
+    grpWin:isNH ? document.getElementById('f-grp-nh').value : document.getElementById('f-grp').value,
+    grade_win:isNH ? (document.getElementById('f-grp-nh').value==='yes') : false,
     notes:document.getElementById('f-notes').value.trim(),
-    ped:hasPed?{si:isNaN(si)?null:si,dsi:isNaN(dsi)?null:dsi,jsi:isNaN(jsi)?null:jsi,di:isNaN(di)?null:di,cod:isNaN(cod)?null:cod}:null
+    // NH extras
+    age:parseInt(document.getElementById('f-age').value)||0,
+    chase_runs:parseInt(document.getElementById('f-chase-runs').value)||0,
+    chase_wins:parseInt(document.getElementById('f-chase-wins').value)||0,
+    dist_win:document.getElementById('f-distwn').value==='yes',
+    raceMode:CURRENT_RACE
   };
   if (editIdx>=0) { runners[editIdx]=runner; editIdx=-1; document.getElementById('form-title').textContent='Add Runner'; }
   else runners.push(runner);
@@ -741,25 +1049,27 @@ function addRunner() {
 
 function editRunner(i) {
   var r=runners[i];
+  var isNH = CURRENT_RACE==='national';
   document.getElementById('f-name').value=r.name;
   document.getElementById('f-bred').value=r.bred;
-  document.getElementById('f-draw').value=r.draw;
-  document.getElementById('f-sp').value=r.sp;
-  document.getElementById('f-trainer').value=r.trainer;
-  document.getElementById('f-jockey').value=r.jockey;
-  document.getElementById('f-or').value=r.or;
-  document.getElementById('f-style').value=r.style;
+  document.getElementById('f-draw').value=r.draw||'';
+  document.getElementById('f-weight').value=r.weight||'';
+  document.getElementById('f-sp').value=r.sp==='---'?'':r.sp;
+  document.getElementById('f-trainer').value=r.trainer==='---'?'':r.trainer;
+  document.getElementById('f-jockey').value=r.jockey==='---'?'':r.jockey;
+  document.getElementById('f-or').value=r.or==='---'?'':r.or;
+  document.getElementById('f-or-nh').value=r.or_||'';
+  document.getElementById('f-style').value=r.style||'MIDFIELD';
+  document.getElementById('f-style-nh').value=r.styleNH||r.style||'MIDFIELD';
   document.getElementById('f-grp').value=r.grpWin||'';
   document.getElementById('f-notes').value=r.notes||'';
-  document.getElementById('f-form').value=r.formStr||'';
-  document.getElementById('f-grp').value=r.groupWin?'yes':'no';
-  if (r.ped) {
-    document.getElementById('f-si').value=r.ped.si!==null?r.ped.si:'';
-    document.getElementById('f-dsi').value=r.ped.dsi!==null?r.ped.dsi:'';
-    document.getElementById('f-di').value=r.ped.di!==null?r.ped.di:'';
-    document.getElementById('f-cod').value=r.ped.cod!==null?r.ped.cod:'';
-    calcJSI();
-  }
+  document.getElementById('f-form').value=r.form||'';
+  // NH extras
+  document.getElementById('f-age').value=r.age||'';
+  document.getElementById('f-chase-runs').value=r.chase_runs||'';
+  document.getElementById('f-chase-wins').value=r.chase_wins||'';
+  document.getElementById('f-distwn').value=r.dist_win?'yes':'no';
+  var grpNH=document.getElementById('f-grp-nh'); if(grpNH) grpNH.value=r.grade_win?'yes':'no';
   editIdx=i; document.getElementById('form-title').textContent='Edit — '+r.name;
   document.getElementById('runner-form').scrollIntoView({behavior:'smooth'});
 }
@@ -767,12 +1077,15 @@ function editRunner(i) {
 function removeRunner(i) { runners.splice(i,1); renderRunners(); }
 
 function clearForm() {
-  ['f-name','f-draw','f-sp','f-trainer','f-jockey','f-or','f-notes','f-si','f-dsi','f-jsi','f-di','f-cod','f-form'].forEach(function(id){
+  ['f-name','f-draw','f-weight','f-sp','f-trainer','f-jockey','f-or','f-or-nh','f-notes','f-form','f-age','f-chase-runs','f-chase-wins'].forEach(function(id){
     var el=document.getElementById(id); if(el) el.value='';
   });
   document.getElementById('f-bred').value='IRE';
   document.getElementById('f-style').value='MIDFIELD';
+  document.getElementById('f-style-nh').value='MIDFIELD';
   document.getElementById('f-grp').value='';
+  document.getElementById('f-distwn').value='';
+  var grpNH=document.getElementById('f-grp-nh'); if(grpNH) grpNH.value='';
   editIdx=-1; document.getElementById('form-title').textContent='Add Runner';
 }
 
@@ -781,29 +1094,34 @@ function renderRunners() {
   var count=document.getElementById('runner-count');
   var genRow=document.getElementById('gen-row');
   var genInfo=document.getElementById('gen-info');
+  var isNH = CURRENT_RACE==='national';
   count.textContent=runners.length+' runner'+(runners.length!==1?'s':'');
   if (!runners.length) { list.innerHTML=''; genRow.style.display='none'; return; }
-  var sorted=runners.map(function(r,i){return {r:r,i:i};}).sort(function(a,b){return a.r.draw-b.r.draw;});
+  var sorted=runners.map(function(r,i){return {r:r,i:i};}).sort(function(a,b){
+    if (isNH) return (b.r.weight||0)-(a.r.weight||0); // sort by weight desc for NH
+    return a.r.draw-b.r.draw; // sort by draw for flat
+  });
   list.innerHTML=sorted.map(function(item){
     var r=item.r; var i=item.i;
-    var sk=r.style.replace(' ','');
+    var sk=(r.style||'').replace(' ','_').replace(' ','_');
     var fd=parseForm(r.form||'');
     var formDisp=r.form?('<span style="letter-spacing:.15em">'+r.form+'</span> <span style="color:#aaa;font-size:9px">('+fd.runsThisSeason+' run'+(fd.runsThisSeason!==1?'s':'')+' this season)</span>'):'No form entered';
-    var pb=r.ped?'<span class="pedbadge ok">Pedigree ✓</span>':'<span class="pedbadge none">No pedigree</span>';
-    var grpBadge=r.grpWin==='yes'?'<span class="pedbadge ok">Grp Win ✓</span>':r.grpWin==='no'?'<span class="pedbadge none">No Grp Win</span>':'';
-    return '<div class="rc"><div class="rc-draw">'+(r.draw||'?')+'</div>'
+    var grpBadge=r.grpWin==='yes'||r.grade_win?'<span class="pedbadge ok">'+(isNH?'Grade Win ✓':'Grp Win ✓')+'</span>':(r.grpWin==='no'||r.grade_win===false)?'<span class="pedbadge none">No '+(isNH?'Grade Win':'Grp Win')+'</span>':'';
+    var drawOrWeight=isNH?('<div class="rc-draw" style="font-size:12px;min-width:44px;line-height:1.2">'+(r.weight||'?')+'</div>'):('<div class="rc-draw">'+(r.draw||'?')+'</div>');
+    var nhMeta=isNH?('<span><b>Age:</b> '+(r.age||'?')+'</span><span><b>Runs:</b> '+(r.chase_runs||0)+'/'+( r.chase_wins||0)+' wins</span>'+(r.dist_win?'<span style="color:var(--green);font-size:9px">✅ 3m+</span>':'<span style="color:var(--amber);font-size:9px">⚠️ No 3m+</span>')):'';
+    var orDisplay=isNH?(r.or_||'—'):r.or;
+    return '<div class="rc">'+drawOrWeight
       +'<div class="rc-info"><div class="rc-name">'+r.name+' <span style="font-family:\'IBM Plex Mono\',monospace;font-size:10px;font-weight:400;color:var(--mid)">('+r.bred+')</span></div>'
-      +'<div class="rc-meta"><span><b>T:</b> '+r.trainer+'</span><span><b>J:</b> '+r.jockey+'</span><span><b>OR:</b> '+r.or+'</span><span><b>SP:</b> '+r.sp+'</span></div>'
+      +'<div class="rc-meta"><span><b>T:</b> '+r.trainer+'</span><span><b>J:</b> '+r.jockey+'</span><span><b>OR:</b> '+orDisplay+'</span><span><b>SP:</b> '+r.sp+'</span>'+nhMeta+'</div>'
       +'<div class="rc-form">'+formDisp+'</div></div>'
-      +'<div class="rc-badges"><span class="pbadge p'+sk+'">'+r.style+'</span>'+pb+grpBadge+'</div>'
+      +'<div class="rc-badges"><span class="pbadge p'+sk+'">'+r.style+'</span>'+grpBadge+'</div>'
       +'<div style="display:flex;gap:6px;margin-left:8px">'
       +'<button class="btn btn-ghost" style="padding:5px 10px;font-size:9px" onclick="editRunner('+i+')">Edit</button>'
       +'<button class="btn btn-danger" onclick="removeRunner('+i+')">✕</button>'
       +'</div></div>';
   }).join('');
   genRow.style.display='flex';
-  var wp=runners.filter(function(r){return r.ped;}).length;
-  genInfo.textContent=runners.length+' runners · '+wp+' with pedigree data';
+  genInfo.textContent=runners.length+' runners';
 }
 
 // ─────────────────────────────────────────────
@@ -831,23 +1149,44 @@ var DOSAGE_CELLS = [
 ];
 
 function renderProfile() {
+  var isNH = CURRENT_RACE==='national';
+  var factors = isNH ? GN_PROFILE_FACTORS : PROFILE_FACTORS;
+  var dosageCells = isNH ? GN_DOSAGE_CELLS : DOSAGE_CELLS;
+  var winners = isNH ? GN_WINNERS : WINNERS;
+
+  // Update profile panel header
+  var panelHdr = document.querySelector('#panel-profile .panel-title');
+  if (panelHdr) panelHdr.textContent = isNH ? '2006–2025 · 19 Winners (excl. 2020)' : '2011–2025 · 15 Winners';
+
   var grid=document.getElementById('icp-grid');
-  grid.innerHTML=PROFILE_FACTORS.map(function(f){
+  grid.innerHTML=factors.map(function(f){
     return '<div class="icp-cell"><div class="icp-label">'+f.label+'</div><div class="icp-value">'+f.ideal+'</div><div class="icp-stats">'+f.stats.replace(/\n/g,'<br>')+'</div></div>';
   }).join('');
   var dgrid=document.getElementById('dos-grid');
-  dgrid.innerHTML=DOSAGE_CELLS.map(function(d){
+  dgrid.innerHTML=dosageCells.map(function(d){
     return '<div class="dos-cell"><div class="dos-metric">'+d.label+'</div><div class="dos-sweet">'+d.sweet+'</div><div class="dos-note">'+d.note+'</div></div>';
   }).join('');
   var tbody=document.getElementById('winner-tbody');
-  tbody.innerHTML=WINNERS.map(function(w){
-    return '<tr><td><strong>'+w.year+'</strong></td><td>'+w.winner+'</td><td>'+w.bred+'</td>'
-      +'<td>'+w.draw+' ('+w.drawGrp+')</td><td>'+w.style+'</td><td>'+w.trainer+'</td>'
-      +'<td>'+w.or+'</td><td>'+(w.wgt||'9-0')+'</td><td>'+w.sp+'</td><td style="font-family:IBM Plex Mono,monospace;letter-spacing:.05em">'+w.form+'</td>'
-      +'<td>'+w.lastRun+'</td><td>'+(w.grpWin==='yes'?'✓':'✗')+'</td>'
-      +'<td>'+(w.di!==null?w.di:'—')+'</td><td>'+(w.cod!==null?w.cod:'—')+'</td>'
-      +'<td>'+(w.jsi!==null?w.jsi:'—')+'</td><td>'+w.field+'</td></tr>';
-  }).join('');
+  if (isNH) {
+    document.querySelector('.wtable thead tr').innerHTML='<th>Year</th><th>Winner</th><th>Bred</th><th>Age</th><th>Weight</th><th>OR</th><th>Style</th><th>Trainer</th><th>SP</th><th>Form</th><th>Days</th><th>Field</th>';
+    tbody.innerHTML=winners.map(function(w){
+      return '<tr><td><strong>'+w.year+'</strong></td><td>'+w.winner+'</td><td>'+w.bred+'</td>'
+        +'<td>'+w.age+'</td><td style="font-family:IBM Plex Mono,monospace">'+w.weight+'</td>'
+        +'<td>'+w.or_+'</td><td>'+w.style+'</td><td>'+w.trainer+'</td>'
+        +'<td>'+w.sp+'</td><td style="font-family:IBM Plex Mono,monospace;letter-spacing:.05em">'+w.form+'</td>'
+        +'<td>'+w.days+'</td><td>'+w.field+'</td></tr>';
+    }).join('');
+  } else {
+    document.querySelector('.wtable thead tr').innerHTML='<th>Year</th><th>Winner</th><th>Bred</th><th>Draw</th><th>Style</th><th>Trainer</th><th>OR</th><th>Wgt</th><th>SP</th><th>Form</th><th>Last Run</th><th>Grp Win</th><th>DI</th><th>COD</th><th>JSI</th><th>Field</th>';
+    tbody.innerHTML=winners.map(function(w){
+      return '<tr><td><strong>'+w.year+'</strong></td><td>'+w.winner+'</td><td>'+w.bred+'</td>'
+        +'<td>'+w.draw+' ('+w.drawGrp+')</td><td>'+w.style+'</td><td>'+w.trainer+'</td>'
+        +'<td>'+w.or+'</td><td>'+(w.wgt||'9-0')+'</td><td>'+w.sp+'</td><td style="font-family:IBM Plex Mono,monospace;letter-spacing:.05em">'+w.form+'</td>'
+        +'<td>'+w.lastRun+'</td><td>'+(w.grpWin==='yes'?'✓':'✗')+'</td>'
+        +'<td>'+(w.di!==null?w.di:'—')+'</td><td>'+(w.cod!==null?w.cod:'—')+'</td>'
+        +'<td>'+(w.jsi!==null?w.jsi:'—')+'</td><td>'+w.field+'</td></tr>';
+    }).join('');
+  }
 }
 
 // ─────────────────────────────────────────────
@@ -864,6 +1203,7 @@ function goGenerate() {
 }
 
 function runAnalysis(key) {
+  if (CURRENT_RACE==='national') { runAnalysisGN(key); return; }
   var out=document.getElementById('analysis-out');
   var loading=document.getElementById('analysis-loading');
   out.innerHTML=''; loading.style.display='block';
@@ -970,19 +1310,27 @@ function runAnalysis(key) {
 function renderWithScores(scored, text) {
   var out=document.getElementById('analysis-out');
   out.innerHTML='';
+  var isNH = CURRENT_RACE==='national';
 
   // Score bar summary
-  var W=RACE.weights;
-  var weightNote='Style '+W.style+'% · Draw '+W.draw+'% · OR '+W.or+'% · SP '+W.sp+'% · Form '+W.form+'% · Pedigree '+W.pedigree+'% · Trainer '+W.trainer+'% · Jockey '+W.jockey+'%';
+  var weightNote;
+  if (isNH) {
+    weightNote='Age 20% · OR 18% · Trainer 12% · Style 8% · Grade Win 8% · Chase Runs 7% · Chase Win% 7% · Weight 7% · Top3-Last4 5% · Last Run 4% · Runs/Season 3% · 24f+ Win 1% | Penalty: ×0.65 if 0 top-3 in last 4';
+  } else {
+    var W=RACE.weights;
+    weightNote='Style '+W.style+'% · Draw '+W.draw+'% · OR '+W.or+'% · SP '+W.sp+'% · Form '+W.form+'% · Pedigree '+W.pedigree+'% · Trainer '+W.trainer+'% · Jockey '+W.jockey+'%';
+  }
   var sumHTML='<div class="out-sec"><div class="out-hdr"><span class="out-num">◎</span>Statistical Score Summary</div><div class="out-body">';
   sumHTML+='<div style="font-family:IBM Plex Mono,monospace;font-size:9px;color:var(--mid);margin-bottom:14px;letter-spacing:.08em">'+weightNote+'</div>';
   scored.forEach(function(s){
-    var stars=starsFromScore(s.result.composite);
+    var displayScore = isNH ? (s.result.final_||s.result.composite) : s.result.composite;
+    var stars=starsFromScore(displayScore);
     var st='';
     for(var i=0;i<5;i++) st+=(i<stars?'<span class="sf">★</span>':'<span class="se">☆</span>');
-    sumHTML+='<div class="score-bar-wrap"><div style="font-family:Playfair Display,serif;font-size:14px;font-weight:700;min-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+s.runner.name+'</div>'
-      +'<div class="score-bar-bg"><div class="score-bar" style="width:'+s.result.composite+'%"></div></div>'
-      +'<div class="score-val">'+s.result.composite+'</div>'
+    var penFlag = (isNH && s.result.penalty) ? ' <span style="font-size:9px;color:var(--red);font-family:IBM Plex Mono,monospace">⚠️ PENALTY</span>' : '';
+    sumHTML+='<div class="score-bar-wrap"><div style="font-family:Playfair Display,serif;font-size:14px;font-weight:700;min-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+s.runner.name+penFlag+'</div>'
+      +'<div class="score-bar-bg"><div class="score-bar" style="width:'+displayScore+'%"></div></div>'
+      +'<div class="score-val">'+displayScore+'</div>'
       +'<div class="stars" style="font-size:13px;min-width:80px">'+st+'</div></div>';
   });
   sumHTML+='</div></div>';
@@ -1001,6 +1349,7 @@ function renderWithScores(scored, text) {
 }
 
 function renderRunnersSec(out, body, scored) {
+  var isNH = CURRENT_RACE==='national';
   var wrap=document.createElement('div');
   wrap.className='out-sec';
   wrap.innerHTML='<div class="out-hdr"><span class="out-num">2</span>Runner-by-Runner Analysis</div>';
@@ -1012,7 +1361,9 @@ function renderRunnersSec(out, body, scored) {
     var spM=hdr.match(/ - ([^|]+)\|/); var sp=spM?spM[1].trim():'';
     var trM=hdr.match(/\| *([^/]+)\//); var tr=trM?trM[1].trim():'';
     var jkM=hdr.match(/\/ *([^|]+)\|/); var jk=jkM?jkM[1].trim():'';
-    var drM=hdr.match(/Stall:([^\s|]+)/); var dr=drM?drM[1].trim():'';
+    var drM=isNH ? hdr.match(/Wgt:([^\s|]+)/) : hdr.match(/Stall:([^\s|]+)/);
+    var dr=drM?drM[1].trim():'';
+    var ageM=isNH?hdr.match(/Age:([^\s|]+)/):null; var ageVal=ageM?ageM[1].trim():'';
     var scM=hdr.match(/Score:(\d+)/); var sc=scM?parseInt(scM[1]):null;
     var stars=sc!==null?starsFromScore(sc):3;
     var st=''; for(var i=0;i<5;i++) st+=(i<stars?'<span class="sf">★</span>':'<span class="se">☆</span>');
@@ -1021,11 +1372,18 @@ function renderRunnersSec(out, body, scored) {
     var formM=rest.match(/\*\*Form:\*\*\n?([\s\S]*?)(?=\*\*Pedigree|\*\*Trip|\*\*Profile|$)/); var formText=formM?formM[1].trim():'';
     var assessM=rest.match(/\*\*Assessment:\*\*\n?([\s\S]*?)(?=\*\*Overall|$)/); var assess=assessM?assessM[1].trim():'';
     var tableM=rest.match(/\*\*Profile Match:\*\*\n?([\s\S]*?)(?=\*\*Assessment|\*\*Overall|$)/);
+    var metaLine=isNH
+      ? '<span>'+tr+' / '+jk+'</span><span>Wgt: '+dr+'lbs</span>'+(ageVal?'<span>Age: '+ageVal+'</span>':'')+'<span>SP: '+sp+'</span>'
+      : '<span>'+tr+' / '+jk+'</span><span>Stall: '+dr+'</span><span>SP: '+sp+'</span>';
+    // NH-specific sections
+    var jumpM=isNH?rest.match(/\*\*Jumping \& Experience:\*\*\n?([\s\S]*?)(?=\*\*Profile|\*\*Assessment|$)/):null;
+    var jumpText=jumpM?jumpM[1].trim():'';
     card.innerHTML='<div class="sc-hdr"><div><div class="sc-name">'+namePart+'</div>'
-      +'<div class="sc-meta"><span>'+tr+' / '+jk+'</span><span>Stall: '+dr+'</span><span>SP: '+sp+'</span></div></div>'
+      +'<div class="sc-meta">'+metaLine+'</div></div>'
       +'<div class="sc-right"><div class="stars">'+st+'</div>'+(sc!==null?'<div class="score-chip">'+sc+'/100</div>':'')+'</div></div>'
       +'<div class="sc-body">'
       +(formText?'<div class="ped-box" style="border-left-color:#4a4035"><div class="ped-box-lbl" style="color:#4a4035">Form</div>'+formText.replace(/\n/g,'<br>')+'</div>':'')
+      +(jumpText?'<div class="ped-box" style="border-left-color:#856404"><div class="ped-box-lbl" style="color:#856404">Jumping & Experience</div>'+jumpText.replace(/\n/g,'<br>')+'</div>':'')
       +((ped||trip)?'<div class="ped-box"><div class="ped-box-lbl">Pedigree Assessment</div>'+(ped?ped.replace(/\n/g,'<br>'):'')+(trip?'<div class="trip-line">'+trip+'</div>':'')+'</div>':'')
       +(tableM?mdTable(tableM[1]):'')
       +(assess?'<div class="assessment-box">'+assess+'</div>':'')
@@ -1088,6 +1446,108 @@ function mdTable(text, isPred) {
   });
   if (inBody) html+='</tbody>';
   return html+'</table>';
+}
+
+// ─────────────────────────────────────────────
+// GN ANALYSIS RUNNER
+// ─────────────────────────────────────────────
+function runAnalysisGN(key) {
+  var out=document.getElementById('analysis-out');
+  var loading=document.getElementById('analysis-loading');
+  out.innerHTML=''; loading.style.display='block';
+
+  var scored=runners.map(function(r){ return {runner:r, result:scoreRunnerGN(r)}; });
+  scored.sort(function(a,b){return (b.result.final_||b.result.composite)-(a.result.final_||a.result.composite)});
+
+  var scoreSummary=scored.map(function(s,i){
+    var pen=s.result.penalty?' [⚠️ TOP-3 PENALTY APPLIED]':'';
+    return (i+1)+'. '+s.runner.name+' — '+s.result.final_+'/100'+pen+' ('+starsFromScore(s.result.final_)+'★)';
+  }).join('\n');
+
+  var runnerDetails=scored.map(function(s,i){
+    var r=s.runner; var res=s.result;
+    var formStr=r.form||'not entered';
+    var cwpct=r.chase_runs>0?Math.round(r.chase_wins/r.chase_runs*100):0;
+    var distStr=r.dist_win?'24f+Win:YES':'24f+Win:NO';
+    var gradeStr=r.grade_win?'GradeWin:YES':'GradeWin:NO';
+    return (i+1)+'. '+r.name+' ('+r.bred+') Age:'+(r.age||'?')+' Wgt:'+(r.weight||'?')+' OR:'+(r.or_||r.or||'?')
+      +' '+r.trainer+'/'+(r.jockey||'?')+' SP:'+(r.sp||'?')+' Style:'+r.style
+      +' Form:'+formStr+' ChaseRuns:'+r.chase_runs+'/'+r.chase_wins+'wins('+cwpct+'%) '+distStr+' '+gradeStr
+      +(r.notes?' Note:'+r.notes:'')
+      +'\n   FINAL SCORE:'+res.final_+'/100 (composite:'+res.composite+(res.penalty?' ×0.65 penalty':'')+') T3L4:'+res.t3
+      +'\n   Age:'+res.scores.age+' OR:'+res.scores.or_+' Trainer:'+res.scores.trainer+' Style:'+res.scores.style
+      +' GradeWin:'+res.scores.grade_win+' ChaseRuns:'+res.scores.chase_runs+' ChaseWin%:'+res.scores.chase_win
+      +' Weight:'+res.scores.weight+' Top3L4:'+res.scores.top3_last4+' LastRun:'+res.scores.last_run
+      +' RunsSeason:'+res.scores.runs_season+' DistWin:'+res.scores.dist_win
+      +'\n   '+Object.keys(res.details).map(function(k){return res.details[k];}).join(' | ');
+  }).join('\n\n');
+
+  var prompt='NH RACING ANALYSER — GRAND NATIONAL 2026\n'
+    +'Aintree · 4m2½f · 30 fences · Open handicap chase\n'
+    +'Dataset: 2006–2025 (19 winners, excl. 2020 cancelled)\n\n'
+    +'SCORING MODEL (weights):\n'
+    +'Age 20% · OR 18% · Trainer 12% · Style 8% · Grade Win 8% · Chase Runs 7% · Chase Win% 7% · Weight 7% · Top-3 Last 4 5% · Last Run 4% · Runs Season 3% · 24f+ Win 1%\n'
+    +'BINARY PENALTY: 0 top-3 in last 4 runs → composite ×0.65\n\n'
+    +'STATISTICAL SCORES (pre-calculated — prediction MUST follow score order):\n'
+    +scoreSummary+'\n\n'
+    +'RUNNER DETAILS:\n'+runnerDetails+'\n\n'
+    +'KEY FACTS FROM 19-YEAR DATASET:\n'
+    +'- Age 8: 6/19 winners (dominant). Age 9: 5/19. Age 10+: 0 wins since 2011.\n'
+    +'- OR 145-149: 6/19 winners. OR 160-164: 2/19 but 2/4 most recent. OR 165+: 0 wins ever.\n'
+    +'- MIDFIELD style: 6/10 modern winners. All 4 most recent winners raced midfield.\n'
+    +'- Chase runs 8-10: 6/10 modern winners. Win rate 20%+: 8/10 modern winners.\n'
+    +'- IRE-bred: 8/10 modern winners (IV 1.36 on 224 runners).\n'
+    +'- 2+ top-3 in last 4 runs: 9/10 modern winners. 0 top-3 = heavy penalty.\n'
+    +'- 24f+ win: 7/10 modern winners — preferred but not essential.\n'
+    +'- Trainers: W P Mullins/G Elliott IV 1.80 (42 runners each). P Nicholls: 0 wins from 23 runners.\n'
+    +'- Falls/unseats in form (F/U/S/B): do NOT penalise — NH racing reality.\n\n'
+    +'OUTPUT — use EXACTLY these section headers:\n\n'
+    +'## RUNNER ANALYSIS\n'
+    +'For each runner in score order:\n'
+    +'### [NAME] - [SP] | [Trainer]/[Jockey] | [Weight] | Age [X] | Score:[final]/100\n'
+    +'**Form:** Interpret the form string. Note runs this season (after the dash), last run result, any falls/PUs (contextualise not penalise). Note 2+/3+ top-3 in last 4 if present.\n'
+    +'**Profile Match:**\n'
+    +'| Factor | Ideal | This Runner | Match |\n|---|---|---|---|\n'
+    +'| Age | 8 (9 viable) | x | ✅/🟡/❌ |\n'
+    +'| OR | 145-149 or 160-164 | x | ✅/🟡/❌ |\n'
+    +'| Weight | 11st1-11st10 | x | ✅/🟡/❌ |\n'
+    +'| Style | MIDFIELD | x | ✅/🟡/❌ |\n'
+    +'| Trainer | Mullins/Elliott/Russell | x | ✅/🟡/❌ |\n'
+    +'| Grade Win | Yes | x | ✅/⚠️ |\n'
+    +'| Chase Runs | 7-11 | x | ✅/🟡/❌ |\n'
+    +'| Chase Win% | 20%+ | x | ✅/🟡/❌ |\n'
+    +'| Last Run | 1st | x | ✅/🟡/❌ |\n'
+    +'| Top-3 Last 4 | 2-3 | x | ✅/🟡/❌ |\n'
+    +'| 24f+ Win | Yes | x | ✅/⚠️ |\n'
+    +'| Breeding | IRE | x | ✅/🟡 |\n'
+    +'**Assessment:** 2-3 sentences on composite score, key strengths/weaknesses vs winner profile.\n\n'
+    +'## PREDICTION\n'
+    +'| Position | Horse | Weight | Score | OR | SP | Key Reason |\n|---|---|---|---|---|---|---|\n\n'
+    +'## PREDICTION NARRATIVE\n'
+    +'4-5 sentences. Race shape, pace scenario, how the Aintree fences sort the field, why top selection is best profile fit.\n\n'
+    +'## FLAGS & CAVEATS\n'
+    +'One per line: Flag Type: detail. Flag: age 10+, OR 165+, top weight concerns, 0 chase wins, no 24f+ win, 0 top-3 in last 4 (penalty applied), Nicholls runners.';
+
+  fetch('https://racing-proxy.danmigo.workers.dev', {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:8000,messages:[{role:'user',content:prompt}]})
+  }).then(function(r){
+    if (!r.ok) return r.text().then(function(t){throw new Error('HTTP '+r.status+': '+t.slice(0,200));});
+    return r.json();
+  }).then(function(data){
+    loading.style.display='none';
+    var text='';
+    if (data.content&&Array.isArray(data.content)) {
+      text=data.content.filter(function(b){return b.type==='text';}).map(function(b){return b.text;}).join('');
+    } else { throw new Error('Unexpected response'); }
+    if (!text.trim()) throw new Error('Empty response');
+    renderWithScores(scored, text);
+  }).catch(function(err){
+    loading.style.display='none';
+    console.error('Error:',err);
+    out.innerHTML='<div class="err-box"><strong>Error generating analysis</strong><br><br>'+err.message+'</div>';
+  });
 }
 
 // ─────────────────────────────────────────────
