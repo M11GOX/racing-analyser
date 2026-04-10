@@ -262,7 +262,7 @@ textarea{resize:vertical;min-height:52px}
       <div class="fg flat-only"><label>Draw (Stall)</label><input id="f-draw" type="number" min="1" max="30" placeholder=""></div>
       <!-- NH ONLY -->
       <div class="fg nh-only" style="display:none"><label>Age</label><input id="f-age" type="number" min="5" max="14" placeholder="e.g. 9"></div>
-      <div class="fg nh-only" style="display:none"><label>Weight <span style="color:var(--gold);font-size:8px">FORMAT: 11-8</span></label><input id="f-weight" placeholder="e.g. 11-8" style="font-family:'IBM Plex Mono',monospace" oninput="normaliseWeight(this)"></div>
+      <div class="fg nh-only" style="display:none"><label>Weight <span style="color:var(--gold);font-size:8px">FORMAT: 11-8</span></label><input id="f-weight" placeholder="e.g. 11-8" style="font-family:'IBM Plex Mono',monospace" onblur="normaliseWeight(this)"></div>
       <div class="fg"><label>SP (Odds)</label><input id="f-sp" placeholder=""></div>
       <div class="fg"><label>Trainer</label><input id="f-trainer" placeholder=""></div>
       <div class="fg"><label>Jockey</label><input id="f-jockey" placeholder=""></div>
@@ -922,6 +922,14 @@ function starsFromScore(s) { return s>=80?5:s>=65?4:s>=50?3:s>=35?2:1; }
 // RACE SELECTOR
 // ─────────────────────────────────────────────
 function selectRace(mode) {
+  // If switching with existing runners, confirm BEFORE any UI mutation
+  if (mode !== CURRENT_RACE && runners.length > 0) {
+    if (!confirm('Switch race? This will clear the current runners list.')) {
+      return; // clean no-op
+    }
+    runners = [];
+  }
+
   CURRENT_RACE = mode;
   // Pills
   document.getElementById('pill-guineas').className = 'race-pill'+(mode==='guineas'?' active':'');
@@ -948,20 +956,8 @@ function selectRace(mode) {
   document.querySelectorAll('.nh-only').forEach(function(el){el.style.display=isNH?'flex':'none';});
   document.getElementById('nh-block').style.display=isNH?'block':'none';
 
-  // Clear runners when switching race to avoid cross-contamination
-  if (runners.length > 0) {
-    if (confirm('Switch race? This will clear the current runners list.')) {
-      runners = []; renderRunners();
-    } else {
-      // Revert selection
-      CURRENT_RACE = mode==='national'?'guineas':'national';
-      document.getElementById('pill-guineas').className='race-pill'+(CURRENT_RACE==='guineas'?' active':'');
-      document.getElementById('pill-national').className='race-pill'+(CURRENT_RACE==='national'?' active':'');
-      return;
-    }
-  }
-
-  // Re-render profile
+  // Re-render runners list and profile for new race mode
+  renderRunners();
   renderProfile();
 }
 
@@ -993,12 +989,15 @@ function switchTab(name, btn) {
 // JSI AUTO
 // ─────────────────────────────────────────────
 function normaliseWeight(el) {
-  // Accept 11-8 or 11st8lb or 11 8 — normalise to 11st8lb on blur
-  // Just store as-is while typing; gnParseWeightLbs handles all formats
-  var v = el.value.trim();
-  // Replace common shorthand: 11-8 → 11st8lb
-  var m = v.match(/^(\d{1,2})-(\d{1,2})$/);
-  if (m) el.value = m[1]+'st'+m[2]+'lb';
+  // Runs on BLUR only — accept 11-8, 11 8, 11st8lb, 11st8, etc → normalise to 11st8lb
+  var v = el.value.trim().toLowerCase().replace(/\s+/g,'');
+  if (!v) return;
+  var st, lb, m;
+  if ((m = v.match(/^(\d{1,2})[-–](\d{1,2})$/))) { st = +m[1]; lb = +m[2]; }
+  else if ((m = v.match(/^(\d{1,2})st(\d{1,2})?(?:lb)?$/))) { st = +m[1]; lb = +(m[2]||0); }
+  else return; // leave as-is, user may still be editing
+  if (lb > 13) { lb = 13; } // clamp - pounds max 13 before rolling to stones
+  el.value = st+'st'+lb+'lb';
 }
 
 function validateForm(el) {
@@ -1110,7 +1109,7 @@ function renderRunners() {
   count.textContent=runners.length+' runner'+(runners.length!==1?'s':'');
   if (!runners.length) { list.innerHTML=''; genRow.style.display='none'; return; }
   var sorted=runners.map(function(r,i){return {r:r,i:i};}).sort(function(a,b){
-    if (isNH) return (b.r.weight||0)-(a.r.weight||0); // sort by weight desc for NH
+    if (isNH) return gnParseWeightLbs(b.r.weight||'')-gnParseWeightLbs(a.r.weight||''); // sort by weight desc for NH
     return a.r.draw-b.r.draw; // sort by draw for flat
   });
   list.innerHTML=sorted.map(function(item){
