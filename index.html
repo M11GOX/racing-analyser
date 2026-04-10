@@ -262,7 +262,7 @@ textarea{resize:vertical;min-height:52px}
       <div class="fg flat-only"><label>Draw (Stall)</label><input id="f-draw" type="number" min="1" max="30" placeholder=""></div>
       <!-- NH ONLY -->
       <div class="fg nh-only" style="display:none"><label>Age</label><input id="f-age" type="number" min="5" max="14" placeholder="e.g. 9"></div>
-      <div class="fg nh-only" style="display:none"><label>Weight <span style="color:var(--gold);font-size:8px">FORMAT: 11st8lb</span></label><input id="f-weight" placeholder="e.g. 11st8lb" style="font-family:'IBM Plex Mono',monospace"></div>
+      <div class="fg nh-only" style="display:none"><label>Weight <span style="color:var(--gold);font-size:8px">FORMAT: 11-8</span></label><input id="f-weight" placeholder="e.g. 11-8" style="font-family:'IBM Plex Mono',monospace" oninput="normaliseWeight(this)"></div>
       <div class="fg"><label>SP (Odds)</label><input id="f-sp" placeholder=""></div>
       <div class="fg"><label>Trainer</label><input id="f-trainer" placeholder=""></div>
       <div class="fg"><label>Jockey</label><input id="f-jockey" placeholder=""></div>
@@ -329,8 +329,6 @@ textarea{resize:vertical;min-height:52px}
   </div>
   <div class="sec-label" style="margin-bottom:9px">Race Factors</div>
   <div class="icp-grid" id="icp-grid"></div>
-  <div class="sec-label" style="margin-bottom:9px">Pedigree / Dosage Sweet Spots</div>
-  <div class="dos-grid" id="dos-grid"></div>
   <hr class="rule">
   <div class="sec-label" style="margin-bottom:9px">Winner History</div>
   <table class="wtable">
@@ -717,6 +715,9 @@ function gnParseWeightLbs(w) {
   if (!w) return null;
   var m = w.match(/(\d+)st(\d+)lb/i);
   if (m) return parseInt(m[1])*14+parseInt(m[2]);
+  // 11-8 shorthand
+  m = w.match(/^(\d{1,2})-(\d{1,2})$/);
+  if (m) return parseInt(m[1])*14+parseInt(m[2]);
   m = w.match(/(\d+)\s+(\d+)/);
   if (m) return parseInt(m[1])*14+parseInt(m[2]);
   return null;
@@ -744,8 +745,8 @@ function gnRunsSeason(form) {
 function scoreRunnerGN(r) {
   var scores = {}, details = {};
 
-  // ── AGE (20%) ──────────────────────────────────────────────────
-  var ageMap = {7:50,8:100,9:78,10:35,11:15};
+  // ── AGE (18%) ──────────────────────────────────────────────────
+  var ageMap = {7:50,8:100,9:85,10:40,11:10};
   scores.age = ageMap[r.age] || 0;
   details.age = r.age===8 ? '✅ Age 8 — dominant (6/10 modern winners, IV 2.68)' :
                 r.age===9 ? '✅ Age 9 — 5/19 winners across all eras' :
@@ -757,38 +758,38 @@ function scoreRunnerGN(r) {
   // ── OR (18%) ───────────────────────────────────────────────────
   var or_ = parseInt(r.or_) || parseInt(r.or) || 0;
   if      (or_<=134)             { scores.or_=0;   details.or_='❌ OR below 135 — uncompetitive, 0 winners ever'; }
-  else if (or_<=144)             { scores.or_=25;  details.or_='⚠️ OR 135-144 — 5/19 winners but ALL pre-2015 (recency discounted)'; }
-  else if (or_<=149)             { scores.or_=75;  details.or_='✅ OR 145-149 — 6/19 winners, 5/10 modern era · high volume positive'; }
-  else if (or_<=154)             { scores.or_=55;  details.or_='🟡 OR 150-154 — viable (Tiger Roll 2018, Ballabriggs, Don\'t Push It)'; }
-  else if (or_<=159)             { scores.or_=65;  details.or_='✅ OR 155-159 — viable (Tiger Roll 2019, Neptune Collonges)'; }
-  else if (or_<=164)             { scores.or_=100; details.or_='✅ OR 160-164 — highest IV, 2/4 most recent winners (Rockett, Clouds)'; }
-  else                           { scores.or_=0;   details.or_='❌ OR 165+ — 0 winners in 19-year corrected dataset'; }
+  else if (or_<=144)             { scores.or_=10;  details.or_='⚠️ OR 135-144 — 5/19 winners but ALL pre-2015 (recency discounted)'; }
+  else if (or_<=149)             { scores.or_=70;  details.or_='✅ OR 145-149 — 6/19 winners, 5/10 modern era · high volume positive'; }
+  else if (or_<=154)             { scores.or_=80;  details.or_='✅ OR 150-154 — viable (Tiger Roll 2018, Ballabriggs, Don\'t Push It)'; }
+  else if (or_<=158)             { scores.or_=90;  details.or_='✅ OR 155-158 — strong (Tiger Roll 2019, Neptune Collonges)'; }
+  else if (or_<=164)             { scores.or_=100; details.or_='✅ OR 159-164 — highest IV, 2/4 most recent winners (Rockett, Maximus)'; }
+  else                           { scores.or_=30;  details.or_='⚠️ OR 165+ — 0 winners in corrected data but near-top handicap range'; }
 
-  // ── TRAINER (12%) ─────────────────────────────────────────────
+  // ── TRAINER (10%) ─────────────────────────────────────────────
   var tl = (r.trainer||'').toLowerCase();
-  if      (tl.includes('russell'))                          { scores.trainer=95;  details.trainer="🟢 L Russell — 2/4 runners = winners (IV 18.95) · One For Arthur, Corach Rambler"; }
-  else if (tl.includes('w p mullins')||tl.includes('willie mullins')) { scores.trainer=90;  details.trainer="🟢 W P Mullins — 2 wins, IV 1.80 · dominant volume operation (42 runners)"; }
-  else if (tl.includes('elliott'))                          { scores.trainer=90;  details.trainer="🟢 G Elliott — 2 wins, IV 1.80 · Tiger Roll ×2, Silver Birch (42 runners)"; }
+  if      (tl.includes('russell'))                          { scores.trainer=95;  details.trainer="🟢 L Russell — 2/4 runners = winners · One For Arthur, Corach Rambler"; }
+  else if (tl.includes('w p mullins')||tl.includes('willie mullins')) { scores.trainer=95;  details.trainer="🟢 W P Mullins — 2 wins, IV 1.80 · dominant volume operation"; }
+  else if (tl.includes('elliott'))                          { scores.trainer=90;  details.trainer="🟢 G Elliott — 2 wins, IV 1.80 · Tiger Roll ×2, Silver Birch"; }
   else if (tl.includes('bromhead'))                         { scores.trainer=85;  details.trainer="🟢 H De Bromhead — 1 win (Minella Times), IV 2.53"; }
-  else if (tl.includes('e mullins')||tl.includes('emmet'))  { scores.trainer=80;  details.trainer="🟢 E Mullins — 1 win (Noble Yeats), IV 12.63 · tiny sample, score capped"; }
+  else if (tl.includes('e mullins')||tl.includes('emmet'))  { scores.trainer=80;  details.trainer="🟢 E Mullins — 1 win (Noble Yeats), tiny sample"; }
   else if (tl.includes('nicholls'))                         { scores.trainer=20;  details.trainer="❌ P Nicholls — 23 runners, 0 wins · consistent strong negative"; }
   else if (tl.includes('henderson'))                        { scores.trainer=30;  details.trainer="⚠️ N Henderson — 7 runners, 0 wins · negative signal"; }
   else if (tl.includes('cromwell'))                         { scores.trainer=45;  details.trainer="🟡 G Cromwell — 8 runners, 0 wins · moderate negative"; }
-  else                                                      { scores.trainer=35;  details.trainer="🟡 "+(r.trainer||'Unknown')+" — outside top trainers (IV 0.32 for 'others' group)"; }
+  else                                                      { scores.trainer=35;  details.trainer="🟡 "+(r.trainer||'Unknown')+" — outside top trainers (IV 0.32 for others group)"; }
 
   // ── RUNNING STYLE (8%) ────────────────────────────────────────
   var styleVal = (r.styleNH||r.style||'MIDFIELD').toUpperCase().replace('_',' ');
-  var styleMap = {MIDFIELD:100,PROMINENT:60,'HOLD UP':45,LED:0};
+  var styleMap = {MIDFIELD:100,PROMINENT:75,'HOLD UP':60,LED:0};
   scores.style = styleMap[styleVal] !== undefined ? styleMap[styleVal] : 35;
   details.style = styleVal==='MIDFIELD'  ? '✅ MIDFIELD — IV 1.39, 6/10 modern winners · all 4 most recent winners' :
-                  styleVal==='PROMINENT' ? '🟡 PROMINENT — 2/10 modern winners, below par but viable' :
+                  styleVal==='PROMINENT' ? '🟡 PROMINENT — 2/10 modern winners, viable' :
                   styleVal==='HOLD UP'   ? '🟡 HOLD UP — 2/10 modern, below par (IV 0.63)' :
                                            '❌ LED — 0 winners in 19-year sample';
 
-  // ── GRADE WIN (8%) ────────────────────────────────────────────
-  scores.grade_win = r.grpWin==='yes'||r.grade_win ? 100 : 35;
+  // ── GRADE WIN (10%) ───────────────────────────────────────────
+  scores.grade_win = r.grpWin==='yes'||r.grade_win ? 100 : 30;
   details.grade_win = (r.grpWin==='yes'||r.grade_win) ?
-    '✅ Grade/Listed win — 8/10 modern winners have one' :
+    '✅ Grade win — 8/10 modern winners have one' :
     '⚠️ No Grade win — only Noble Yeats (50/1) & Minella Times (11/1) won without';
 
   // ── CHASE RUNS (7%) ───────────────────────────────────────────
@@ -807,12 +808,12 @@ function scoreRunnerGN(r) {
   var cw = parseInt(r.chase_wins) || 0;
   var cwpct = cr>0 ? Math.round(cw/cr*100) : 0;
   if      (cwpct>=40)  { scores.chase_win=100; details.chase_win='✅ '+cw+'/'+cr+' = '+cwpct+'% — elite strike rate'; }
-  else if (cwpct>=30)  { scores.chase_win=85;  details.chase_win='✅ '+cw+'/'+cr+' = '+cwpct+'% — strong (30%+ threshold)'; }
-  else if (cwpct>=20)  { scores.chase_win=70;  details.chase_win='✅ '+cw+'/'+cr+' = '+cwpct+'% — meets 20% threshold (8/10 modern winners)'; }
-  else if (cwpct>=10)  { scores.chase_win=45;  details.chase_win='⚠️ '+cw+'/'+cr+' = '+cwpct+'% — below ideal 20% threshold'; }
+  else if (cwpct>=30)  { scores.chase_win=90;  details.chase_win='✅ '+cw+'/'+cr+' = '+cwpct+'% — strong (30%+ threshold)'; }
+  else if (cwpct>=20)  { scores.chase_win=80;  details.chase_win='✅ '+cw+'/'+cr+' = '+cwpct+'% — meets 20% threshold (8/10 modern winners)'; }
+  else if (cwpct>=10)  { scores.chase_win=60;  details.chase_win='🟡 '+cw+'/'+cr+' = '+cwpct+'% — below ideal 20% threshold'; }
   else if (cwpct>0)    { scores.chase_win=25;  details.chase_win='⚠️ '+cw+'/'+cr+' = '+cwpct+'% — very low win rate'; }
   else if (cr===0)     { scores.chase_win=50;  details.chase_win='🟡 Chase runs not entered — neutral score applied'; }
-  else                 { scores.chase_win=5;   details.chase_win='❌ 0/'+cr+' chase wins — Rule The World (0/13) only precedent · very rare winner'; }
+  else                 { scores.chase_win=0;   details.chase_win='❌ 0/'+cr+' chase wins — Rule The World (0/13) only precedent · very rare winner'; }
 
   // ── WEIGHT (7%) ───────────────────────────────────────────────
   var wgt_str = r.weight||'';
@@ -863,15 +864,17 @@ function scoreRunnerGN(r) {
     '⚠️ No 24f+ win — 3/10 won without (Noble Yeats, Minella Times, Rule The World)';
 
   // ── COMPOSITE ─────────────────────────────────────────────────
-  var W = {age:20,or_:18,trainer:12,style:8,grade_win:8,chase_runs:7,chase_win:7,weight:7,top3_last4:5,last_run:4,runs_season:3,dist_win:1};
+  // Weights: Age18 OR18 Trainer10 Style8 GradeWin10 ChaseRuns7 ChaseWin7 Weight7 Top3L45 LastRun4 RunsSeason3 DistWin1 = 98 → normalise to 100
+  var W = {age:18,or_:18,trainer:10,style:8,grade_win:10,chase_runs:7,chase_win:7,weight:7,top3_last4:5,last_run:4,runs_season:3,dist_win:1};
+  var Wtot = Object.keys(W).reduce(function(s,k){return s+W[k];},0); // = 98
   var tot = 0;
   Object.keys(W).forEach(function(k){ tot += (scores[k]||0) * W[k]; });
-  var composite = Math.round(tot)/100;
+  var composite = Math.round(tot/Wtot*10)/10;
   var penalty = t3===0;
   var final_ = penalty ? Math.round(composite*0.65*10)/10 : Math.round(composite*10)/10;
 
   return {
-    composite: Math.round(composite*10)/10,
+    composite: composite,
     final_: final_,
     scores: scores,
     details: details,
@@ -989,6 +992,15 @@ function switchTab(name, btn) {
 // ─────────────────────────────────────────────
 // JSI AUTO
 // ─────────────────────────────────────────────
+function normaliseWeight(el) {
+  // Accept 11-8 or 11st8lb or 11 8 — normalise to 11st8lb on blur
+  // Just store as-is while typing; gnParseWeightLbs handles all formats
+  var v = el.value.trim();
+  // Replace common shorthand: 11-8 → 11st8lb
+  var m = v.match(/^(\d{1,2})-(\d{1,2})$/);
+  if (m) el.value = m[1]+'st'+m[2]+'lb';
+}
+
 function validateForm(el) {
   // Allow digits, dash, F, U, R, P (DNF chars) — max 13 chars total (6 runs each side + dash)
   var val = el.value.replace(/[^0-9\-FURPfurp]/g,'');
@@ -1163,7 +1175,7 @@ function renderProfile() {
     return '<div class="icp-cell"><div class="icp-label">'+f.label+'</div><div class="icp-value">'+f.ideal+'</div><div class="icp-stats">'+f.stats.replace(/\n/g,'<br>')+'</div></div>';
   }).join('');
   var dgrid=document.getElementById('dos-grid');
-  dgrid.innerHTML=dosageCells.map(function(d){
+  if (dgrid) dgrid.innerHTML=dosageCells.map(function(d){
     return '<div class="dos-cell"><div class="dos-metric">'+d.label+'</div><div class="dos-sweet">'+d.sweet+'</div><div class="dos-note">'+d.note+'</div></div>';
   }).join('');
   var tbody=document.getElementById('winner-tbody');
@@ -1315,7 +1327,7 @@ function renderWithScores(scored, text) {
   // Score bar summary
   var weightNote;
   if (isNH) {
-    weightNote='Age 20% · OR 18% · Trainer 12% · Style 8% · Grade Win 8% · Chase Runs 7% · Chase Win% 7% · Weight 7% · Top3-Last4 5% · Last Run 4% · Runs/Season 3% · 24f+ Win 1% | Penalty: ×0.65 if 0 top-3 in last 4';
+    weightNote='Age 18% · OR 18% · Grade Win 10% · Trainer 10% · Style 8% · Chase Runs 7% · Chase Win% 7% · Weight 7% · Top3-Last4 5% · Last Run 4% · Runs/Season 3% · 24f+ Win 1% | ×0.65 penalty if 0 top-3 in last 4';
   } else {
     var W=RACE.weights;
     weightNote='Style '+W.style+'% · Draw '+W.draw+'% · OR '+W.or+'% · SP '+W.sp+'% · Form '+W.form+'% · Pedigree '+W.pedigree+'% · Trainer '+W.trainer+'% · Jockey '+W.jockey+'%';
@@ -1357,33 +1369,54 @@ function renderRunnersSec(out, body, scored) {
   body.split(/^### /m).filter(function(s){return s.trim();}).forEach(function(block){
     var lines=block.split('\n'); var hdr=lines[0].trim(); var rest=lines.slice(1).join('\n');
     var card=document.createElement('div'); card.className='scorecard';
-    var namePart=hdr.split(' - ')[0].trim();
-    var spM=hdr.match(/ - ([^|]+)\|/); var sp=spM?spM[1].trim():'';
-    var trM=hdr.match(/\| *([^/]+)\//); var tr=trM?trM[1].trim():'';
-    var jkM=hdr.match(/\/ *([^|]+)\|/); var jk=jkM?jkM[1].trim():'';
-    var drM=isNH ? hdr.match(/Wgt:([^\s|]+)/) : hdr.match(/Stall:([^\s|]+)/);
-    var dr=drM?drM[1].trim():'';
-    var ageM=isNH?hdr.match(/Age:([^\s|]+)/):null; var ageVal=ageM?ageM[1].trim():'';
-    var scM=hdr.match(/Score:(\d+)/); var sc=scM?parseInt(scM[1]):null;
+
+    // Parse header: NAME - SP | Trainer / Jockey | Wgt:X | Age:X | Score:X/100
+    // Split on | first to avoid regex conflicts
+    var parts = hdr.split('|').map(function(p){return p.trim();});
+    // parts[0] = "NAME - SP", parts[1] = "Trainer / Jockey", parts[2] = "Wgt:X" or "Stall:X", etc.
+    var nameSP = parts[0] || '';
+    var namePart = nameSP.split(' - ')[0].trim();
+    var sp = nameSP.indexOf(' - ')>=0 ? nameSP.split(' - ').slice(1).join(' - ').trim() : '';
+
+    var trainerJockey = parts[1] || '';
+    var slashIdx = trainerJockey.indexOf('/');
+    var tr = slashIdx>=0 ? trainerJockey.slice(0,slashIdx).trim() : trainerJockey.trim();
+    var jk = slashIdx>=0 ? trainerJockey.slice(slashIdx+1).trim() : '';
+
+    var dr='', ageVal='';
+    if (isNH) {
+      // Find Wgt: and Age: in remaining parts
+      for (var pi=2;pi<parts.length;pi++) {
+        var p=parts[pi];
+        var wm=p.match(/^Wgt:(.+)/i); if(wm) dr=wm[1].trim();
+        var am=p.match(/^Age:(.+)/i); if(am) ageVal=am[1].trim();
+      }
+    } else {
+      var stallPart = parts[2]||'';
+      var sm=stallPart.match(/Stall:([^\s]+)/i); if(sm) dr=sm[1].trim();
+    }
+
+    var scM=hdr.match(/Score:(\d+(?:\.\d+)?)/); var sc=scM?parseFloat(scM[1]):null;
     var stars=sc!==null?starsFromScore(sc):3;
     var st=''; for(var i=0;i<5;i++) st+=(i<stars?'<span class="sf">★</span>':'<span class="se">☆</span>');
+
     var tripM=rest.match(/\*\*Trip Verdict:([^*]+)\*\*/); var trip=tripM?tripM[1].trim():'';
-    var pedM=rest.match(/\*\*Pedigree:\*\*\n?([\s\S]*?)(?=\*\*Trip Verdict|\*\*Profile|\*\*Form|$)/); var ped=pedM?pedM[1].trim():'';
-    var formM=rest.match(/\*\*Form:\*\*\n?([\s\S]*?)(?=\*\*Pedigree|\*\*Trip|\*\*Profile|$)/); var formText=formM?formM[1].trim():'';
+    var pedM=rest.match(/\*\*Pedigree:\*\*\n?([\s\S]*?)(?=\*\*Trip Verdict|\*\*Profile|\*\*Form|\*\*Assessment|$)/); var ped=pedM?pedM[1].trim():'';
     var assessM=rest.match(/\*\*Assessment:\*\*\n?([\s\S]*?)(?=\*\*Overall|$)/); var assess=assessM?assessM[1].trim():'';
     var tableM=rest.match(/\*\*Profile Match:\*\*\n?([\s\S]*?)(?=\*\*Assessment|\*\*Overall|$)/);
+
     var metaLine=isNH
-      ? '<span>'+tr+' / '+jk+'</span><span>Wgt: '+dr+'lbs</span>'+(ageVal?'<span>Age: '+ageVal+'</span>':'')+'<span>SP: '+sp+'</span>'
-      : '<span>'+tr+' / '+jk+'</span><span>Stall: '+dr+'</span><span>SP: '+sp+'</span>';
-    // NH-specific sections
+      ? '<span>'+tr+(jk?' / '+jk:'')+'</span><span>'+( dr?dr:'—')+'</span>'+(ageVal?'<span>Age: '+ageVal+'</span>':'')+'<span>SP: '+sp+'</span>'
+      : '<span>'+tr+(jk?' / '+jk:'')+'</span><span>Stall: '+dr+'</span><span>SP: '+sp+'</span>';
+
     var jumpM=isNH?rest.match(/\*\*Jumping \& Experience:\*\*\n?([\s\S]*?)(?=\*\*Profile|\*\*Assessment|$)/):null;
     var jumpText=jumpM?jumpM[1].trim():'';
+
     card.innerHTML='<div class="sc-hdr"><div><div class="sc-name">'+namePart+'</div>'
       +'<div class="sc-meta">'+metaLine+'</div></div>'
       +'<div class="sc-right"><div class="stars">'+st+'</div>'+(sc!==null?'<div class="score-chip">'+sc+'/100</div>':'')+'</div></div>'
       +'<div class="sc-body">'
-      +(formText?'<div class="ped-box" style="border-left-color:#4a4035"><div class="ped-box-lbl" style="color:#4a4035">Form</div>'+formText.replace(/\n/g,'<br>')+'</div>':'')
-      +(jumpText?'<div class="ped-box" style="border-left-color:#856404"><div class="ped-box-lbl" style="color:#856404">Jumping & Experience</div>'+jumpText.replace(/\n/g,'<br>')+'</div>':'')
+      +(jumpText?'<div class="ped-box" style="border-left-color:#856404"><div class="ped-box-lbl" style="color:#856404">Jumping &amp; Experience</div>'+jumpText.replace(/\n/g,'<br>')+'</div>':'')
       +((ped||trip)?'<div class="ped-box"><div class="ped-box-lbl">Pedigree Assessment</div>'+(ped?ped.replace(/\n/g,'<br>'):'')+(trip?'<div class="trip-line">'+trip+'</div>':'')+'</div>':'')
       +(tableM?mdTable(tableM[1]):'')
       +(assess?'<div class="assessment-box">'+assess+'</div>':'')
@@ -1394,17 +1427,17 @@ function renderRunnersSec(out, body, scored) {
 
 function renderPredSec(out, body) {
   var s=makeSec('3','Statistical Prediction'); out.appendChild(s);
-  document.getElementById('ob-3').innerHTML=mdTable(body,true);
+  var ob=document.getElementById('ob-3'); if(ob) ob.innerHTML=mdTable(body,true);
 }
 
 function renderNarrativeSec(out, body) {
   var s=makeSec('4','Prediction Narrative'); out.appendChild(s);
-  document.getElementById('ob-4').innerHTML='<div class="narrative-box">'+body.replace(/\n\n/g,'</p><p>').replace(/\*([^*]+)\*/g,'<em>$1</em>')+'</div>';
+  var ob=document.getElementById('ob-4'); if(ob) ob.innerHTML='<div class="narrative-box">'+body.replace(/\n\n/g,'</p><p>').replace(/\*([^*]+)\*/g,'<em>$1</em>')+'</div>';
 }
 
 function renderFlagsSec(out, body) {
   var s=makeSec('5','Flags & Caveats'); out.appendChild(s);
-  var bd=document.getElementById('ob-5'); var html='';
+  var bd=document.getElementById('ob-5'); if(!bd) return; var html='';
   body.split('\n').filter(function(l){return l.trim();}).forEach(function(line){
     var ci=line.indexOf(':');
     if (ci>0&&ci<40) html+='<div class="flag-card"><div class="flag-type">'+line.slice(0,ci).replace(/^[-*] */,'').trim()+'</div><div class="flag-text">'+line.slice(ci+1).trim()+'</div></div>';
@@ -1486,7 +1519,7 @@ function runAnalysisGN(key) {
     +'Aintree · 4m2½f · 30 fences · Open handicap chase\n'
     +'Dataset: 2006–2025 (19 winners, excl. 2020 cancelled)\n\n'
     +'SCORING MODEL (weights):\n'
-    +'Age 20% · OR 18% · Trainer 12% · Style 8% · Grade Win 8% · Chase Runs 7% · Chase Win% 7% · Weight 7% · Top-3 Last 4 5% · Last Run 4% · Runs Season 3% · 24f+ Win 1%\n'
+    +'Age 18% · OR 18% · Grade Win 10% · Trainer 10% · Style 8% · Chase Runs 7% · Chase Win% 7% · Weight 7% · Top-3 Last 4 5% · Last Run 4% · Runs Season 3% · 24f+ Win 1%\n'
     +'BINARY PENALTY: 0 top-3 in last 4 runs → composite ×0.65\n\n'
     +'STATISTICAL SCORES (pre-calculated — prediction MUST follow score order):\n'
     +scoreSummary+'\n\n'
@@ -1504,8 +1537,7 @@ function runAnalysisGN(key) {
     +'OUTPUT — use EXACTLY these section headers:\n\n'
     +'## RUNNER ANALYSIS\n'
     +'For each runner in score order:\n'
-    +'### [NAME] - [SP] | [Trainer]/[Jockey] | [Weight] | Age [X] | Score:[final]/100\n'
-    +'**Form:** Interpret the form string. Note runs this season (after the dash), last run result, any falls/PUs (contextualise not penalise). Note 2+/3+ top-3 in last 4 if present.\n'
+    +'### [NAME] - [SP] | [Trainer] / [Jockey] | Wgt:[Weight] | Age:[X] | Score:[final]/100\n'
     +'**Profile Match:**\n'
     +'| Factor | Ideal | This Runner | Match |\n|---|---|---|---|\n'
     +'| Age | 8 (9 viable) | x | ✅/🟡/❌ |\n'
@@ -1522,7 +1554,14 @@ function runAnalysisGN(key) {
     +'| Breeding | IRE | x | ✅/🟡 |\n'
     +'**Assessment:** 2-3 sentences on composite score, key strengths/weaknesses vs winner profile.\n\n'
     +'## PREDICTION\n'
-    +'| Position | Horse | Weight | Score | OR | SP | Key Reason |\n|---|---|---|---|---|---|---|\n\n'
+    +'Provide exactly 6 rows — 1st through 6th.\n'
+    +'| Position | Horse | Weight | Score | OR | SP | Key Reason |\n|---|---|---|---|---|---|---|\n'
+    +'| 1st | | | | | | |\n'
+    +'| 2nd | | | | | | |\n'
+    +'| 3rd | | | | | | |\n'
+    +'| 4th | | | | | | |\n'
+    +'| 5th | | | | | | |\n'
+    +'| 6th | | | | | | |\n\n'
     +'## PREDICTION NARRATIVE\n'
     +'4-5 sentences. Race shape, pace scenario, how the Aintree fences sort the field, why top selection is best profile fit.\n\n'
     +'## FLAGS & CAVEATS\n'
