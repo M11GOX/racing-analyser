@@ -443,7 +443,7 @@ var GN_WINNERS = [
 
 var GN_PROFILE_FACTORS = [
   {label:'Age',             ideal:'Age 8 dominant · 9 viable',             stats:'Age 8: 6/19 winners (2015-2025 dominant)\nAge 9: 5/19 · Age 7: 1/19 (Noble Yeats, 50/1)\nAge 10: 4/19 — all pre-2012 · Age 11: 3/19 — all pre-2015\nNo winner aged 12+ in 19-year sample'},
-  {label:'Official Rating', ideal:'145–149 or 160–164 · bimodal',          stats:'OR 145-149: 6/19 winners (5/10 modern era)\nOR 160-164: 2/19 but 2/4 most recent (highest IV)\nOR 150-159: 6/19 — viable, not a dead zone\nOR 135-144: 5/19 — all pre-2015, recency discounted\nOR 165+: 0/19 winners in corrected data'},
+  {label:'Official Rating', ideal:'145–149 or 159–163 · bimodal',          stats:'OR 145-149: 6/19 winners (5/10 modern era)\nOR 159-163: 2/19 but 2/4 most recent (highest IV) — Rockett 163, Maximus 159\nOR 150-158: 4/19 — viable\nOR 135-144: 5/19 — all pre-2015, recency discounted\nOR 164+: 0 wins — but 2nd & 3rd in 2025 both rated 167 · race trending classier'},
   {label:'Running Style',   ideal:'MIDFIELD dominant (modern)',             stats:'MIDFIELD: 6/10 modern winners · IV 1.39\nAll 4 most recent winners raced midfield\nPROMINENT: 2/10 modern · HOLD UP: 2/10 modern\nLED: 0 winners in 19yr sample'},
   {label:'Trainer',         ideal:'W P Mullins · G Elliott · L Russell',   stats:'L Russell: 2 wins from 4 runners (IV 18.95)\nW P Mullins & G Elliott: 2 wins each, IV 1.80 (42 runners)\nH De Bromhead: 1 win, IV 2.53\nP Nicholls: 23 runners, 0 wins — consistent negative'},
   {label:'Grade Win',       ideal:'Yes — 8/10 modern winners',             stats:'Grade win: 8/10 modern winners\nOnly Noble Yeats & Minella Times won without a Grade win\nBoth were 50/1 and 11/1 — exceptional profiles needed'},
@@ -456,10 +456,10 @@ var GN_PROFILE_FACTORS = [
 
 var GN_DOSAGE_CELLS = [
   {label:'Age Sweet Spot',        sweet:'8 yrs (dominant)',      note:'Age 8: 6/19 wins. Age 9: 5/19. Age 10+: 0 wins since 2011 in modern era'},
-  {label:'OR Sweet Spots',        sweet:'145-149 or 160-164',    note:'Bimodal pattern. OR 165+ = 0 winners ever. OR 135-144 = pre-2015 era only'},
+  {label:'OR Sweet Spots',        sweet:'145-149 or 159-163',    note:'Bimodal pattern. OR 164+: 0 wins but 2nd & 3rd in 2025. OR 135-144 = pre-2015 era only'},
   {label:'Chase Run Sweet Spot',  sweet:'7–11 runs',             note:'6/10 modern winners in 8-10 run band. 7 and 11 also valid. Less exposed = better'},
   {label:'Chase Win Rate',        sweet:'20%+ strike rate',      note:'8/10 modern winners had 20%+ chase win rate. Quality over quantity of runs'},
-  {label:'Form Sweet Spot',       sweet:'2-3 top-3 in last 4',   note:'9/10 modern winners had 2+ top-3 in last 4 runs. 0 top-3 = heavy penalty'},
+  {label:'Form Sweet Spot',       sweet:'2-3 top-3 in last 4',   note:'9/10 modern winners had 2+ top-3 in last 4 runs. 0 top-3 scored low on factor'},
 ];
 
 
@@ -762,8 +762,8 @@ function scoreRunnerGN(r) {
   else if (or_<=149)             { scores.or_=70;  details.or_='✅ OR 145-149 — 6/19 winners, 5/10 modern era · high volume positive'; }
   else if (or_<=154)             { scores.or_=80;  details.or_='✅ OR 150-154 — viable (Tiger Roll 2018, Ballabriggs, Don\'t Push It)'; }
   else if (or_<=158)             { scores.or_=90;  details.or_='✅ OR 155-158 — strong (Tiger Roll 2019, Neptune Collonges)'; }
-  else if (or_<=164)             { scores.or_=100; details.or_='✅ OR 159-164 — highest IV, 2/4 most recent winners (Rockett, Maximus)'; }
-  else                           { scores.or_=30;  details.or_='⚠️ OR 165+ — 0 winners in corrected data but near-top handicap range'; }
+  else if (or_<=163)             { scores.or_=100; details.or_='✅ OR 159-163 — highest IV, 2/4 most recent winners (Rockett OR 163, Maximus OR 159)'; }
+  else                           { scores.or_=60;  details.or_='🔶 OR 164+ — 0 wins but 2nd & 3rd in 2025 both rated 167 · serious contenders at top weight'; }
 
   // ── TRAINER (10%) ─────────────────────────────────────────────
   var tl = (r.trainer||'').toLowerCase();
@@ -831,7 +831,7 @@ function scoreRunnerGN(r) {
   var t3 = gnCountTop3Last4(form);
   var t3map = {0:10,1:60,2:80,3:95,4:100};
   scores.top3_last4 = t3map[Math.min(t3,4)];
-  details.top3_last4 = t3===0 ? '❌ 0 top-3 in last 4 — 18/19 winners had at least one · ×0.65 penalty applied' :
+  details.top3_last4 = t3===0 ? '❌ 0 top-3 in last 4 — 18/19 winners had at least one' :
                        t3===1 ? '🟡 1 top-3 in last 4 — minimum threshold met (Noble Yeats, Mon Mome)' :
                        t3===2 ? '✅ 2 top-3 in last 4 — good form (Corach Rambler, Tiger Roll 2018)' :
                        t3>=3  ? '✅ '+t3+'/4 top-3 in last 4 — strong recent form · dominant pattern in winners' : '';
@@ -870,8 +870,11 @@ function scoreRunnerGN(r) {
   var tot = 0;
   Object.keys(W).forEach(function(k){ tot += (scores[k]||0) * W[k]; });
   var composite = Math.round(tot/Wtot*10)/10;
-  var penalty = t3===0;
-  var final_ = penalty ? Math.round(composite*0.65*10)/10 : Math.round(composite*10)/10;
+  // Top-3-in-last-4 signal is already captured by the top3_last4 factor (5% weight).
+  // Previously applied a ×0.65 multiplier on top when t3===0, which double-counted and
+  // hammered scores too hard. Multiplier removed — factor-level scoring does the work.
+  var penalty = false;
+  var final_ = Math.round(composite*10)/10;
 
   return {
     composite: composite,
@@ -1326,7 +1329,7 @@ function renderWithScores(scored, text) {
   // Score bar summary
   var weightNote;
   if (isNH) {
-    weightNote='Age 18% · OR 18% · Grade Win 10% · Trainer 10% · Style 8% · Chase Runs 7% · Chase Win% 7% · Weight 7% · Top3-Last4 5% · Last Run 4% · Runs/Season 3% · 24f+ Win 1% | ×0.65 penalty if 0 top-3 in last 4';
+    weightNote='Age 18% · OR 18% · Grade Win 10% · Trainer 10% · Style 8% · Chase Runs 7% · Chase Win% 7% · Weight 7% · Top3-Last4 5% · Last Run 4% · Runs/Season 3% · 24f+ Win 1%';
   } else {
     var W=RACE.weights;
     weightNote='Style '+W.style+'% · Draw '+W.draw+'% · OR '+W.or+'% · SP '+W.sp+'% · Form '+W.form+'% · Pedigree '+W.pedigree+'% · Trainer '+W.trainer+'% · Jockey '+W.jockey+'%';
@@ -1338,7 +1341,7 @@ function renderWithScores(scored, text) {
     var stars=starsFromScore(displayScore);
     var st='';
     for(var i=0;i<5;i++) st+=(i<stars?'<span class="sf">★</span>':'<span class="se">☆</span>');
-    var penFlag = (isNH && s.result.penalty) ? ' <span style="font-size:9px;color:var(--red);font-family:IBM Plex Mono,monospace">⚠️ PENALTY</span>' : '';
+    var penFlag = '';
     sumHTML+='<div class="score-bar-wrap"><div style="font-family:Playfair Display,serif;font-size:14px;font-weight:700;min-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+s.runner.name+penFlag+'</div>'
       +'<div class="score-bar-bg"><div class="score-bar" style="width:'+displayScore+'%"></div></div>'
       +'<div class="score-val">'+displayScore+'</div>'
@@ -1492,7 +1495,7 @@ function runAnalysisGN(key) {
   scored.sort(function(a,b){return (b.result.final_||b.result.composite)-(a.result.final_||a.result.composite)});
 
   var scoreSummary=scored.map(function(s,i){
-    var pen=s.result.penalty?' [⚠️ TOP-3 PENALTY APPLIED]':'';
+    var pen='';
     return (i+1)+'. '+s.runner.name+' — '+s.result.final_+'/100'+pen+' ('+starsFromScore(s.result.final_)+'★)';
   }).join('\n');
 
@@ -1506,7 +1509,7 @@ function runAnalysisGN(key) {
       +' '+r.trainer+'/'+(r.jockey||'?')+' SP:'+(r.sp||'?')+' Style:'+r.style
       +' Form:'+formStr+' ChaseRuns:'+r.chase_runs+'/'+r.chase_wins+'wins('+cwpct+'%) '+distStr+' '+gradeStr
       +(r.notes?' Note:'+r.notes:'')
-      +'\n   FINAL SCORE:'+res.final_+'/100 (composite:'+res.composite+(res.penalty?' ×0.65 penalty':'')+') T3L4:'+res.t3
+      +'\n   FINAL SCORE:'+res.final_+'/100 (composite:'+res.composite+') T3L4:'+res.t3
       +'\n   Age:'+res.scores.age+' OR:'+res.scores.or_+' Trainer:'+res.scores.trainer+' Style:'+res.scores.style
       +' GradeWin:'+res.scores.grade_win+' ChaseRuns:'+res.scores.chase_runs+' ChaseWin%:'+res.scores.chase_win
       +' Weight:'+res.scores.weight+' Top3L4:'+res.scores.top3_last4+' LastRun:'+res.scores.last_run
@@ -1519,17 +1522,17 @@ function runAnalysisGN(key) {
     +'Dataset: 2006–2025 (19 winners, excl. 2020 cancelled)\n\n'
     +'SCORING MODEL (weights):\n'
     +'Age 18% · OR 18% · Grade Win 10% · Trainer 10% · Style 8% · Chase Runs 7% · Chase Win% 7% · Weight 7% · Top-3 Last 4 5% · Last Run 4% · Runs Season 3% · 24f+ Win 1%\n'
-    +'BINARY PENALTY: 0 top-3 in last 4 runs → composite ×0.65\n\n'
+    +'SCORING NOTE: Top-3-in-last-4 is captured as a scoring factor (5% weight). 0 top-3 scores 10/100 on that factor — no separate multiplier applied.\n\n'
     +'STATISTICAL SCORES (pre-calculated — prediction MUST follow score order):\n'
     +scoreSummary+'\n\n'
     +'RUNNER DETAILS:\n'+runnerDetails+'\n\n'
     +'KEY FACTS FROM 19-YEAR DATASET:\n'
     +'- Age 8: 6/19 winners (dominant). Age 9: 5/19. Age 10+: 0 wins since 2011.\n'
-    +'- OR 145-149: 6/19 winners. OR 160-164: 2/19 but 2/4 most recent. OR 165+: 0 wins ever.\n'
+    +'- OR 145-149: 6/19 winners. OR 159-163: 2/19 but 2/4 most recent (Rockett 163, Maximus 159). OR 164+: 0 wins but 2nd & 3rd in 2025 both rated 167 — flag as emerging, not eliminated.\n'
     +'- MIDFIELD style: 6/10 modern winners. All 4 most recent winners raced midfield.\n'
     +'- Chase runs 8-10: 6/10 modern winners. Win rate 20%+: 8/10 modern winners.\n'
     +'- IRE-bred: 8/10 modern winners (IV 1.36 on 224 runners).\n'
-    +'- 2+ top-3 in last 4 runs: 9/10 modern winners. 0 top-3 = heavy penalty.\n'
+    +'- 2+ top-3 in last 4 runs: 9/10 modern winners. 0 top-3 is a strong negative signal.\n'
     +'- 24f+ win: 7/10 modern winners — preferred but not essential.\n'
     +'- Trainers: W P Mullins/G Elliott IV 1.80 (42 runners each). P Nicholls: 0 wins from 23 runners.\n'
     +'- Falls/unseats in form (F/U/S/B): do NOT penalise — NH racing reality.\n\n'
@@ -1564,7 +1567,7 @@ function runAnalysisGN(key) {
     +'## PREDICTION NARRATIVE\n'
     +'4-5 sentences. Race shape, pace scenario, how the Aintree fences sort the field, why top selection is best profile fit.\n\n'
     +'## FLAGS & CAVEATS\n'
-    +'One per line: Flag Type: detail. Flag: age 10+, OR 165+, top weight concerns, 0 chase wins, no 24f+ win, 0 top-3 in last 4 (penalty applied), Nicholls runners.';
+    +'One per line: Flag Type: detail. Flag: age 10+, OR 164+ (0 wins but serious contenders — note 2025 2nd & 3rd both rated 167), top weight concerns, 0 chase wins, no 24f+ win, 0 top-3 in last 4, Nicholls runners.';
 
   fetch('https://racing-proxy.danmigo.workers.dev', {
     method:'POST',
