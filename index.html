@@ -231,7 +231,7 @@ textarea{resize:vertical;min-height:52px}
 .icp-band-name{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--mid);min-width:76px;white-space:nowrap}
 .icp-band-track{flex:1;height:7px;background:rgba(0,0,0,.06);border-radius:4px;overflow:hidden}
 .icp-band-fill{height:100%;border-radius:4px}
-.icp-band-pct{font-family:'IBM Plex Mono',monospace;font-size:8px;min-width:22px;text-align:right;font-weight:500}
+
 .nh-score-list{display:flex;flex-direction:column;gap:1px}
 .nh-score-row{display:flex;align-items:center;gap:10px;padding:9px 8px;border-radius:2px;transition:background .15s}
 .nh-score-row:hover{background:var(--cream)}
@@ -744,7 +744,7 @@ function renderICPFactorBars() {
       h+='<div class="icp-band" style="background:'+B[b.t]+'">';
       h+='<div class="icp-band-name">'+b.n+'</div>';
       h+='<div class="icp-band-track"><div class="icp-band-fill" style="width:'+b.p+'%;background:'+C[b.t]+'"></div></div>';
-      h+='<div class="icp-band-pct" style="color:'+C[b.t]+'">'+b.p+'</div>';
+      
       h+='</div>';
     });
     h+='</div></div>';
