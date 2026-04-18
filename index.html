@@ -1355,7 +1355,6 @@ function editRunner(i) {
   document.getElementById('f-age').value=r.age||'';
   document.getElementById('f-chase-runs').value=r.chase_runs||'';
   document.getElementById('f-chase-wins').value=r.chase_wins||'';
-  document.getElementById('f-distwn').value=r.dist_win?'yes':'no';
   var grpNH=document.getElementById('f-grp-nh'); if(grpNH) grpNH.value=r.grade_win?'yes':'no';
   var g1wEl=document.getElementById('f-g1-wins'); if(g1wEl) g1wEl.value=r.g1_wins||0;
   var g1pEl=document.getElementById('f-g1-places'); if(g1pEl) g1pEl.value=r.g1_places||0;
@@ -1377,7 +1376,6 @@ function clearForm() {
   document.getElementById('f-style').value='MIDFIELD';
   document.getElementById('f-style-nh').value='MIDFIELD';
   document.getElementById('f-grp').value='';
-  document.getElementById('f-distwn').value='';
   var grpNH=document.getElementById('f-grp-nh'); if(grpNH) grpNH.value='';
   var rg1=document.getElementById('f-recent-g1'); if(rg1) rg1.value='no';
   editIdx=-1; document.getElementById('form-title').textContent='Add Runner';
