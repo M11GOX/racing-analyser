@@ -1277,13 +1277,13 @@ function gnScoreRunnerNew(r) {
   }
 
   // B_MP: 3m+ places specialist (Iroko profile: 0 wins but 2+ places, young, unexposed)
-  if (mw === 0 && h['dist3m_places'] >= 2 && age <= 9 && cr <= 14) {
+  if (mw === 0 && r.dist3m_places >= 2 && age <= 9 && cr <= 14) {
     bonuses['B_MP'] = 3;
-    details['B_MP'] = '⭐ B_MP Distance Place Specialist — 0 3m+ wins but '+h['dist3m_places']+' places. Age/CR limits apply.';
+    details['B_MP'] = '⭐ B_MP Distance Place Specialist — 0 3m+ wins but '+r.dist3m_places+' places. Age/CR limits apply.';
     bonusTotal += 3;
-  } else if (mw === 1 && h['dist3m_places'] >= 3 && age <= 9 && cr <= 14) {
+  } else if (mw === 1 && r.dist3m_places >= 3 && age <= 9 && cr <= 14) {
     bonuses['B_MP'] = 2;
-    details['B_MP'] = '⭐ B_MP Distance Place Heavy — 1 win and '+h['dist3m_places']+' places over 3m+.';
+    details['B_MP'] = '⭐ B_MP Distance Place Heavy — 1 win and '+r.dist3m_places+' places over 3m+.';
     bonusTotal += 2;
   }
 
