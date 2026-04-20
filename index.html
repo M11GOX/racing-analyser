@@ -990,7 +990,7 @@ function scoreRunnerGuineas(r, fieldSize) {
   if(dg==='Low')base+=5; else if(dg==='Mid')base+=3; else base+=1;
   if(prep===0)base+=3; else if(prep===1)base+=4; else if(prep===2)base+=0; else base+=2;
   if(foalM===3)base+=3; else if(foalM<=2)base+=1; else base+=2;
-  if(grpw===0)base+=3; else if(grpw===1)base+=4; else if(grpw===2)base+=1; else base+=3;
+  if(grpw===0)base+=0; else if(grpw===1)base+=2; else base+=3;
   if(trainer.indexOf('Appleby')>=0||trainer.indexOf('Balding')>=0||trainer.indexOf('Bolger')>=0)base+=3;
   else if(trainer.indexOf("A P O'Brien")>=0&&trainer.indexOf('Joseph')<0)base+=1;
   else base+=2;
