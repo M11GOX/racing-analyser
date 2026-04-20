@@ -1514,19 +1514,18 @@ function editRunner(i) {
   var r=runners[i];
   var isNH = CURRENT_RACE==='national';
   document.getElementById('f-name').value=r.name;
-  document.getElementById('f-bred').value=r.bred;
+  document.getElementById('f-bred').value=r.bred||'IRE';
   document.getElementById('f-draw').value=r.draw||'';
-  document.getElementById('f-weight').value=r.weight||'';
   document.getElementById('f-sp').value=r.sp==='---'?'':r.sp;
   document.getElementById('f-trainer').value=r.trainer==='---'?'':r.trainer;
   document.getElementById('f-jockey').value=r.jockey==='---'?'':r.jockey;
   document.getElementById('f-or').value=r.or==='---'?'':r.or;
-  document.getElementById('f-or-nh').value=r.or_||'';
-  document.getElementById('f-style-nh').value=r.styleNH||r.style||'MIDFIELD';
-  var fgrpE=document.getElementById('f-grp'); if(fgrpE) fgrpE.value=r.grpWin||'';
   document.getElementById('f-notes').value=r.notes||'';
   document.getElementById('f-form').value=r.form||'';
-  // NH extras
+  // NH fields
+  document.getElementById('f-weight').value=r.weight||'';
+  document.getElementById('f-or-nh').value=r.or_||'';
+  document.getElementById('f-style-nh').value=r.styleNH||r.style||'MIDFIELD';
   document.getElementById('f-age').value=r.age||'';
   document.getElementById('f-chase-runs').value=r.chase_runs||'';
   document.getElementById('f-chase-wins').value=r.chase_wins||'';
@@ -1537,9 +1536,22 @@ function editRunner(i) {
   var d3pEl=document.getElementById('f-dist3m-places'); if(d3pEl) d3pEl.value=r.dist3m_places||0;
   var odEl=document.getElementById('f-or-delta'); if(odEl) odEl.value=r.or_delta||0;
   var rg1El=document.getElementById('f-recent-g1'); if(rg1El) rg1El.value=r.recent_g1_top3?'yes':'no';
-  // Flat extras
+  // Flat fields
   var pgEl=document.getElementById('f-pace-guineas'); if(pgEl) pgEl.value=r.pace_guineas||'PATIENT';
   var g1sEl=document.getElementById('f-g1sire'); if(g1sEl) g1sEl.value=r.g1_sire_123?'yes':'no';
+  var rprEl=document.getElementById('f-rpr'); if(rprEl) rprEl.value=r.rpr||'';
+  var tsEl=document.getElementById('f-ts'); if(tsEl) tsEl.value=r.ts||'';
+  var tsExEl=document.getElementById('f-ts-excuse'); if(tsExEl) tsExEl.value=r.ts_excuse||'none';
+  var siEl=document.getElementById('f-si'); if(siEl) siEl.value=r.si||'';
+  var dsiEl=document.getElementById('f-dsi'); if(dsiEl) dsiEl.value=r.dsi||'';
+  var jsiEl=document.getElementById('f-jsi'); if(jsiEl) jsiEl.value=r.jsi||'';
+  var diEl=document.getElementById('f-di'); if(diEl) diEl.value=r.di||'';
+  var codEl=document.getElementById('f-cod'); if(codEl) codEl.value=r.cod||'';
+  var fmEl=document.getElementById('f-foal-month'); if(fmEl) fmEl.value=r.foal_month||'';
+  var gwEl=document.getElementById('f-grp-wins'); if(gwEl) gwEl.value=r.grp_wins||0;
+  var l78El=document.getElementById('f-last78f'); if(l78El) l78El.value=r.last_78f?'yes':'no';
+  var w8El=document.getElementById('f-won8f'); if(w8El) w8El.value=r.won_8f?'yes':'no';
+  var w7El=document.getElementById('f-won7f'); if(w7El) w7El.value=r.won_7f?'yes':'no';
   editIdx=i; document.getElementById('form-title').textContent='Edit — '+r.name;
   document.getElementById('runner-form').scrollIntoView({behavior:'smooth'});
 }
@@ -1581,7 +1593,9 @@ function renderRunners() {
     var sk=(r.style||'').replace(' ','_').replace(' ','_');
     var fd=parseForm(r.form||'');
     var formDisp=r.form?('<span style="letter-spacing:.15em">'+r.form+'</span> <span style="color:#aaa;font-size:9px">('+fd.runsThisSeason+' run'+(fd.runsThisSeason!==1?'s':'')+' this season)</span>'):'No form entered';
-    var grpBadge=r.grpWin==='yes'||r.grade_win?'<span class="pedbadge ok">'+(isNH?'Grade Win ✓':'Grp Win ✓')+'</span>':(r.grpWin==='no'||r.grade_win===false)?'<span class="pedbadge none">No '+(isNH?'Grade Win':'Grp Win')+'</span>':'';
+    var grpBadge=isNH
+      ? (r.grade_win ? '<span class="pedbadge ok">Grade Win ✓</span>' : '<span class="pedbadge none">No Grade Win</span>')
+      : (r.grp_wins>0 ? '<span class="pedbadge ok">Grp Wins: '+r.grp_wins+'</span>' : '<span class="pedbadge none">No Grp Win</span>');
     var drawOrWeight=isNH?('<div class="rc-draw" style="font-size:12px;min-width:44px;line-height:1.2">'+(r.weight||'?')+'</div>'):('<div class="rc-draw">'+(r.draw||'?')+'</div>');
     var nhMeta=isNH?('<span><b>Age:</b> '+(r.age||'?')+'</span><span><b>CR:</b> '+(r.chase_runs||0)+'</span><span><b>OR:</b> '+(r.or_||'?')+' Δ'+(r.or_delta||0)+'</span><span><b>G1W:</b> '+(r.g1_wins||0)+'</span><span><b>3m+W:</b> '+(r.dist3m_wins||0)+'</span><span style="color:'+(r.dist3m_wins>0?'var(--green)':'var(--amber)')+';">'+(r.dist3m_wins>0?'✅':'⚠️')+(r.dist3m_wins>0?' Distance':' No 3m+')+'</span>'):'';
     var orDisplay=isNH?(r.or_||'—'):r.or;
