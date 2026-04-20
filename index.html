@@ -336,7 +336,7 @@ textarea{resize:vertical;min-height:52px}
       <div class="fg nh-only" style="display:none"><label>Official Rating (OR)</label><input id="f-or-nh" type="number" min="100" max="200" placeholder="e.g. 163"></div>
       <div class="fg nh-only" style="display:none"><label>OR Delta <span style="color:var(--gold);font-size:8px">FUTURE MARK − CURRENT</span></label><input id="f-or-delta" type="number" min="0" max="20" placeholder="e.g. 5"></div>
       <div class="fg flat-only"><label>Running Style</label>
-        <select id="f-style"><option>LED</option><option>PROMINENT</option><option selected>MIDFIELD</option><option value="HOLD UP">HOLD UP</option></select>
+        <select id="f-pace-guineas"><option value="PATIENT">Patient (held up / rear)</option><option value="PROMINENT">Prominent / Led</option></select>
       </div>
       <div class="fg nh-only" style="display:none"><label>Running Style</label>
         <select id="f-style-nh"><option>LED</option><option>PROMINENT</option><option selected>MIDFIELD</option><option value="HOLD UP">HOLD UP</option></select>
@@ -365,20 +365,40 @@ textarea{resize:vertical;min-height:52px}
     <div class="fsec">Form &amp; Race Record</div>
     <div class="g2">
       <div class="fg">
-        <label>Previous Form <span style="color:var(--gold);font-size:8px">MAX 6 RUNS · USE - TO SEPARATE SEASONS</span></label>
+        <label>Previous Form</label>
         <input id="f-form" placeholder="e.g. 121-1 or 13-1 or 111" maxlength="13" style="font-family:'IBM Plex Mono',monospace;font-size:15px;letter-spacing:.12em" oninput="validateForm(this)">
-        <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#aaa;margin-top:3px;display:block">Oldest → most recent · 1-3 = finish pos · 0 = outside top 10 · - = season/year break · F/U/R/P = falls/unseated/refused/pulled up</span>
       </div>
-      <div class="fg flat-only">
-        <label id="grp-label">Group Win</label>
-        <select id="f-grp">
-          <option value="">— Select —</option>
-          <option value="yes">Yes</option>
-          <option value="no">No</option>
-        </select>
+      <div class="fg flat-only"><label>Group Wins</label><input id="f-grp-wins" type="number" min="0" max="10" placeholder="0"></div>
+      <div class="fg flat-only"><label>Best RPR <span style="color:var(--gold);font-size:8px">CAREER BEST PRIOR TO RACE</span></label><input id="f-rpr" type="number" min="70" max="135" placeholder="e.g. 113"></div>
+      <div class="fg flat-only"><label>Best TS <span style="color:var(--gold);font-size:8px">TOP SPEED FIGURE</span></label>
+        <div style="display:flex;gap:6px">
+          <input id="f-ts" type="number" min="50" max="120" placeholder="e.g. 96" style="flex:1">
+          <select id="f-ts-excuse" style="flex:1.2;font-size:10px">
+            <option value="none">No excuse</option>
+            <option value="aw">Majority AW runs</option>
+            <option value="soft">Soft/heavy ground</option>
+            <option value="limited">Limited data (&le;2 runs)</option>
+            <option value="mixed">Mixed excuses</option>
+          </select>
+        </div>
       </div>
     </div>
-
+    <div class="fsec flat-only">Pedigree Indices</div>
+    <div class="g3 flat-only">
+      <div class="fg"><label>Sire Index (SI)</label><input id="f-si" type="number" step="0.1" min="4" max="14" placeholder="e.g. 9.6" oninput="updateJSI()"></div>
+      <div class="fg"><label>Damsire Index (DSI)</label><input id="f-dsi" type="number" step="0.1" min="4" max="14" placeholder="e.g. 10.9" oninput="updateJSI()"></div>
+      <div class="fg"><label>Joint Sire Index <span style="color:var(--gold);font-size:8px">AUTO</span></label><input id="f-jsi" type="number" step="0.1" min="10" max="25" placeholder="auto" readonly style="background:var(--cream);color:var(--mid)"></div>
+      <div class="fg"><label>Dosage Index (DI)</label><input id="f-di" type="number" step="0.01" min="0.1" max="5" placeholder="e.g. 0.67"></div>
+      <div class="fg"><label>COD Index</label><input id="f-cod" type="number" step="0.01" min="-1" max="1.5" placeholder="e.g. -0.15"></div>
+      <div class="fg"><label>G1 Sire (RPR 123+)?</label><select id="f-g1sire"><option value="no">No</option><option value="yes">Yes</option></select></div>
+      <div class="fg"><label>Foal Month</label><select id="f-foal-month"><option value="">— Select —</option><option value="1">January</option><option value="2">February</option><option value="3">March</option><option value="4">April</option><option value="5">May</option><option value="6">June+</option></select></div>
+    </div>
+    <div class="fsec flat-only">Trip Profile</div>
+    <div class="g3 flat-only">
+      <div class="fg"><label>Last run at 7f-8f?</label><select id="f-last78f"><option value="yes">Yes</option><option value="no">No</option></select></div>
+      <div class="fg"><label>Won at 8f?</label><select id="f-won8f"><option value="no">No</option><option value="yes">Yes</option></select></div>
+      <div class="fg"><label>Won at 7f?</label><select id="f-won7f"><option value="no">No</option><option value="yes">Yes</option></select></div>
+    </div>
     <div class="fg" style="margin-top:12px"><label>Notes (optional)</label><textarea id="f-notes" placeholder="Course form, fitness, jockey booking context, going preferences..."></textarea></div>
     <div class="fa">
       <button class="btn btn-ink" onclick="addRunner()">Add Runner</button>
@@ -389,6 +409,7 @@ textarea{resize:vertical;min-height:52px}
   <div class="runners-list" id="runners-list"></div>
   <div class="gen-row" id="gen-row" style="display:none">
     <button class="btn btn-gold" style="padding:12px 28px;font-size:11px" onclick="goGenerate()">Generate Phase 3 Analysis →</button>
+    <button class="btn btn-ghost" style="font-size:9px;padding:8px 14px" onclick="if(confirm('Clear all runners?'))clearSavedRunners()">Clear All</button>
     <span class="gen-info" id="gen-info"></span>
   </div>
 </div>
@@ -396,14 +417,14 @@ textarea{resize:vertical;min-height:52px}
 <!-- PROFILE -->
 <div id="panel-profile" class="panel">
   <div class="panel-hdr">
-    <div><div class="sec-label">Ideal Contestant Profile</div><div class="panel-title">2019–2025 · 99 Runners · 7 Winners</div></div>
+    <div><div class="sec-label">Ideal Contestant Profile</div><div class="panel-title" id="profile-title">2021–2025 · 65 Runners · 5 Winners</div></div>
   </div>
   <div class="sec-label" style="margin-bottom:9px">Race Factors</div>
   <div class="icp-grid" id="icp-grid"></div>
   <hr class="rule">
   <div class="sec-label" style="margin-bottom:9px">Winner History</div>
   <table class="wtable">
-    <thead><tr><th>Year</th><th>Winner</th><th>Bred</th><th>Draw</th><th>Style</th><th>Trainer</th><th>OR</th><th>Wgt</th><th>SP</th><th>Form</th><th>Last Run</th><th>Grp Win</th><th>DI</th><th>COD</th><th>JSI</th><th>Field</th></tr></thead>
+    <thead><tr><th>Year</th><th>Winner</th><th>Bred</th><th>Draw</th><th>OR</th><th>8f Win</th><th>Grp Win</th><th>SP</th><th>Form</th><th>Field</th></tr></thead>
     <tbody id="winner-tbody"></tbody>
   </table>
 </div>
@@ -465,22 +486,12 @@ var RACE = {
 // To update: paste new result here in chat
 // ─────────────────────────────────────────────
 var WINNERS = [
-  {year:2011,winner:'Frankel',         bred:'GB', draw:1, drawGrp:'Low', style:'LED',     trainer:'Sir Henry Cecil', jockey:'T Queally',  or:126,wgt:'9-0',sp:'1/2F',  form:'1111-1',  grpWin:'yes',si:11.3,dsi:9.2, jsi:20.5,di:0.67,cod:-0.11,field:13},
-  {year:2012,winner:'Camelot',         bred:'GB', draw:12,drawGrp:'Mid', style:'HOLD UP', trainer:"A P O'Brien",    jockey:"J O'Brien",  or:119,wgt:'9-0',sp:'11/8F', form:'11-',     grpWin:'yes',si:11.9,dsi:9.9, jsi:21.8,di:0.68,cod:-0.06,field:18},
-  {year:2013,winner:'Dawn Approach',   bred:'IRE',draw:3, drawGrp:'Low', style:'PROMINENT',trainer:'J S Bolger',    jockey:'K Manning',  or:124,wgt:'9-0',sp:'9/4',   form:'111111-', grpWin:'yes',si:10.0,dsi:7.0, jsi:17.0,di:1.00,cod:0.08, field:13},
-  {year:2014,winner:'Night Of Thunder',bred:'IRE',draw:3, drawGrp:'Low', style:'MIDFIELD', trainer:'R Hannon',      jockey:'K Fallon',   or:109,wgt:'9-0',sp:'40/1',  form:'11-2',    grpWin:'no', si:9.6, dsi:11.3,jsi:20.9,di:0.74,cod:-0.12,field:14},
-  {year:2015,winner:'Gleneagles',      bred:'IRE',draw:16,drawGrp:'High',style:'MIDFIELD', trainer:"A P O'Brien",  jockey:'R Moore',    or:116,wgt:'9-0',sp:'13/8F', form:'411113-', grpWin:'yes',si:11.3,dsi:7.7, jsi:19.0,di:0.73,cod:-0.03,field:18},
-  {year:2016,winner:'Galileo Gold',    bred:'GB', draw:1, drawGrp:'Low', style:'PROMINENT',trainer:'H Palmer',      jockey:'F Dettori',  or:110,wgt:'9-0',sp:'13/2',  form:'21113-',  grpWin:'yes',si:7.7, dsi:11.3,jsi:19.0,di:0.74,cod:-0.05,field:13},
-  {year:2017,winner:'Churchill',       bred:'IRE',draw:3, drawGrp:'Low', style:'MIDFIELD', trainer:"A P O'Brien",  jockey:'R Moore',    or:122,wgt:'9-0',sp:'5/6F',  form:'311111-', grpWin:'yes',si:11.3,dsi:7.7, jsi:19.0,di:0.76,cod:-0.03,field:10},
-  {year:2018,winner:'Saxon Warrior',   bred:'JPN',draw:9, drawGrp:'Mid', style:'MIDFIELD', trainer:"A P O'Brien",  jockey:"D O'Brien",  or:119,wgt:'9-0',sp:'8/13F', form:'111-',    grpWin:'yes',si:10.5,dsi:11.3,jsi:21.8,di:0.87,cod:0.04, field:14},
-  {year:2019,winner:'Magna Grecia',    bred:'IRE',draw:17,drawGrp:'High',style:'PROMINENT',trainer:"A P O'Brien",  jockey:"D O'Brien",  or:113,wgt:'9-0',sp:'11/2',  form:'121-',    grpWin:'yes',si:7.5, dsi:11.3,jsi:18.8,di:1.00,cod:0.12, field:19},
-  {year:2020,winner:'Kameko',          bred:'USA',draw:15,drawGrp:'High',style:'MIDFIELD', trainer:'A Balding',    jockey:'O Murphy',   or:118,wgt:'9-0',sp:'10/1',  form:'1221-',   grpWin:'yes',si:9.8, dsi:9.0, jsi:18.8,di:2.64,cod:0.70, field:15},
-  {year:2021,winner:'Poetic Flare',    bred:'IRE',draw:4, drawGrp:'Low', style:'PROMINENT',trainer:'J S Bolger',   jockey:'K Manning',  or:109,wgt:'9-0',sp:'16/1',  form:'101-1',   grpWin:'yes',si:9.3, dsi:9.0, jsi:18.3,di:1.46,cod:0.31, field:14},
-  {year:2022,winner:'Coroebus',        bred:'IRE',draw:1, drawGrp:'Low', style:'MIDFIELD', trainer:'C Appleby',   jockey:'J Doyle',    or:115,wgt:'9-0',sp:'5/1',   form:'121-',    grpWin:'yes',si:9.6, dsi:10.9,jsi:20.5,di:0.76,cod:-0.13,field:15},
-  {year:2023,winner:'Chaldean',        bred:'GB', draw:3, drawGrp:'Low', style:'PROMINENT',trainer:'A Balding',   jockey:'F Dettori',  or:119,wgt:'9-0',sp:'7/2',   form:'51111-UR',grpWin:'yes',si:10.5,dsi:7.8, jsi:18.3,di:0.67,cod:-0.15,field:14},
-  {year:2024,winner:'Notable Speech',  bred:'GB', draw:6, drawGrp:'Mid', style:'MIDFIELD', trainer:'C Appleby',   jockey:'W Buick',    or:109,wgt:'9-2',sp:'16/1',  form:'111',     grpWin:'no', si:9.6, dsi:7.5, jsi:17.1,di:1.26,cod:0.12, field:11},
-  {year:2025,winner:'Ruling Court',    bred:'USA',draw:11,drawGrp:'High',style:'MIDFIELD', trainer:'C Appleby',   jockey:'W Buick',    or:112,wgt:'9-2',sp:'9/2',   form:'13-1',    grpWin:'no', si:9.8, dsi:10.7,jsi:20.5,di:1.00,cod:0.11, field:11}
-];
+  {year:2021,winner:'Poetic Flare',  bred:'IRE',draw:4, drawGrp:'Low', style:'PROMINENT',trainer:'J S Bolger',      sp:'16/1', or:109,wgt:'9-0',form:'101-1',   lastRun:'1st',grpWin:'yes',si:9.3, dsi:9.0, jsi:18.3,di:1.46,cod:0.31, field:14,rpr:110,ts:98, foal:'March', won8f:false,won7f:true},
+  {year:2022,winner:'Coroebus',      bred:'IRE',draw:1, drawGrp:'Low', style:'PATIENT',  trainer:'Charlie Appleby', sp:'5/1',  or:115,wgt:'9-0',form:'121-1',   lastRun:'1st',grpWin:'yes',si:9.6, dsi:10.9,jsi:20.5,di:0.76,cod:-0.13,field:15,rpr:116,ts:96, foal:'March', won8f:true, won7f:false},
+  {year:2023,winner:'Chaldean',      bred:'GB', draw:3, drawGrp:'Low', style:'PROMINENT',trainer:'Andrew Balding',  sp:'7/2',  or:119,wgt:'9-2',form:'51111-U', lastRun:'U',  grpWin:'yes',si:10.5,dsi:7.8, jsi:18.3,di:0.67,cod:-0.15,field:14,rpr:118,ts:106,foal:'May',   won8f:false,won7f:true},
+  {year:2024,winner:'Notable Speech',bred:'GB', draw:6, drawGrp:'Mid', style:'PATIENT',  trainer:'Charlie Appleby', sp:'16/1', or:109,wgt:'9-2',form:'111',    lastRun:'1st',grpWin:'no', si:9.6, dsi:7.5, jsi:17.1,di:1.26,cod:0.12, field:11,rpr:113,ts:64, foal:'March', won8f:true, won7f:false},
+  {year:2025,winner:'Ruling Court',  bred:'USA',draw:11,drawGrp:'High',style:'PATIENT',  trainer:'Charlie Appleby', sp:'9/2',  or:112,wgt:'9-2',form:'13-1',   lastRun:'1st',grpWin:'no', si:9.8, dsi:10.7,jsi:20.5,di:1.00,cod:0.11, field:11,rpr:113,ts:96, foal:'February', won8f:true, won7f:false},
+]
 
 // ─────────────────────────────────────────────
 // RACE MODE
@@ -797,6 +808,61 @@ function renderNHScoreCard(out, scored) {
   out.appendChild(wrap);
 }
 
+
+function renderICPFactorBarsGuineas() {
+  var grid = document.getElementById('icp-grid');
+  if (!grid) return;
+  var C={ideal:'var(--gold)',good:'#4a7c5a',ok:'#888',poor:'#c0392b'};
+  var B={ideal:'rgba(184,151,42,.12)',good:'rgba(74,124,90,.08)',ok:'rgba(136,136,136,.06)',poor:'rgba(192,57,43,.06)'};
+  var factors = [
+    {label:'Official Rating (OR)',ideal:'OR 109-119',stat:'OR 122+: 0 wins. OR 110-115: ideal (2 winners, IV=0.90). OR 109: 2 winners (A/E=3.47 — market underrates). OR 116-121: 1 winner. Unrated horses: 0 wins.',
+     bands:[{n:'Unrated',p:15,t:'ok'},{n:'OR 99-109',p:55,t:'good'},{n:'OR 110-115',p:100,t:'ideal'},{n:'OR 116-121',p:80,t:'good'},{n:'OR 122+',p:30,t:'ok'}]},
+    {label:'Best RPR',ideal:'RPR 108-118',stat:'RPR <108: 0 wins from 17 runners (hard floor). RPR 108-113: 3 winners (ideal). RPR 114-118: 2 winners. RPR 119+: 0 wins — exposed/expected horses consistently beaten.',
+     bands:[{n:'RPR <108',p:0,t:'poor'},{n:'RPR 108-113',p:100,t:'ideal'},{n:'RPR 114-118',p:85,t:'ideal'},{n:'RPR 119+',p:20,t:'poor'}]},
+    {label:'Best TS (Top Speed)',ideal:'TS 94-100',stat:'TS 80-93: void zone — 0 wins from 23 runners. TS 94-100: 3 winners (IV=1.86). TS <80 with AW/soft excuse = neutral (unexposed, not slow). TS 101+: 1 winner.',
+     bands:[{n:'TS <80 (excused)',p:45,t:'ok'},{n:'TS 80-93',p:0,t:'poor'},{n:'TS 94-100',p:100,t:'ideal'},{n:'TS 101+',p:65,t:'good'}]},
+    {label:'Sire Index (SI)',ideal:'SI 9.0-10.5',stat:'All 5 winners had SI 9.0-10.5. Zero wins from 40 runners outside. The decisive pedigree filter. SI 7.5-8.9: 0 wins from 25 runners. SI <7.5: 0 wins from 9 runners.',
+     bands:[{n:'SI <7.5',p:0,t:'poor'},{n:'SI 7.5-8.9',p:20,t:'poor'},{n:'SI 9.0-10.5',p:100,t:'ideal'},{n:'SI 10.6+',p:10,t:'poor'}]},
+    {label:'Dosage Index (DI)',ideal:'DI 0.67-1.30',stat:'DI 0.67-1.30: 4 winners (IV=1.62). DI <0.67: 0 wins (too stamina-lean). DI 2.00+: 0 wins (11 runners). DI 1.50+ only works with proven 8f win on the track.',
+     bands:[{n:'DI <0.67',p:0,t:'poor'},{n:'DI 0.67-1.30',p:100,t:'ideal'},{n:'DI 1.31-1.49',p:40,t:'ok'},{n:'DI 1.50-1.99',p:10,t:'poor'},{n:'DI 2.00+',p:0,t:'poor'}]},
+    {label:'COD Index',ideal:'COD -0.20 to +0.15',stat:'4/5 winners in COD -0.20 to +0.15 (IV=1.93). COD <-0.20: 0 wins. COD 0.41+: 0 wins from 13 runners. Tightest ideal band of all pedigree indices.',
+     bands:[{n:'COD <-0.20',p:0,t:'poor'},{n:'COD -0.20 to +0.15',p:100,t:'ideal'},{n:'COD 0.16-0.40',p:30,t:'ok'},{n:'COD 0.41+',p:0,t:'poor'}]},
+    {label:'Joint Sire Index (JSI)',ideal:'JSI 16.5-20.5',stat:'All 5 winners in JSI 16.5-20.5. JSI <16.5: 0 wins from 13 runners. JSI 20.6+: 0 wins from 9 runners. Captures combined SI + DSI quality.',
+     bands:[{n:'JSI <16.5',p:0,t:'poor'},{n:'JSI 16.5-18.5',p:80,t:'ideal'},{n:'JSI 18.6-20.5',p:100,t:'ideal'},{n:'JSI 20.6+',p:0,t:'poor'}]},
+    {label:'Total Career Runs',ideal:'3-4 runs',stat:'3-4 runs: 4 winners (IV=2.08). 1-2 runs: 0 wins (too lightly raced). 5-6 runs: 1 winner (Chaldean). No horse with 7+ runs has won in the 5yr sample.',
+     bands:[{n:'1-2 runs',p:15,t:'poor'},{n:'3-4 runs',p:100,t:'ideal'},{n:'5-6 runs',p:40,t:'ok'}]},
+    {label:'Trip Win (7f/8f)',ideal:'Won 8f preferred',stat:'Won 8f: 3 winners (IV=1.86, PRB 67%). Won 7f only: 2 winners (stepped up — Poetic Flare, Chaldean). Won neither: 0 winners from 15 runners. Speed pedigree only works with 8f track record.',
+     bands:[{n:'Won 8f',p:100,t:'ideal'},{n:'Won 7f only',p:65,t:'good'},{n:'Won neither',p:0,t:'poor'}]},
+    {label:'Draw',ideal:'Low draw',stat:'Low draw: 3 winners (IV=2.05). Mid: 1 winner (Notable Speech). High: 1 winner (Ruling Court 2025). Signal is real but weakens in smaller fields (11 runners). Clear Low advantage in full fields.',
+     bands:[{n:'Low',p:100,t:'ideal'},{n:'Mid',p:40,t:'ok'},{n:'High',p:15,t:'poor'}]},
+    {label:'Prep Runs',ideal:'0-1 preps',stat:'Fresh (0): 2 winners. 1 prep: 2 winners. 2 preps: 0 wins from 4 runners (void zone). 3+ preps: 1 winner (Notable Speech, unusual). Ideal is 0-1 preps this season before the Guineas.',
+     bands:[{n:'Fresh (0)',p:85,t:'ideal'},{n:'1 prep',p:100,t:'ideal'},{n:'2 preps',p:0,t:'poor'},{n:'3+ preps',p:25,t:'ok'}]},
+    {label:'Foal Date',ideal:'March',stat:'March foals: 3 winners (IV=1.30). Late Apr-May: 1 winner. Early Jan-Feb: 1 winner (IV=0.57). March foals represent planned priority matings and are typically more physically mature at age 3.',
+     bands:[{n:'Early Jan-Feb',p:30,t:'ok'},{n:'March',p:100,t:'ideal'},{n:'Late Apr-May',p:55,t:'good'}]},
+    {label:'Trainer',ideal:'Appleby · Balding',stat:"Charlie Appleby: 3 wins (IV=3.90). Andrew Balding: 1 win (IV=4.33). J S Bolger: 1 win. A P O'Brien: 0 wins from 9 runners — consistent negative across 5 years.",
+     bands:[{n:"A P O'Brien",p:0,t:'poor'},{n:'Other',p:30,t:'ok'},{n:'Balding/Bolger',p:80,t:'ideal'},{n:'Appleby',p:100,t:'ideal'}]},
+    {label:'Pace Style',ideal:'Patient (held up/rear)',stat:'PATIENT: 3/5 winners, IV=1.62, PRB=57%. PROMINENT: 2/5 winners, IV=0.63, PRB=46%. Both styles produce winners — scoring rewards patient but does not eliminate prominent.',
+     bands:[{n:'Prominent/Led',p:55,t:'ok'},{n:'Patient (held up/rear)',p:100,t:'ideal'}]},
+    {label:'G1 Sire (RPR 123+)',ideal:'Yes — all 5 winners',stat:'YES: 27 runners, 5 winners, IV=2.41, PRB=61.6%. NO: 38 runners, 0 winners, IV=0.00. All 5 winners had a G1 sire rated 123+ RPR. The strongest binary filter after form.',
+     bands:[{n:'No G1 sire 123+',p:0,t:'poor'},{n:'G1 sire 123+',p:100,t:'ideal'}]},
+  ];
+  var h='';
+  factors.forEach(function(f){
+    h+='<div class="icp-factor-card">';
+    h+='<div class="icp-factor-header"><div class="icp-factor-label">'+f.label+'</div><div class="icp-factor-ideal">Ideal: '+f.ideal+'</div></div>';
+    h+='<div class="icp-factor-stat">'+f.stat+'</div>';
+    h+='<div class="icp-factor-bars">';
+    f.bands.forEach(function(b){
+      h+='<div class="icp-band" style="background:'+B[b.t]+'">';
+      h+='<div class="icp-band-name">'+b.n+'</div>';
+      h+='<div class="icp-band-track"><div class="icp-band-fill" style="width:'+b.p+'%;background:'+C[b.t]+'"></div></div>';
+      h+='</div>';
+    });
+    h+='</div></div>';
+  });
+  grid.innerHTML=h;
+}
+
 function renderICPCharts(contenders){} // stub — dot charts removed
 
 function parseForm(formStr) {
@@ -851,202 +917,117 @@ function parseForm(formStr) {
 // ─────────────────────────────────────────────
 // STATISTICAL SCORING ENGINE
 // ─────────────────────────────────────────────
-function scoreRunner(r, fieldSize) {
-  var scores = {}, details = {};
-
-  // ── STYLE (weight 10%) ──────────────────────────────────────
-  var styleMap = {MIDFIELD:100, PROMINENT:72, LED:18, 'HOLD UP':18};
-  scores.style = styleMap[r.style] || 0;
-  details.style = r.style==='MIDFIELD'  ? '✅ 8/15 winners · dominant profile' :
-                  r.style==='PROMINENT' ? '⚠️ 6/15 winners · viable but overbet' :
-                  r.style==='LED'       ? '⚠️ 1/15 winners · Frankel only' :
-                                          '⚠️ 1/15 winners · Camelot only';
-
-  // ── DRAW (weight 9%) ────────────────────────────────────────
-  var dg = getDrawGroup(r.draw, fieldSize);
-  var midScore = fieldSize<=11 ? 42 : fieldSize<=16 ? 22 : 12;
-  scores.draw = dg==='Low' ? 82 : dg==='High' ? 78 : midScore;
-  details.draw = dg==='Low'  ? '✅ Low draw — 8/15 winners · dominant signal' :
-                 dg==='High' ? '✅ High draw — 4/15 winners · positive' :
-                               '⚠️ Mid draw — 3/15 winners · only viable in small fields';
-
-  // ── OR (weight 10%) ─────────────────────────────────────────
-  var orVal = parseInt(r.or);
-  if (isNaN(orVal))   { scores.or=28;  details.or='⚠️ Unrated'; }
-  else if (orVal>=120){ scores.or=100; details.or='✅ OR 120+ — 4/15 winners · not a barrier'; }
-  else if (orVal>=116){ scores.or=100; details.or='✅ OR 116-119 — 5/15 winners · peak band'; }
-  else if (orVal>=112){ scores.or=94;  details.or='✅ OR 112-115 — 4/15 winners'; }
-  else if (orVal>=109){ scores.or=80;  details.or='✅ OR 109-111 — 3/15 winners · value zone'; }
-  else if (orVal>=100){ scores.or=58;  details.or='🟡 OR 100-108 — below typical winner range'; }
-  else                { scores.or=18;  details.or='❌ Sub-100 OR'; }
-
-  // ── RUNS THIS SEASON (weight 3%) ────────────────────────────
-  var fd = parseForm(r.form || '');
-  var runsN = fd.runsThisSeason;
-  scores.runs = ({0:100,1:88,2:45,3:68})[runsN] || (runsN<=6 ? 52 : 28);
-  details.runs = runsN===0 ? '✅ Fresh — 10/15 winners · dominant signal' :
-                 runsN===1 ? '✅ 1 prep run — 4/15 winners' :
-                 runsN===2 ? '⚠️ 2 runs — 0/15 winners had exactly 2 seasonal runs' :
-                 runsN===3 ? '🟡 3 runs — Notable Speech only' :
-                             '🟡 4-6 runs — Dawn Approach (6) and Gleneagles (5) both won';
-
-  // ── LAST RUN RESULT (weight 9%) ─────────────────────────────
-  var lr = fd.lastRun;
-  scores.lastRun = {'1':100,'2':52,'3':38,'0':8,'fresh':60}[lr] || 20;
-  details.lastRun = lr==='1'     ? '✅ Won last run — 12/15 winners · strongest single signal' :
-                    lr==='2'     ? '🟡 2nd last run — Night of Thunder won after a 2nd' :
-                    lr==='3'     ? '⚠️ 3rd last run — only 2 winners came off a 3rd' :
-                    lr==='0'     ? '❌ Outside top 10 last run' :
-                    lr==='fresh' ? '🟡 Fresh — last run was previous season' :
-                                   '⚠️ Last run: ' + lr;
-
-  // ── GROUP WIN (weight 8%) ────────────────────────────────────
-  scores.groupWin = r.grpWin==='yes' ? 85 : 45;
-  details.groupWin = r.grpWin==='yes' ? '🟢 Group win — 12/15 winners had Group form' :
-                     r.grpWin==='no'  ? '🟡 No Group win — 3/15 winners had none' :
-                                        '🟡 Unknown';
-
-  // ── UNBEATEN CAREER (weight 5%) ─────────────────────────────
-  function isUnbeaten(form) {
-    var s = (form||'').toUpperCase().replace(/-/g,'');
-    var runs = s.replace(/[FURP]/g,'');
-    return runs.length > 0 && runs.split('').every(function(c){return c==='1';});
+// ─────────────────────────────────────────────
+// GUINEAS SCORING ENGINE v3
+// Evidence-based 2021-2025 | Winner avg 131 | Top-4 avg 89
+// ─────────────────────────────────────────────
+function drawGroupFlat(draw, fs) {
+  if (fs<=12) {
+    if (draw<=Math.round(fs*0.27)) return 'Low';
+    if (draw<=Math.round(fs*0.64)) return 'Mid';
+    return 'High';
   }
-  var ub = isUnbeaten(r.form || '');
-  scores.unbeaten = ub ? 100 : 35;
-  details.unbeaten = ub ? '✅ Unbeaten — 5/15 winners (Frankel, Camelot, Dawn Approach, Saxon Warrior, Notable Speech)' :
-                          '🟡 Not unbeaten — 10/15 winners had at least one defeat';
-
-  // ── PEDIGREE (weight 30%) ────────────────────────────────────
-  // Internal weights — statistically justified:
-  // SI 28% (highest discriminating SD 26.0, direct sire impact)
-  // JSI 25% (important but overlaps with SI — discounted)
-  // COD 19% (13/15 winners in core — tightest sweet spot)
-  // DI 18% (catches extremes well, primary speed/stamina ratio)
-  // DSI 10% (lowest SD 13.6, less important per your instruction)
-  function scoreSI(v) {
-    if (v<7.5)   return 5;
-    if (v<=7.9)  return 22;
-    if (v<=8.9)  return 40;
-    if (v<=9.2)  return 80;
-    if (v<=10.5) return 100;
-    if (v<=11.0) return 90;
-    if (v<=11.9) return 78;
-    return 45;
-  }
-  function scoreDSI(v) {
-    if (v<7.0)   return 15;
-    if (v<=7.9)  return 68;
-    if (v<=11.0) return 100;
-    if (v<=11.5) return 85;
-    if (v<=12.0) return 62;
-    return 30;
-  }
-  function scoreJSI(v) {
-    if (v<17.0)  return 8;
-    if (v<=17.1) return 35;
-    if (v<=18.2) return 45;
-    if (v<=20.5) return 100;
-    if (v<=22.0) return 95;
-    return 70;
-  }
-  function scoreDI(v) {
-    if (v>2.65)  return 10;
-    if (v>=2.01) return 25;
-    if (v>=1.61) return 15;
-    if (v>=1.47) return 42;
-    if (v>=1.31) return 78;
-    if (v>=1.01) return 95;
-    if (v>=0.67) return 100;
-    if (v>=0.60) return 55;
-    return 30;
-  }
-  function scoreCOD(v) {
-    if (v>0.75||v<-0.40) return 8;
-    if (v>=0.56)  return 20;
-    if (v>=0.32)  return 40;
-    if (v>=0.13)  return 78;
-    if (v>=-0.15) return 100;
-    if (v>=-0.20) return 65;
-    if (v>=-0.30) return 38;
-    if (v>=-0.40) return 20;
-    return 8;
-  }
-  var pedW = {si:0.28, jsi:0.25, cod:0.19, di:0.18, dsi:0.10};
-  var pedBits=[], pedTot=0, pedTotW=0;
-  if (r.ped) {
-    [{k:'si',f:scoreSI,l:'SI'},{k:'jsi',f:scoreJSI,l:'JSI'},{k:'cod',f:scoreCOD,l:'COD'},
-     {k:'di',f:scoreDI,l:'DI'},{k:'dsi',f:scoreDSI,l:'DSI'}].forEach(function(pf) {
-      var v = r.ped[pf.k];
-      if (v !== null && v !== undefined) {
-        var s = pf.f(v);
-        pedTot  += s * pedW[pf.k];
-        pedTotW += pedW[pf.k];
-        pedBits.push(pf.l+' '+v+' '+(s>=88?'✅':s>=55?'⚠️':'❌')+' ('+s+')');
-      }
-    });
-  }
-  scores.pedigree = pedTotW > 0 ? Math.round(pedTot/pedTotW) : 50;
-  details.pedigree = pedBits.length ? pedBits.join(' | ') : 'No pedigree data — neutral 50';
-
-  // Trip verdict
-  var tripVerdict = null;
-  if (r.ped && r.ped.di !== null && r.ped.cod !== null) {
-    var di=r.ped.di, cod=r.ped.cod;
-    if      (di>2.00&&cod>0.55)  tripVerdict={icon:'🔴',text:'Speed-biased on both metrics. Only Kameko (DI 2.64/COD 0.70) won with a comparable profile.'};
-    else if (di>2.00)             tripVerdict={icon:'🔴',text:'DI '+di+' — significant speed bias. Only Kameko exceeded 2.0 in 15 years.'};
-    else if (cod>0.55)            tripVerdict={icon:'🔴',text:'COD '+cod+' — sprint lean. Mile may be beyond optimal trip.'};
-    else if (cod<-0.30)           tripVerdict={icon:'🔴',text:'COD '+cod+' — staying lean. Optimal trip likely 10f+.'};
-    else if (di>=0.67&&di<=1.30&&cod>=-0.15&&cod<=0.12) tripVerdict={icon:'🟢',text:'Ideal — DI '+di+' and COD '+cod+' both in the 15-year winner core.'};
-    else if (di>=0.60&&di<=1.46&&cod>=-0.20&&cod<=0.31) tripVerdict={icon:'🟢',text:'Good — DI '+di+' / COD '+cod+' within winner range.'};
-    else if (di>1.46)             tripVerdict={icon:'🟡',text:'Slightly sharp — DI '+di+'. No winner between 1.47-2.63 except Kameko.'};
-    else if (cod<-0.20)           tripVerdict={icon:'🟡',text:'Slightly long — COD '+cod+' just outside the core -0.15 zone.'};
-    else                          tripVerdict={icon:'🟡',text:'Borderline — DI '+di+' / COD '+cod+'.'};
-  }
-
-  // ── TRAINER (weight 8%) ─────────────────────────────────────
-  var tl = r.trainer.toLowerCase();
-  if      (tl.indexOf('appleby')>=0)  { scores.trainer=100; details.trainer="🟢 Appleby — 3/15 wins · all 2022-2025 · dominant recent trainer"; }
-  else if (tl.indexOf("o'brien")>=0||tl.indexOf('obrien')>=0||tl.indexOf('aidan')>=0)
-                                       { scores.trainer=88;  details.trainer="🟢 A P O'Brien — 5/15 wins · 2012-2019"; }
-  else if (tl.indexOf('balding')>=0)  { scores.trainer=85;  details.trainer="🟢 Balding — 2/15 wins · 2020 & 2023"; }
-  else if (tl.indexOf('bolger')>=0)   { scores.trainer=78;  details.trainer="🟢 Bolger — 2/15 wins · 2013 & 2021"; }
-  else                                 { scores.trainer=50;  details.trainer="🟡 "+r.trainer+" — no wins in 15yr sample · neutral"; }
-
-  // ── JOCKEY (weight 9%) ─────────────────────────────────────
-  // Active jockeys only — retired jockeys scored neutral
-  var jl = (r.jockey||'').toLowerCase();
-  if      (jl.indexOf('buick')>=0) { scores.jockey=100; details.jockey="🟢 Buick — 2/15 wins · 2024 & 2025 · PRB 0.95 · dominant current signal"; }
-  else if (jl.indexOf('doyle')>=0) { scores.jockey=88;  details.jockey="🟢 Doyle — 1/15 wins · 2022 · PRB 0.83"; }
-  else                              { scores.jockey=50;  details.jockey="🟡 "+(r.jockey||'Unknown')+" — neutral (retired jockeys scored neutral regardless of historical record)"; }
-
-  // ── SP reference ────────────────────────────────────────────
-  var spDec = parseSP(r.sp);
-  var spFlag = spDec!==null && spDec<2.5 ? ' ⚠️ Shorter than 5/2 — 0W in 15yr sample' : ' (not scored)';
-  details.sp = (r.sp&&r.sp!=='---' ? r.sp : '—') + spFlag;
-
-  // ── BRED informational ──────────────────────────────────────
-  var bm = {IRE:'🟡 IRE — 7/15 winners',GB:'🟡 GB — 5/15 winners',USA:'🟢 USA — 2/15 winners',JPN:'🟡 JPN — 1/15 winners'};
-  details.bred = bm[r.bred] || '🟡 '+r.bred;
-
-  // ── COMPOSITE ───────────────────────────────────────────────
-  // Style 10, Draw 9, OR 10, Runs 3, LastRun 9, GrpWin 8, Unbeaten 5,
-  // Pedigree 30, Trainer 8, Jockey 8 = 100
-  var W = {style:10,draw:9,or:10,runs:3,lastRun:9,groupWin:8,unbeaten:5,pedigree:30,trainer:8,jockey:8};
-  var tot=0, totW=0;
-  Object.keys(W).forEach(function(k){
-    if (scores[k]!==undefined){tot+=scores[k]*W[k];totW+=W[k];}
-  });
-  var composite = Math.round(tot/totW);
-
-  return {composite:composite, scores:scores, details:details, tripVerdict:tripVerdict, drawGroup:dg, formData:fd};
+  var t=Math.floor(fs/3);
+  if (draw<=t) return 'Low';
+  if (draw<=t*2) return 'Mid';
+  return 'High';
 }
 
-// ─────────────────────────────────────────────
-// GRAND NATIONAL SCORING ENGINE
-// Validated against 19 winners 2006-2025
-// Weights: Age20 OR18 Trainer12 Style8 GradeWin8 ChaseRuns7 ChaseWin%7 Weight7 Top3L45 LastRun4 RunsSeason3 DistWin1 = 100
-// ─────────────────────────────────────────────
+function parseFormFlat(formStr) {
+  var s=(formStr||'').trim().toUpperCase();
+  var allRuns,prepRuns,lastRun;
+  if (s.slice(-1)==='-') {
+    allRuns=s.slice(0,-1).replace(/-/g,''); prepRuns=0;
+    lastRun=allRuns.slice(-1)||null;
+  } else if (s.indexOf('-')>=0) {
+    var sp=s.split('-'), prev=sp.slice(0,-1).join('').replace(/-/g,''), curr=sp[sp.length-1];
+    allRuns=prev+curr; prepRuns=curr.length;
+    lastRun=curr.slice(-1)||(prev.slice(-1)||null);
+  } else {
+    allRuns=s; prepRuns=s.length; lastRun=s.slice(-1)||null;
+  }
+  var perf=allRuns.split('').filter(function(c){return /[0-9FURPB]/.test(c);});
+  var l3=perf.slice(-3);
+  return {
+    totalRuns:perf.length, prepRuns:prepRuns,
+    wonLast:lastRun==='1',
+    has12Last3:l3.some(function(c){return c==='1'||c==='2';})
+  };
+}
+
+function scoreRunnerGuineas(r, fieldSize) {
+  var fm=parseFormFlat(r.form||'');
+  var draw=parseInt(r.draw)||1;
+  var dg=drawGroupFlat(draw, fieldSize||11);
+  var or_=parseInt(r.or||r.or_)||0;
+  var rpr=parseInt(r.rpr)||0;
+  var ts=parseInt(r.ts)||0;
+  var tsExc=r.ts_excuse||'none';
+  var si=parseFloat(r.si)||0;
+  var di=parseFloat(r.di)||1.0;
+  var cod=parseFloat(r.cod)||0;
+  var jsi=parseFloat(r.jsi)||(si+(parseFloat(r.dsi||0)))||0;
+  var grpw=parseInt(r.grp_wins||r.grpWins)||0;
+  var foalM=parseInt(r.foal_month)||3;
+  var prep=fm.prepRuns, totRuns=fm.totalRuns, wonLast=fm.wonLast;
+  var last78f=r.last_78f!==false&&r.last78f!==false;
+  var won8f=r.won_8f===true||r.won8f===true;
+  var won7f=r.won_7f===true||r.won7f===true;
+  var trainer=r.trainer||'';
+  var base=0,bonusTotal=0,penTotal=0,bonuses={},penalties={};
+
+  // BASE
+  if(or_===0)base+=5; else if(or_<=109)base+=8; else if(or_<=115)base+=15; else if(or_<=121)base+=12; else base+=9;
+  if(rpr<108)base+=0; else if(rpr<=113)base+=15; else if(rpr<=118)base+=20; else base+=12;
+  var tsExcused=ts<80&&tsExc!=='none';
+  if(tsExcused)base+=7; else if(ts<80)base+=3; else if(ts<=93)base+=0; else if(ts<=100)base+=10; else base+=8;
+  if(si<7.5)base+=0; else if(si<9.0)base+=4; else if(si<=10.5)base+=15; else base+=3;
+  if(di<0.67)base+=0; else if(di<=1.30)base+=8; else if(di<=1.49)base+=5; else base+=1;
+  if(cod<-0.20)base+=0; else if(cod<=0.15)base+=7; else if(cod<=0.40)base+=3; else base+=0;
+  if(jsi<16.5)base+=0; else if(jsi<=18.5)base+=5; else if(jsi<=20.5)base+=7; else base+=0;
+  if(totRuns<=2)base+=2; else if(totRuns<=4)base+=6; else base+=3;
+  if(won8f)base+=8; else if(won7f)base+=5;
+  if(dg==='Low')base+=5; else if(dg==='Mid')base+=3; else base+=1;
+  if(prep===0)base+=3; else if(prep===1)base+=4; else if(prep===2)base+=0; else base+=2;
+  if(foalM===3)base+=3; else if(foalM<=2)base+=1; else base+=2;
+  if(grpw===0)base+=3; else if(grpw===1)base+=4; else if(grpw===2)base+=1; else base+=3;
+  if(trainer.indexOf('Appleby')>=0||trainer.indexOf('Balding')>=0||trainer.indexOf('Bolger')>=0)base+=3;
+  else if(trainer.indexOf("A P O'Brien")>=0&&trainer.indexOf('Joseph')<0)base+=1;
+  else base+=2;
+  // PACE STYLE (5=PATIENT, 3=PROMINENT) — IV 1.62 vs 0.63
+  var paceG=(r.pace_guineas||'PATIENT').toUpperCase();
+  if(paceG==='PATIENT'||paceG==='HOLD UP'||paceG==='HOLD_UP')base+=5; else base+=3;
+
+  // BONUSES
+  if(wonLast){bonuses['B1']=10;bonusTotal+=10;}
+  if(last78f){bonuses['B2']=8;bonusTotal+=8;}
+  if(si>=9.0&&si<=10.5){bonuses['B3']=5;bonusTotal+=5;}
+  if(di>=0.67&&di<=1.30&&cod>=-0.20&&cod<=0.15&&jsi>=16.5&&jsi<=20.5){bonuses['B4']=6;bonusTotal+=6;}
+  if(trainer.indexOf('Appleby')>=0&&prep<=1){bonuses['B5']=3;bonusTotal+=3;}
+  if(rpr>=110&&rpr<=118&&totRuns<=3&&wonLast){bonuses['B6']=4;bonusTotal+=4;}
+  // B7 — G1 Sire 123+ YES (IV=2.41, all 5 winners qualify)
+  if(r.g1_sire_123===true){bonuses['B7']=5;bonusTotal+=5;}
+
+  // PENALTIES
+  if(!wonLast){penalties['P1']=-15;penTotal-=15;}
+  if(!last78f){var p2=(won7f||won8f)?-4:-8;penalties['P2']=p2;penTotal+=p2;}
+  if(si<9.0||si>10.5){var p3=si<7.5?-10:(si<9.0?-6:-8);penalties['P3']=p3;penTotal+=p3;}
+  if(ts>=80&&ts<=93&&totRuns>=4){penalties['P4']=-5;penTotal-=5;}
+  if(prep===2){penalties['P5']=-5;penTotal-=5;}
+  if(rpr<108){penalties['P6']=-8;penTotal-=8;}
+  if(di>=1.50){var p7f=di>=2.00?-8:-4,p7=won8f?Math.round(p7f/2):p7f;penalties['P7']=p7;penTotal+=p7;}
+  if(cod>0.40){var p8=won8f?-2:-5;penalties['P8']=p8;penTotal+=p8;}
+  if(jsi<16.5){penalties['P9']=-5;penTotal-=5;}
+  if(trainer.indexOf("A P O'Brien")>=0&&trainer.indexOf('Joseph')<0){penalties['P10']=-3;penTotal-=3;}
+  if(!won7f&&!won8f){penalties['P11']=-6;penTotal-=6;}
+  if(won7f&&!won8f&&(si<9.0||si>10.5)){penalties['P12']=-3;penTotal-=3;}
+
+  var finalScore=Math.max(0,base+bonusTotal+penTotal);
+  return {finalScore:finalScore,composite:finalScore,base:base,bonusTotal:bonusTotal,penTotal:penTotal,bonuses:bonuses,penalties:penalties,drawGroup:dg};
+}
+
+function scoreRunner(r,fieldSize){return scoreRunnerGuineas(r,fieldSize);}
+
 function gnParseWeightLbs(w) {
   if (!w) return null;
   var m = w.match(/(\d+)st(\d+)lb/i);
@@ -1387,7 +1368,7 @@ function selectRace(mode) {
     document.getElementById('hdr-race-sub').textContent = 'Newmarket · 1 Mile · 3yo · Group 1 · 2011–2025 · 15 winners';
     document.getElementById('field-size-label').textContent = 'Total Field Size';
     document.getElementById('field-size-hint').textContent = 'Declared runners — used for draw groupings.';
-    document.getElementById('grp-label').textContent = 'Group Win';
+    var glEl=document.getElementById('grp-label'); if(glEl) glEl.textContent='Group Win';
   }
 
   // Show/hide form elements
@@ -1398,6 +1379,7 @@ function selectRace(mode) {
   // Re-render runners list and profile for new race mode
   renderRunners();
   renderProfile();
+  loadRunners();
 }
 
 
@@ -1439,6 +1421,13 @@ function normaliseWeight(el) {
   el.value = st+'st'+lb+'lb';
 }
 
+
+function updateJSI() {
+  var si=parseFloat((document.getElementById('f-si')||{}).value)||0;
+  var dsi=parseFloat((document.getElementById('f-dsi')||{}).value)||0;
+  var el=document.getElementById('f-jsi');
+  if (el) el.value=(si>0&&dsi>0)?Math.round((si+dsi)*10)/10:'';
+}
 function validateForm(el) {
   // Allow digits, dash, F, U, R, P (DNF chars) — max 13 chars total (6 runs each side + dash)
   var val = el.value.replace(/[^0-9\-FURPfurp]/g,'');
@@ -1469,6 +1458,9 @@ function addRunner() {
   if (!name) { alert('Please enter a horse name.'); return; }
   var isNH = CURRENT_RACE==='national';
 
+  var siVal=parseFloat((document.getElementById('f-si')||{}).value)||0;
+  var dsiVal=parseFloat((document.getElementById('f-dsi')||{}).value)||0;
+  var jsiVal=parseFloat((document.getElementById('f-jsi')||{}).value)||(siVal+dsiVal)||0;
   var runner = {
     name:name,
     bred:document.getElementById('f-bred').value,
@@ -1478,26 +1470,40 @@ function addRunner() {
     sp:document.getElementById('f-sp').value.trim()||'---',
     trainer:document.getElementById('f-trainer').value.trim()||'---',
     jockey:document.getElementById('f-jockey').value.trim()||'---',
-    or_:isNH ? (document.getElementById('f-or-nh').value.trim()||'') : '',
+    or_:isNH ? ((document.getElementById('f-or-nh')||{}).value||'').trim() : '',
     or:isNH ? '' : (document.getElementById('f-or').value.trim()||'---'),
-    style:isNH ? document.getElementById('f-style-nh').value : document.getElementById('f-style').value,
-    styleNH:document.getElementById('f-style-nh').value,
+    style:isNH ? ((document.getElementById('f-style-nh')||{}).value||'MIDFIELD') : (document.getElementById('f-pace-guineas')||{value:'PATIENT'}).value,
+    styleNH:((document.getElementById('f-style-nh')||{}).value||'MIDFIELD'),
     form:document.getElementById('f-form').value.trim(),
-    grpWin:isNH ? document.getElementById('f-grp-nh').value : document.getElementById('f-grp').value,
-    grade_win:isNH ? (document.getElementById('f-grp-nh').value==='yes') : false,
+    grpWin:isNH ? document.getElementById('f-grp-nh').value : ((document.getElementById('f-grp')||{}).value||''),
+    grade_win:isNH ? ((document.getElementById('f-grp-nh')||{}).value==='yes') : false,
     notes:document.getElementById('f-notes').value.trim(),
     // NH extras
-    age:parseInt(document.getElementById('f-age').value)||0,
-    chase_runs:parseInt(document.getElementById('f-chase-runs').value)||0,
-    chase_wins:parseInt(document.getElementById('f-chase-wins').value)||0,
-    g1_wins:parseInt(document.getElementById('f-g1-wins').value)||0,
-    g1_places:parseInt(document.getElementById('f-g1-places').value)||0,
-    dist3m_wins:parseInt(document.getElementById('f-dist3m-wins').value)||0,
-    dist3m_places:parseInt(document.getElementById('f-dist3m-places').value)||0,
-    or_delta:parseInt(document.getElementById('f-or-delta').value)||0,
-    recent_g1_top3:document.getElementById('f-recent-g1').value==='yes',
-    dist_win:parseInt(document.getElementById('f-dist3m-wins').value)>0,
-    raceMode:CURRENT_RACE
+    age:parseInt((document.getElementById('f-age')||{}).value||0)||0,
+    chase_runs:parseInt((document.getElementById('f-chase-runs')||{}).value||0)||0,
+    chase_wins:parseInt((document.getElementById('f-chase-wins')||{}).value||0)||0,
+    g1_wins:parseInt((document.getElementById('f-g1-wins')||{}).value||0)||0,
+    g1_places:parseInt((document.getElementById('f-g1-places')||{}).value||0)||0,
+    dist3m_wins:parseInt((document.getElementById('f-dist3m-wins')||{}).value||0)||0,
+    dist3m_places:parseInt((document.getElementById('f-dist3m-places')||{}).value||0)||0,
+    or_delta:parseInt((document.getElementById('f-or-delta')||{}).value||0)||0,
+    recent_g1_top3:((document.getElementById('f-recent-g1')||{}).value==='yes'),
+    dist_win:parseInt((document.getElementById('f-dist3m-wins')||{}).value||0)>0,
+    raceMode:CURRENT_RACE,
+    // Flat/Guineas fields
+    rpr:parseInt((document.getElementById('f-rpr')||{}).value)||0,
+    ts:parseInt((document.getElementById('f-ts')||{}).value)||0,
+    ts_excuse:(document.getElementById('f-ts-excuse')||{}).value||'none',
+    si:siVal, dsi:dsiVal, jsi:jsiVal,
+    di:parseFloat((document.getElementById('f-di')||{}).value)||0,
+    cod:parseFloat((document.getElementById('f-cod')||{}).value)||0,
+    foal_month:parseInt((document.getElementById('f-foal-month')||{}).value)||3,
+    grp_wins:parseInt((document.getElementById('f-grp-wins')||{}).value)||0,
+    last_78f:!(document.getElementById('f-last78f')&&document.getElementById('f-last78f').value==='no'),
+    won_8f:!!(document.getElementById('f-won8f')&&document.getElementById('f-won8f').value==='yes'),
+    won_7f:!!(document.getElementById('f-won7f')&&document.getElementById('f-won7f').value==='yes'),
+    pace_guineas:(document.getElementById('f-pace-guineas')||{value:'PATIENT'}).value||'PATIENT',
+    g1_sire_123:!!(document.getElementById('f-g1sire')&&document.getElementById('f-g1sire').value==='yes'),
   };
   if (editIdx>=0) { runners[editIdx]=runner; editIdx=-1; document.getElementById('form-title').textContent='Add Runner'; }
   else runners.push(runner);
@@ -1516,9 +1522,8 @@ function editRunner(i) {
   document.getElementById('f-jockey').value=r.jockey==='---'?'':r.jockey;
   document.getElementById('f-or').value=r.or==='---'?'':r.or;
   document.getElementById('f-or-nh').value=r.or_||'';
-  document.getElementById('f-style').value=r.style||'MIDFIELD';
   document.getElementById('f-style-nh').value=r.styleNH||r.style||'MIDFIELD';
-  document.getElementById('f-grp').value=r.grpWin||'';
+  var fgrpE=document.getElementById('f-grp'); if(fgrpE) fgrpE.value=r.grpWin||'';
   document.getElementById('f-notes').value=r.notes||'';
   document.getElementById('f-form').value=r.form||'';
   // NH extras
@@ -1532,6 +1537,9 @@ function editRunner(i) {
   var d3pEl=document.getElementById('f-dist3m-places'); if(d3pEl) d3pEl.value=r.dist3m_places||0;
   var odEl=document.getElementById('f-or-delta'); if(odEl) odEl.value=r.or_delta||0;
   var rg1El=document.getElementById('f-recent-g1'); if(rg1El) rg1El.value=r.recent_g1_top3?'yes':'no';
+  // Flat extras
+  var pgEl=document.getElementById('f-pace-guineas'); if(pgEl) pgEl.value=r.pace_guineas||'PATIENT';
+  var g1sEl=document.getElementById('f-g1sire'); if(g1sEl) g1sEl.value=r.g1_sire_123?'yes':'no';
   editIdx=i; document.getElementById('form-title').textContent='Edit — '+r.name;
   document.getElementById('runner-form').scrollIntoView({behavior:'smooth'});
 }
@@ -1539,15 +1547,20 @@ function editRunner(i) {
 function removeRunner(i) { runners.splice(i,1); renderRunners(); }
 
 function clearForm() {
-  ['f-name','f-draw','f-weight','f-sp','f-trainer','f-jockey','f-or','f-or-nh','f-notes','f-form','f-age','f-chase-runs','f-chase-wins','f-g1-wins','f-g1-places','f-dist3m-wins','f-dist3m-places','f-or-delta'].forEach(function(id){
+  ['f-name','f-draw','f-weight','f-sp','f-trainer','f-jockey','f-or','f-or-nh','f-notes','f-form','f-age','f-chase-runs','f-chase-wins','f-g1-wins','f-g1-places','f-dist3m-wins','f-dist3m-places','f-or-delta','f-rpr','f-ts','f-si','f-dsi','f-jsi','f-di','f-cod','f-foal-month','f-grp-wins'].forEach(function(id){
     var el=document.getElementById(id); if(el) el.value='';
   });
   document.getElementById('f-bred').value='IRE';
-  document.getElementById('f-style').value='MIDFIELD';
   document.getElementById('f-style-nh').value='MIDFIELD';
-  document.getElementById('f-grp').value='';
+  var fgrp=document.getElementById('f-grp'); if(fgrp) fgrp.value='';
   var grpNH=document.getElementById('f-grp-nh'); if(grpNH) grpNH.value='';
   var rg1=document.getElementById('f-recent-g1'); if(rg1) rg1.value='no';
+  var l78=document.getElementById('f-last78f'); if(l78) l78.value='yes';
+  var w8f=document.getElementById('f-won8f'); if(w8f) w8f.value='no';
+  var w7f=document.getElementById('f-won7f'); if(w7f) w7f.value='no';
+  var pg=document.getElementById('f-pace-guineas'); if(pg) pg.value='PATIENT';
+  var g1s=document.getElementById('f-g1sire'); if(g1s) g1s.value='no';
+  var tse=document.getElementById('f-ts-excuse'); if(tse) tse.value='none';
   editIdx=-1; document.getElementById('form-title').textContent='Add Runner';
 }
 
@@ -1584,30 +1597,36 @@ function renderRunners() {
   }).join('');
   genRow.style.display='flex';
   genInfo.textContent=runners.length+' runners';
+  saveRunners();
 }
 
 // ─────────────────────────────────────────────
 // PROFILE RENDER
 // ─────────────────────────────────────────────
 var PROFILE_FACTORS = [
-  {label:'Weight',        ideal:'Level weights — no advantage',          stats:'All colts 9-0 (Notable Speech & Ruling Court 9-2). Fillies 8-11. Not a scoring factor.'},
-  {label:'Running Style', ideal:'MIDFIELD primary',                      stats:'MIDFIELD: 8/15 winners\nPROMINENT: 6/15 winners\nLED: 1/15 (Frankel) · HOLD UP: 1/15 (Camelot)'},
-  {label:'Draw',          ideal:'Low (1-4) dominant',                    stats:'Low stalls 1-4: 8/15 winners\nHigh stalls 11+: 4/15 winners\nMid: 3/15 · only viable in small fields (≤11 runners)'},
-  {label:'OR Band',       ideal:'109+ · 120+ not a barrier',             stats:'OR 120+: 4/15 winners (Frankel 126, Churchill 122, Dawn Approach 124)\nOR 116-119: 5/15 · OR 112-115: 4/15 · OR 109-111: 3/15\nMean winner OR: 116.0'},
-  {label:'Starting Price',ideal:'Reference only — not scored',           stats:'Shorter than 5/2: 0W in 15yr sample (small sample caveat)\nSP removed from scoring — shown for reference only'},
-  {label:'Trainer',       ideal:"Appleby · O'Brien · Balding · Bolger",  stats:"Appleby: 3/15 wins (2022-2025) · dominant recent\nA P O'Brien: 5/15 wins (2012-2019) · strong historical\nBalding: 2/15 · Bolger: 2/15"},
-  {label:'Jockey',        ideal:'Buick · Doyle',                         stats:'Buick: 2/15 wins · 2024 & 2025 · PRB 0.95\nDoyle: 1/15 wins · 2022 · PRB 0.83\nAll others neutral · retired jockeys scored neutral'},
-  {label:'Form',          ideal:'Fresh + won last run',                  stats:'Fresh (0 runs): 10/15 winners — dominant\n1 prep run: 4/15 winners\nLast run 1st: 12/15 winners — strongest single signal\nUnbeaten career: 5/15 winners (Frankel, Camelot, Dawn Approach, Saxon Warrior, Notable Speech)'},
-  {label:'Group Win',     ideal:'Yes — 12/15 winners had Group form',    stats:'Yes: 12/15 winners\nNo: 3/15 (Night of Thunder, Notable Speech, Ruling Court)\nWeight increased to 8% — strong signal'},
-  {label:'Key Insight',   ideal:'Fresh + last run win + clean pedigree', stats:'10/15 winners went fresh · 12/15 won last run\nPedigree is the dominant factor (30% weight)\nJSI below 17.0 = below every winner in 15yr sample\nDI 1.61-2.00 = void zone — 0 winners except Kameko'}
+  {label:'Official Rating (OR)',   ideal:'OR 109-119',           stats:'OR 110-115: ideal (2 winners). OR 109: 2 winners. OR 116-121: 1 winner (Chaldean). OR 122+: 0 winners — City Of Troy (125), Native Trail (122) both beaten. Unrated: 0 wins.'},
+  {label:'Best RPR',              ideal:'RPR 108-118',           stats:'RPR <108: 0 wins from 17 runners (hard floor). RPR 108-113: 3 winners (ideal). RPR 114-118: 2 winners. RPR 119+: 0 winners from 3 runners (Native Trail 120, City Of Troy 123).'},
+  {label:'Best Top Speed (TS)',   ideal:'TS 94-100',             stats:'TS 94-100: 3 winners (IV=1.86). TS 80-93: 0 wins from 23 runners — void zone. TS <80 with AW/soft excuse treated as neutral — Notable Speech won with TS 64 from 3 AW runs. TS 101+: 1 winner.'},
+  {label:'Sire Index (SI)',       ideal:'SI 9.0-10.5',           stats:'All 5 winners had SI 9.0-10.5. Zero wins from 40 runners outside this range. SI is the single strongest pedigree signal. SI <7.5: 0 wins. SI 7.5-8.9: 0 wins from 25 runners. SI 10.6+: 0 wins.'},
+  {label:'Dosage Index (DI)',     ideal:'DI 0.67-1.30',          stats:'DI 0.67-1.30: 4 winners. DI <0.67: 0 wins. DI 2.00+: 0 wins from 11 runners. DI 1.50+ horses who won at 8f on track (Ghostwriter, Field Of Gold) placed but did not win.'},
+  {label:'COD Index',             ideal:'COD -0.20 to +0.15',    stats:'4 of 5 winners in COD -0.20 to +0.15 (IV=1.93). COD <-0.20: 0 wins. COD 0.41+: 0 wins from 13 runners. Speed-biased pedigree partially offset by proven 8f win.'},
+  {label:'Joint Sire Index (JSI)',ideal:'JSI 16.5-20.5',         stats:'All 5 winners in JSI 16.5-20.5. JSI <16.5: 0 wins from 13 runners. JSI 20.6+: 0 wins from 9 runners. JSI captures combined SI + DSI — damsire alone not independently predictive.'},
+  {label:'Total Career Runs',     ideal:'3-4 runs',              stats:'3-4 runs: 4 winners (IV=2.08). 1-2 runs: 0 wins — too lightly raced. 5-6 runs: 1 winner (Chaldean 5 runs). No horse with 7+ runs won in 5yr sample.'},
+  {label:'Trip Win (7f/8f)',      ideal:'Won 8f or 7f',          stats:'Won 8f (any): 3 winners, IV=1.86, PRB 66.8% — highest. Won 7f only: 2 winners (Poetic Flare, Chaldean stepped up). Won neither: 0 winners from 15 runners. Speed pedigree horses only placed if they had won at 8f.'},
+  {label:'Draw',                  ideal:'Low draw (IV=2.05)',     stats:'Low draw: 3 winners. Mid: 1 winner (Notable Speech). High: 1 winner (Ruling Court 2025). Signal is real but weakens in small fields (<=11 runners). IV=2.05 for low draw overall.'},
+  {label:'Prep Runs',             ideal:'0 or 1 prep runs',      stats:'Fresh (0 preps): 2 winners. 1 prep: 2 winners. 2 preps: 0 wins from 4 runners (void zone). 3+ preps: 1 winner (Notable Speech unusual case). Ideal window is 0-1 prep runs this season.'},
+  {label:'Foal Date',             ideal:'March foals',            stats:'March foals: 3 winners (IV=1.30). Late Apr-May: 1 winner (Chaldean, May). Early Jan-Feb: 1 winner (Ruling Court Feb, IV=0.57). Mild signal — priority breeding theory supported.'},
+  {label:'Trainer',               ideal:'Appleby · Balding',     stats:"Charlie Appleby: 3 wins (Coroebus 2022, Notable Speech 2024, Ruling Court 2025), IV=3.90. Andrew Balding: 1 win (Chaldean 2023), IV=4.33. J S Bolger: 1 win (Poetic Flare 2021), IV=6.50. A P O'Brien: 0 wins from 9 runners — notable negative."},
+  {label:'Won Last Race',         ideal:'Yes — essential',       stats:'All 5 winners won their last race before the Guineas. Zero wins from 31 runners who did not win last time out. The single strongest form filter — 100% hit rate in 5yr sample. Not winning last run is the primary penalty in the model.'},
+  {label:'Pace Style',             ideal:'Patient (held up/rear)',  stats:'PATIENT (held up/rear): 3/5 winners, IV=1.62, PRB=57.0%. PROMINENT (led/prominent): 2/5 winners, IV=0.63, PRB=45.9%. Both styles produce winners — neither disqualifying. Patient is clearly favoured but Poetic Flare and Chaldean both won from prominent positions.'},
+  {label:'G1 Sire (min RPR 123+)',ideal:'Yes — all 5 winners',     stats:'G1 Sire 123+ YES: 27 runners, 5 winners, IV=2.41, PRB=61.6%. G1 Sire 123+ NO: 38 runners, 0 winners, IV=0.00, PRB=41.8%. All 5 winners had a sire with a minimum RPR of 123. The strongest binary filter in the dataset — zero wins without.'},
 ];
-
 var DOSAGE_CELLS = [
-  {label:'Sire Index (28%)',       sweet:'9.3 – 10.5',    note:'Core 9/15 winners · Gap 8.0-8.9: 0 winners · Outliers: 7.5/7.7 & 11.3/11.9'},
-  {label:'Joint Sire Index (25%)', sweet:'18.3 – 22.0',   note:'Floor: 17.0 · 0 winners ever below 17.0 · Gap 17.2-18.2: 0 winners'},
-  {label:'COD Index (19%)',        sweet:'-0.15 – +0.12', note:'13/15 winners in core · tightest sweet spot · Kameko 0.70 and Poetic 0.31 only outliers'},
-  {label:'Dosage Index (18%)',     sweet:'0.67 – 1.30',   note:'12/15 winners in core · VOID 1.61-2.00: 0 winners · Kameko 2.64 only outlier above 1.46'},
-  {label:'Damsire Index (10%)',    sweet:'7.0 – 11.5',    note:'Wide range · 5/15 winners below 8.0 · lower weight — less discriminating'}
+  {label:'SI 9.0-10.5 (key)',    sweet:'9.0 – 10.5',     note:'All 5 winners 2021-2025. Zero wins from 40 runners outside. Hardest single filter in the model.'},
+  {label:'DI 0.67-1.30 (ideal)', sweet:'0.67 – 1.30',    note:'4/5 winners. Zero wins below 0.67 or above 2.00. DI 1.50+ only works with proven 8f win on track record.'},
+  {label:'COD -0.20 to +0.15',   sweet:'-0.20 – +0.15',  note:'4/5 winners. Zero wins below -0.20 or above 0.40. Speed-biased COD 0.41+ partially mitigated if won 8f.'},
+  {label:'JSI 16.5-20.5',        sweet:'16.5 – 20.5',    note:'All 5 winners. Zero wins below 16.5 or above 20.5. JSI captures sire+damsire combined strength.'},
+  {label:'RPR 108-118',          sweet:'108 – 118',       note:'All 5 winners. Zero wins below 108 (17 runners). RPR 119+ = exposed/expected — 0 wins from 3 runners.'},
 ];
 
 function renderProfile() {
@@ -1625,7 +1644,7 @@ function renderProfile() {
     return '<div class="icp-cell"><div class="icp-label">'+f.label+'</div><div class="icp-value">'+f.ideal+'</div><div class="icp-stats">'+f.stats.replace(/\n/g,'<br>')+'</div></div>';
   }).join('');
   var dgrid=document.getElementById('dos-grid');
-  renderICPFactorBars();
+  if (isNH) { renderICPFactorBars(); } else { renderICPFactorBarsGuineas(); }
   renderICPCharts(runners);
   if (dgrid) dgrid.innerHTML=dosageCells.map(function(d){
     return '<div class="dos-cell"><div class="dos-metric">'+d.label+'</div><div class="dos-sweet">'+d.sweet+'</div><div class="dos-note">'+d.note+'</div></div>';
@@ -1641,14 +1660,16 @@ function renderProfile() {
         +'<td>'+w.field+'</td></tr>';
     }).join('');
   } else {
-    document.querySelector('.wtable thead tr').innerHTML='<th>Year</th><th>Winner</th><th>Bred</th><th>Draw</th><th>Style</th><th>Trainer</th><th>OR</th><th>Wgt</th><th>SP</th><th>Form</th><th>Last Run</th><th>Grp Win</th><th>DI</th><th>COD</th><th>JSI</th><th>Field</th>';
+    document.querySelector('.wtable thead tr').innerHTML='<th>Year</th><th>Winner</th><th>Bred</th><th>Draw</th><th>OR</th><th>8f Win</th><th>Grp Win</th><th>SP</th><th>Form</th><th>Field</th>';
     tbody.innerHTML=winners.map(function(w){
       return '<tr><td><strong>'+w.year+'</strong></td><td>'+w.winner+'</td><td>'+w.bred+'</td>'
-        +'<td>'+w.draw+' ('+w.drawGrp+')</td><td>'+w.style+'</td><td>'+w.trainer+'</td>'
-        +'<td>'+w.or+'</td><td>'+(w.wgt||'9-0')+'</td><td>'+w.sp+'</td><td style="font-family:IBM Plex Mono,monospace;letter-spacing:.05em">'+w.form+'</td>'
-        +'<td>'+w.lastRun+'</td><td>'+(w.grpWin==='yes'?'✓':'✗')+'</td>'
-        +'<td>'+(w.di!==null?w.di:'—')+'</td><td>'+(w.cod!==null?w.cod:'—')+'</td>'
-        +'<td>'+(w.jsi!==null?w.jsi:'—')+'</td><td>'+w.field+'</td></tr>';
+        +'<td>'+w.draw+' ('+w.drawGrp+')</td>'
+        +'<td>'+w.or+'</td>'
+        +'<td>'+(w.won8f?'✓':'✗')+'</td>'
+        +'<td>'+(w.grpWin==='yes'?'✓':'✗')+'</td>'
+        +'<td>'+w.sp+'</td>'
+        +'<td style="font-family:IBM Plex Mono,monospace;letter-spacing:.05em">'+w.form+'</td>'
+        +'<td>'+w.field+'</td></tr>';
     }).join('');
   }
 }
@@ -1675,8 +1696,8 @@ function runAnalysis(key) {
   var fsEl=document.getElementById('field-size');
   var fieldSize=(fsEl&&parseInt(fsEl.value)>0)?parseInt(fsEl.value):runners.length;
 
-  var scored=runners.map(function(r){ return {runner:r, result:scoreRunner(r,fieldSize)}; });
-  scored.sort(function(a,b){return b.result.composite-a.result.composite;});
+  var scored=runners.map(function(r){ return {runner:r, result:scoreRunnerGuineas(r,fieldSize)}; });
+  scored.sort(function(a,b){return (b.result.finalScore||0)-(a.result.finalScore||0);});
 
   var W=RACE.weights;
   var weightNote='Weights: Style '+W.style+'% · Draw '+W.draw+'% · OR '+W.or+'% · SP '+W.sp+'% · Form '+W.form+'% · Pedigree '+W.pedigree+'% · Trainer '+W.trainer+'% · Jockey '+W.jockey+'%';
@@ -1697,7 +1718,36 @@ function runAnalysis(key) {
       +'\n   '+Object.keys(res.details).map(function(k){return k+': '+res.details[k];}).join(' | ');
   }).join('\n\n');
 
-  var prompt='FLAT RACING ANALYSER - PHASE 3 - 2000 GUINEAS\n'
+    var scoreSummaryG = scored.map(function(s,i){
+    var r=s.result;
+    var bons=Object.keys(r.bonuses||{}).join(',');
+    var pens=Object.keys(r.penalties||{}).join(',');
+    return (i+1)+'. '+s.runner.name+' SCORE:'+r.finalScore+' (base:'+r.base+' bonus:+'+r.bonusTotal+' pen:'+r.penTotal+')'+(bons?' +['+bons+']':'')+(pens?' -['+pens+']':'');
+  }).join('\n');
+
+  var prompt='2000 GUINEAS — PHASE 3 STATISTICAL ANALYSIS\n'
+    +'Evidence base: 2021-2025 · 65 runners · 5 winners\n'
+    +'Winner avg score: 141 | Top-4 avg: ~95\n\n'
+    +'PRE-CALCULATED SCORES (ranking MUST follow score order):\n'
+    +scoreSummaryG+'\n\n'
+    +'KEY MODEL SIGNALS:\n'
+    +'- B1 Won last race: 100% of winners (strongest single filter)\n'
+    +'- B2 Last run at 7f-8f: 100% of winners\n'
+    +'- B3 SI 9.0-10.5: 100% of winners — zero wins outside this range\n'
+    +'- B4 Pedigree triple lock (DI+COD+JSI all ideal): high confidence\n'
+    +'- B7 G1 Sire 123+ YES: all 5 winners qualify. IV=2.41. Zero wins from 38 runners without.\n'
+    +'- Pace PATIENT (held up/rear): 3/5 winners, IV=1.62. PROMINENT: 2/5 winners, IV=0.63. Both viable.\n'
+    +'- P1 Did not win last: -15pts (zero wins from 31 runners)\n'
+    +'- P3 SI outside 9.0-10.5: -6/-8/-10pts depending on band\n'
+    +'- P11 Won neither 7f nor 8f: -6pts (zero winners from 15 runners)\n\n'
+    +'OUTPUT — produce ONE section only:\n\n'
+    +'## SCORE SUMMARY\n'
+    +'One line per runner in score order. Format exactly:\n'
+    +'| Rank | Horse | Score | SP | Key Factor |\n'
+    +'|---|---|---|---|---|\n'
+    +'Include all runners. Key Factor: one short phrase — the dominant signal for their ranking.';
+
+  var old_prompt='FLAT RACING ANALYSER UNUSED';
     +'Sample: 2019-2025 · 99 runners · 7 winners\n\n'
     +'STATISTICAL SCORES (pre-calculated — prediction ranking MUST follow composite score order):\n'
     +scoreSummary+'\n\n'+weightNote+'\n\n'
@@ -1749,7 +1799,6 @@ function renderWithScores(scored, text) {
   var isNH=CURRENT_RACE==='national';
   if (isNH) {
     renderNHScoreCard(out,scored);
-    // Render the score table from Claude if it returned one
     if (text && text.trim()) {
       var sections=text.split(/^## /m).filter(function(s){return s.trim();});
       sections.forEach(function(sec){
@@ -1763,32 +1812,20 @@ function renderWithScores(scored, text) {
     }
     return;
   }
-  var W=RACE.weights;
-  var wn='Style '+W.style+'% · Draw '+W.draw+'% · OR '+W.or+'% · SP '+W.sp+'% · Form '+W.form+'% · Pedigree '+W.pedigree+'% · Trainer '+W.trainer+'% · Jockey '+W.jockey+'%';
-  var sH='<div class="out-sec"><div class="out-hdr"><span class="out-num">◎</span>Statistical Score Summary</div><div class="out-body">';
-  sH+='<div style="font-family:IBM Plex Mono,monospace;font-size:9px;color:var(--mid);margin-bottom:14px">'+wn+'</div>';
-  scored.forEach(function(s){
-    var sc=s.result.composite;
-    var stars=starsFromScore(sc); var st='';
-    for(var i=0;i<5;i++) st+=i<stars?'<span class="sf">★</span>':'<span class="se">☆</span>';
-    var bp=Math.min(100,Math.round(sc/100*100));
-    sH+='<div class="score-bar-wrap"><div style="font-family:Playfair Display,serif;font-size:14px;font-weight:700;min-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+s.runner.name+'</div>'
-      +'<div class="score-bar-bg"><div class="score-bar" style="width:'+bp+'%"></div></div>'
-      +'<div class="score-val">'+sc+'</div><div class="stars" style="font-size:13px;min-width:80px">'+st+'</div></div>';
-  });
-  sH+='</div></div>';
-  out.innerHTML=sH;
-  renderContenderComparisonChart(scored);
-  var sections=text.split(/^## /m).filter(function(s){return s.trim();});
-  sections.forEach(function(sec){
-    var lines=sec.split('\n'); var title=lines[0].trim(); var body=lines.slice(1).join('\n').trim();
-    if(title.indexOf('RUNNER')>=0) renderRunnersSec(out,body,scored);
-    else if(title==='PREDICTION') renderPredSec(out,body);
-    else if(title.indexOf('NARRATIVE')>=0) renderNarrativeSec(out,body);
-    else if(title.indexOf('FLAGS')>=0) renderFlagsSec(out,body);
-  });
+  // Guineas — same NH-style score card, calibrated to 2021-2025 model
+  renderNHScoreCard(out, scored, 131, 89);
+  if (text && text.trim()) {
+    var sections=text.split(/^## /m).filter(function(s){return s.trim();});
+    sections.forEach(function(sec){
+      var lines=sec.split('\n'); var title=lines[0].trim(); var body=lines.slice(1).join('\n').trim();
+      if (title.indexOf('SCORE')>=0||title.indexOf('SUMM')>=0) {
+        var d=document.createElement('div'); d.className='out-sec';
+        d.innerHTML='<div class="out-hdr"><span class="out-num">2</span>Profile Notes</div><div class="out-body">'+mdTable(body,false)+'</div>';
+        out.appendChild(d);
+      }
+    });
+  }
 }
-
 
 function renderRunnersSec(out, body, scored) {
   var isNH = CURRENT_RACE==='national';
@@ -2041,8 +2078,44 @@ function runAnalysisGN(key) {
 // ─────────────────────────────────────────────
 // INIT
 // ─────────────────────────────────────────────
+
+// ─────────────────────────────────────────────
+// PERSIST RUNNERS TO LOCALSTORAGE
+// ─────────────────────────────────────────────
+function saveRunners() {
+  try {
+    var key = 'ra_runners_' + CURRENT_RACE;
+    localStorage.setItem(key, JSON.stringify(runners));
+  } catch(e) {}
+}
+
+function loadRunners() {
+  try {
+    var key = 'ra_runners_' + CURRENT_RACE;
+    var saved = localStorage.getItem(key);
+    if (saved) {
+      var parsed = JSON.parse(saved);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        runners = parsed;
+        renderRunners();
+        var fsEl = document.getElementById('field-size');
+        if (fsEl && !fsEl.value) fsEl.value = runners.length;
+      }
+    }
+  } catch(e) {}
+}
+
+function clearSavedRunners() {
+  try {
+    localStorage.removeItem('ra_runners_' + CURRENT_RACE);
+    runners = [];
+    renderRunners();
+  } catch(e) {}
+}
+
 updateKeyStatus();
 renderProfile();
+loadRunners();
 </script>
 </body>
 </html>
