@@ -763,8 +763,9 @@ function renderICPFactorBars() {
   grid.innerHTML=h;
 }
 
-function renderNHScoreCard(out, scored) {
-  var WINNER_AVG=94, TOP4_AVG=75;
+function renderNHScoreCard(out, scored, winnerAvg, top4Avg) {
+  var WINNER_AVG=winnerAvg||94, TOP4_AVG=top4Avg||75;
+  var isFlat = CURRENT_RACE !== 'national';
   var maxScore=Math.max(120, scored.length?(scored[0].result.finalScore||0)+10:120);
   var winPct=Math.round(WINNER_AVG/maxScore*100);
   var t4Pct=Math.round(TOP4_AVG/maxScore*100);
@@ -792,7 +793,10 @@ function renderNHScoreCard(out, scored) {
     rows+='<div class="nh-score-row">';
     rows+='<div class="nh-rank">'+medal+'</div>';
     rows+='<div class="nh-name"><div class="nh-horse-name">'+s.runner.name+'</div>';
-    rows+='<div class="nh-meta">'+s.runner.trainer+' · '+s.runner.sp+' · Age '+(s.runner.age||'?')+' · OR '+(s.runner.or_||'?')+'</div>';
+    var metaLine = isFlat
+      ? (s.runner.trainer+' · '+s.runner.sp+' · Stall '+(s.runner.draw||'?')+' · OR '+(s.runner.or||'?'))
+      : (s.runner.trainer+' · '+s.runner.sp+' · Age '+(s.runner.age||'?')+' · OR '+(s.runner.or_||'?'));
+    rows+='<div class="nh-meta">'+metaLine+'</div>';
     if(mods) rows+='<div class="nh-mods">'+mods+'</div>';
     rows+='</div>';
     rows+='<div class="nh-bar-col"><div class="nh-bar-track">';
@@ -804,7 +808,7 @@ function renderNHScoreCard(out, scored) {
     rows+='<div class="nh-stars">'+st+'</div>';
     rows+='</div>';
   });
-  wrap.innerHTML='<div class="out-hdr"><span class="out-num">◎</span>Contender Rankings — Grand National</div><div class="out-body">'+leg+'<div class="nh-score-list">'+rows+'</div></div>';
+  wrap.innerHTML='<div class="out-hdr"><span class="out-num">◎</span>Contender Rankings — '+(CURRENT_RACE==='national'?'Grand National':'2000 Guineas')+'</div><div class="out-body">'+leg+'<div class="nh-score-list">'+rows+'</div></div>';
   out.appendChild(wrap);
 }
 
