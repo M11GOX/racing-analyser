@@ -1753,27 +1753,6 @@ function runAnalysis(key) {
     +'|---|---|---|---|---|\n'
     +'Include all runners. Key Factor: one short phrase — the dominant signal for their ranking.';
 
-  var old_prompt='FLAT RACING ANALYSER UNUSED';
-    +'Sample: 2019-2025 · 99 runners · 7 winners\n\n'
-    +'STATISTICAL SCORES (pre-calculated — prediction ranking MUST follow composite score order):\n'
-    +scoreSummary+'\n\n'+weightNote+'\n\n'
-    +'RUNNER DETAILS:\n'+runnerDetails+'\n\n'
-    +'KEY FORM RULES FOR THIS RACE:\n'
-    +'- 3 of 7 winners went fresh (0 runs this season) — valid route, not a negative\n'
-    +'- 6 of 7 winners won their most recent run (regardless of season)\n'
-    +'- Sweet spot: 0 or 1 prep run this season. 4+ runs: 0 winners\n'
-    +'- Last 2 winners had no Group win — unbeaten record compensates\n'
-    +'- Favs shorter than 5/2: 0 wins from 5 runners — flag any runner at 5/2 or shorter\n'
-    +'- OR 120+: 0 wins from 8 runners — flag any runner rated 120+\n'
-    +'- Middle draw: IV 0.42 — flag any runner in the middle draw band\n\n'
-    +'SCORING: Breeding is informational only (not scored). For trainer: 🟢 Appleby/Balding · 🔴 AO Brien · 🟡 others. For jockey: 🟢 Buick/Doyle · 🔴 R Moore · 🟡 others. Use ✅⚠️❌ for Style/Draw/OR/SP/pedigree metrics only.\n\n'
-    +'OUTPUT — produce ONE section only:\n\n'
-    +'## SCORE SUMMARY\n'
-    +'One line per runner in score order. Format exactly as this table:\n'
-    +'| Rank | Horse | Score | SP | Key Factor |\n'
-    +'|---|---|---|---|---|\n'
-    +'Include all runners. Key Factor: one short phrase — the most important factor driving their rank. Keep factual and brief.';
-
   fetch('https://racing-proxy.danmigo.workers.dev', {
     method:'POST',
     headers:{'Content-Type':'application/json'},
