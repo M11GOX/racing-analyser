@@ -988,7 +988,7 @@ function scoreRunnerGuineas(r, fieldSize) {
   if(si<7.5)base+=0; else if(si<9.0)base+=4; else if(si<=10.5)base+=15; else base+=3;
   if(di<0.67)base+=0; else if(di<=1.30)base+=8; else if(di<=1.49)base+=5; else base+=1;
   if(cod<-0.20)base+=0; else if(cod<=0.15)base+=7; else if(cod<=0.40)base+=3; else base+=0;
-  if(jsi<16.5)base+=0; else if(jsi<=18.5)base+=5; else if(jsi<=20.5)base+=7; else base+=0;
+  if(jsi<16)base+=0; else if(jsi<=17.5)base+=3; else if(jsi<=19)base+=5; else if(jsi<=21)base+=7; else base+=0;
   if(totRuns<=2)base+=2; else if(totRuns<=4)base+=6; else base+=3;
   if(won8f)base+=8; else if(won7f)base+=5;
   if(dg==='Low')base+=5; else if(dg==='Mid')base+=3; else base+=1;
@@ -1021,7 +1021,7 @@ function scoreRunnerGuineas(r, fieldSize) {
   if(rpr<108){penalties['P6']=-8;penTotal-=8;}
   if(di>=1.50){var p7f=di>=2.00?-8:-4,p7=won8f?Math.round(p7f/2):p7f;penalties['P7']=p7;penTotal+=p7;}
   if(cod>0.40){var p8=won8f?-2:-5;penalties['P8']=p8;penTotal+=p8;}
-  if(jsi<16.5){penalties['P9']=-5;penTotal-=5;}
+  if(jsi<16){penalties['P9']=-5;penTotal-=5;}
   if(trainer.indexOf("A P O'Brien")>=0&&trainer.indexOf('Joseph')<0){penalties['P10']=-3;penTotal-=3;}
   if(!won7f&&!won8f){penalties['P11']=-6;penTotal-=6;}
   if(won7f&&!won8f&&(si<9.0||si>10.5)){penalties['P12']=-3;penTotal-=3;}
