@@ -1724,19 +1724,7 @@ function runAnalysis(key) {
     return (i+1)+'. '+s.runner.name+' — composite '+s.result.composite+'/100 ('+starsFromScore(s.result.composite)+'★)';
   }).join('\n');
 
-  var runnerDetails=scored.map(function(s,i){
-    var r=s.runner; var res=s.result;
-    var ped=r.ped?('SI:'+(r.ped.si||'?')+' DSI:'+(r.ped.dsi||'?')+' JSI:'+(r.ped.jsi||'?')+' DI:'+(r.ped.di!==null?r.ped.di:'?')+' COD:'+(r.ped.cod!==null?r.ped.cod:'?')):'no-pedigree';
-    var formStr=r.form||'not entered';
-    var grpStr=r.grpWin==='yes'?'Group win: YES':r.grpWin==='no'?'Group win: NO':'Group win: unknown';
-    return (i+1)+'. '+r.name+' ('+r.bred+') Stall:'+r.draw+'('+res.drawGroup+') '+r.trainer+'/'+r.jockey
-      +' OR:'+r.or+' SP:'+r.sp+' Style:'+r.style+' Form:'+formStr+' '+grpStr+' '+ped
-      +(r.notes?' Note:'+r.notes:'')
-      +'\n   COMPOSITE:'+res.composite+'/100 | Style:'+res.scores.style+' Draw:'+res.scores.draw+' OR:'+res.scores.or+' SP:'+res.scores.sp+' Form:'+res.scores.form+' Pedigree:'+Math.round(res.scores.pedigree)+' Trainer:'+res.scores.trainer+' Jockey:'+res.scores.jockey
-      +'\n   '+Object.keys(res.details).map(function(k){return k+': '+res.details[k];}).join(' | ');
-  }).join('\n\n');
-
-    var scoreSummaryG = scored.map(function(s,i){
+  var scoreSummaryG = scored.map(function(s,i){
     var r=s.result;
     var bons=Object.keys(r.bonuses||{}).join(',');
     var pens=Object.keys(r.penalties||{}).join(',');
