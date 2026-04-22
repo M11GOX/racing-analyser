@@ -953,9 +953,22 @@ function parseFormFlat(formStr) {
   }
   var perf=allRuns.split('').filter(function(c){return /[0-9FURPB]/.test(c);});
   var l3=perf.slice(-3);
+  var NON_COMPLETE=/^[FURPBC]$/;
+  // Find last completed run result (skip non-completions from right)
+  var lastCompletedRun=null;
+  var lastRunIsNonComplete=lastRun&&NON_COMPLETE.test(lastRun);
+  for(var i=perf.length-1;i>=0;i--){
+    if(!NON_COMPLETE.test(perf[i])){lastCompletedRun=perf[i];break;}
+  }
+  // wonLast: true if last completed run was a win (ignoring F/U/P etc.)
+  var wonLast=lastCompletedRun==='1';
+  // completedLast: true if the most recent run was a completion (number)
+  var completedLast=lastRun&&!NON_COMPLETE.test(lastRun);
   return {
     totalRuns:perf.length, prepRuns:prepRuns,
-    wonLast:lastRun==='1',
+    wonLast:wonLast,
+    completedLast:!!completedLast,
+    lastCompletedRun:lastCompletedRun,
     has12Last3:l3.some(function(c){return c==='1'||c==='2';})
   };
 }
@@ -992,7 +1005,7 @@ function scoreRunnerGuineas(r, fieldSize) {
   var jsi=parseFloat(r.jsi)||(si+(parseFloat(r.dsi||0)))||0;
   var grpw=parseInt(r.grp_wins||r.grpWins)||0;
   var foalM=parseInt(r.foal_month)||3;
-  var prep=fm.prepRuns, totRuns=fm.totalRuns, wonLast=fm.wonLast;
+  var prep=fm.prepRuns, totRuns=fm.totalRuns, wonLast=fm.wonLast, completedLast=fm.completedLast;
   var last78f=r.last_78f!==false&&r.last78f!==false;
   var won8f=r.won_8f===true||r.won8f===true;
   var won7f=r.won_7f===true||r.won7f===true;
@@ -1032,7 +1045,7 @@ function scoreRunnerGuineas(r, fieldSize) {
   if(r.g1_sire_123===true){bonuses['B7']=5;bonusTotal+=5;}
 
   // PENALTIES
-  if(!wonLast){penalties['P1']=-15;penTotal-=15;}
+  if(!wonLast&&completedLast){penalties['P1']=-10;penTotal-=10;}
   if(!last78f){var p2=(won7f||won8f)?-4:-8;penalties['P2']=p2;penTotal+=p2;}
   if(si<9.0||si>10.5){var p3=si<7.5?-10:(si<9.0?-6:-8);penalties['P3']=p3;penTotal+=p3;}
   if(ts>=80&&ts<=93&&totRuns>=4){penalties['P4']=-5;penTotal-=5;}
@@ -1769,7 +1782,7 @@ function runAnalysis(key) {
     +'- B4 Pedigree triple lock (DI+COD+JSI all ideal): high confidence\n'
     +'- B7 G1 Sire 123+ YES: all 5 winners qualify. IV=2.41. Zero wins from 38 runners without.\n'
     +'- Pace PATIENT (held up/rear): 3/5 winners, IV=1.62. PROMINENT: 2/5 winners, IV=0.63. Both viable.\n'
-    +'- P1 Did not win last: -15pts (zero wins from 31 runners)\n'
+    +'- P1 Did not win last completed run: -10pts. Non-completions (F/U/P) disregarded — looks through to previous completed run.\n'
     +'- P3 SI outside 9.0-10.5: -6/-8/-10pts depending on band\n'
     +'- P11 Won neither 7f nor 8f: -6pts (zero winners from 15 runners)\n\n'
     +'OUTPUT — produce ONE section only:\n\n'
