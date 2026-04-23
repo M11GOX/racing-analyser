@@ -1855,13 +1855,13 @@ function runAnalysis(key) {
     +wildcardBlock
     +'OUTPUT — produce EXACTLY these two sections, in this order, using these exact headers:\n\n'
     +'## CONTENDER ANALYSIS\n'
-    +'Cover ONLY the top '+cutoff+' horses by score. For each, use this exact format:\n\n'
+    +'Cover ONLY the top '+cutoff+' horses by score. For each:\n\n'
     +'### [Rank]. [Horse Name] ([Score])\n'
-    +'A single flowing paragraph of 3-4 sentences. Lead with the profile picture — what the base score and strongest bonuses say about this horse. Reference specific bonus/penalty codes in plain English (e.g. "B7 fires for a G1 sire rated 123+, the strongest binary filter in the dataset"). End with what the profile SUPPORTS or WARNS AGAINST — do not claim the horse will win. Do not use bullet points. Do not add any other sub-headers.\n\n'
+    +'2-3 sentences maximum. Be concise and direct — no padding, no re-explaining what the dataset is. Name the 1-2 strongest signals driving the score (cite codes: e.g. "B1+B7 fire"). Name the biggest concern if one exists. End with one plain-English verdict on what the profile supports or warns against. Do not repeat context already given in the scores above.\n\n'
     +'## ONE TO WATCH\n'
-    +'Exactly one horse — use the pre-computed ONE TO WATCH pick above. Format:\n\n'
-    +'### [Horse Name] ([Score], ranked #[current rank])\n'
-    +'A single flowing paragraph of 2-3 sentences. Lead with the penalty that is dragging the score down (cite the specific code from the pre-computed pick). Explain briefly why the rest of the profile is winner-grade — cite the bonuses that fired. End with one sentence on what makes this horse a potentially mispriced angle. Do not use bullet points.';
+    +'Use the pre-computed ONE TO WATCH pick. Format:\n\n'
+    +'### [Horse Name] ([Score], #[rank])\n'
+    +'2 sentences. Sentence 1: name the penalty holding the score down and what the notional score would be without it. Sentence 2: one reason the underlying profile is interesting. No bullet points. No hedging.';
 
   fetch('https://racing-proxy.danmigo.workers.dev', {
     method:'POST',
