@@ -1792,9 +1792,52 @@ function runAnalysis(key) {
     return (i+1)+'. '+s.runner.name+' SCORE:'+r.finalScore+' (base:'+r.base+' bonus:+'+r.bonusTotal+' pen:'+r.penTotal+')'+(bons?' +['+bons+']':'')+(pens?' -['+pens+']':'')+' | '+wrStr+' | '+wlStr+' | '+sireStr;
   }).join('\n');
 
+  // Dynamic contender cutoff: ≤12 runners → top 3, ≥13 runners → top 4
+  var cutoff = runners.length >= 13 ? 4 : 3;
+  var WINNER_THRESHOLD = 131;
+
+  // Wildcard / One to Watch — deterministic:
+  //   Highest-scoring horse OUTSIDE the cutoff whose (finalScore − largest_penalty) ≥ 131.
+  //   Fallback: highest (finalScore − largest_penalty) regardless of threshold.
+  var wildcardPick = null;
+  if (scored.length > cutoff) {
+    var candidates = scored.slice(cutoff).map(function(s){
+      var pens = s.result.penalties || {};
+      var largestPen = 0, largestPenKey = null;
+      Object.keys(pens).forEach(function(k){
+        if (pens[k] < largestPen) { largestPen = pens[k]; largestPenKey = k; }
+      });
+      return {
+        s: s,
+        notionalScore: s.result.finalScore - largestPen, // subtract negative = add absolute value
+        largestPen: largestPen,
+        largestPenKey: largestPenKey
+      };
+    });
+    var qualifiers = candidates.filter(function(c){ return c.notionalScore >= WINNER_THRESHOLD; });
+    var pool = qualifiers.length ? qualifiers : candidates;
+    pool.sort(function(a,b){ return b.notionalScore - a.notionalScore; });
+    wildcardPick = pool[0] || null;
+  }
+
+  var wildcardBlock = '';
+  if (wildcardPick) {
+    var wr = wildcardPick.s.runner;
+    var wres = wildcardPick.s.result;
+    var wrank = scored.indexOf(wildcardPick.s) + 1;
+    var bons = Object.keys(wres.bonuses||{}).map(function(k){return k+'(+'+wres.bonuses[k]+')';}).join(', ');
+    var pens = Object.keys(wres.penalties||{}).map(function(k){return k+'('+wres.penalties[k]+')';}).join(', ');
+    wildcardBlock = 'ONE TO WATCH — pre-computed pick (you MUST use this exact horse):\n'
+      + 'Name: '+wr.name+' (currently ranked #'+wrank+', score '+wres.finalScore+')\n'
+      + 'Largest single penalty: '+(wildcardPick.largestPenKey||'none')+' = '+wildcardPick.largestPen+'pts\n'
+      + 'Notional score if that penalty were removed: '+wildcardPick.notionalScore+(wildcardPick.notionalScore>=WINNER_THRESHOLD?' (≥131 winner threshold)':' (below 131 threshold — closest profile match)')+'\n'
+      + 'Bonuses: '+(bons||'none')+'\n'
+      + 'Penalties: '+(pens||'none')+'\n\n';
+  }
+
   var prompt='2000 GUINEAS — PHASE 3 STATISTICAL ANALYSIS\n'
     +'Evidence base: 2021-2025 · 65 runners · 5 winners\n'
-    +'Winner avg score: 141 | Top-4 avg: ~95\n\n'
+    +'Winner avg score: 131 | Top-4 avg: 89\n\n'
     +'PRE-CALCULATED SCORES (ranking MUST follow score order):\n'
     +scoreSummaryG+'\n\n'
     +'KEY MODEL SIGNALS:\n'
@@ -1809,12 +1852,16 @@ function runAnalysis(key) {
     +'- P11 Won neither 7f nor 8f: -6pts (zero winners from 15 runners)\n'
     +'- BWR/PWR Win Rate × Runs: +8 for 3-4 runs at ≥66% WR; +5 for middle bands; -5 for 3-4 runs at <34% WR; -3 for only 2 completed runs. Completed runs only (F/U/P excluded).\n'
     +'- BS/PS Sire: +8 top tier (Dubawi, Frankel, Justify, Dawn Approach), +5 Kingman, +3/+2 listed G1 sires, -3/-5 known under-performing sires.\n\n'
-    +'OUTPUT — produce ONE section only:\n\n'
-    +'## SCORE SUMMARY\n'
-    +'One line per runner in score order. Format exactly:\n'
-    +'| Rank | Horse | Score | SP | Key Factor |\n'
-    +'|---|---|---|---|---|\n'
-    +'Include all runners. Key Factor: one short phrase — the dominant signal for their ranking.';
+    +wildcardBlock
+    +'OUTPUT — produce EXACTLY these two sections, in this order, using these exact headers:\n\n'
+    +'## CONTENDER ANALYSIS\n'
+    +'Cover ONLY the top '+cutoff+' horses by score. For each, use this exact format:\n\n'
+    +'### [Rank]. [Horse Name] ([Score])\n'
+    +'A single flowing paragraph of 3-4 sentences. Lead with the profile picture — what the base score and strongest bonuses say about this horse. Reference specific bonus/penalty codes in plain English (e.g. "B7 fires for a G1 sire rated 123+, the strongest binary filter in the dataset"). End with what the profile SUPPORTS or WARNS AGAINST — do not claim the horse will win. Do not use bullet points. Do not add any other sub-headers.\n\n'
+    +'## ONE TO WATCH\n'
+    +'Exactly one horse — use the pre-computed ONE TO WATCH pick above. Format:\n\n'
+    +'### [Horse Name] ([Score], ranked #[current rank])\n'
+    +'A single flowing paragraph of 2-3 sentences. Lead with the penalty that is dragging the score down (cite the specific code from the pre-computed pick). Explain briefly why the rest of the profile is winner-grade — cite the bonuses that fired. End with one sentence on what makes this horse a potentially mispriced angle. Do not use bullet points.';
 
   fetch('https://racing-proxy.danmigo.workers.dev', {
     method:'POST',
@@ -1864,15 +1911,43 @@ function renderWithScores(scored, text) {
   renderNHScoreCard(out, scored, 131, 89);
   if (text && text.trim()) {
     var sections=text.split(/^## /m).filter(function(s){return s.trim();});
+    var secNum = 2;
     sections.forEach(function(sec){
       var lines=sec.split('\n'); var title=lines[0].trim(); var body=lines.slice(1).join('\n').trim();
-      if (title.indexOf('SCORE')>=0||title.indexOf('SUMM')>=0) {
+      if (/CONTENDER\s+ANALYSIS/i.test(title)) {
         var d=document.createElement('div'); d.className='out-sec';
-        d.innerHTML='<div class="out-hdr"><span class="out-num">2</span>Profile Notes</div><div class="out-body">'+mdTable(body,false)+'</div>';
+        d.innerHTML='<div class="out-hdr"><span class="out-num">'+secNum+'</span>Contender Analysis</div><div class="out-body">'+renderContenderBody(body)+'</div>';
         out.appendChild(d);
+        secNum++;
+      } else if (/ONE\s+TO\s+WATCH/i.test(title)) {
+        var d=document.createElement('div'); d.className='out-sec';
+        d.innerHTML='<div class="out-hdr"><span class="out-num">'+secNum+'</span>One to Watch</div><div class="out-body">'+renderContenderBody(body)+'</div>';
+        out.appendChild(d);
+        secNum++;
+      } else if (title.indexOf('SCORE')>=0||title.indexOf('SUMM')>=0) {
+        // Legacy fallback — should no longer be produced, but render as table if it appears
+        var d=document.createElement('div'); d.className='out-sec';
+        d.innerHTML='<div class="out-hdr"><span class="out-num">'+secNum+'</span>Profile Notes</div><div class="out-body">'+mdTable(body,false)+'</div>';
+        out.appendChild(d);
+        secNum++;
       }
     });
   }
+}
+
+// Render a contender/one-to-watch body — ### headers become styled horse cards, paragraphs below
+function renderContenderBody(body) {
+  var blocks = body.split(/^###\s+/m).filter(function(b){return b.trim();});
+  if (!blocks.length) return '<p style="font-family:IBM Plex Sans,sans-serif;font-size:13px;line-height:1.7">'+body.replace(/\n\n+/g,'</p><p style="font-family:IBM Plex Sans,sans-serif;font-size:13px;line-height:1.7">')+'</p>';
+  return blocks.map(function(b){
+    var lines = b.split('\n');
+    var hdr = lines[0].trim();
+    var para = lines.slice(1).join(' ').trim();
+    return '<div class="scorecard">'
+      +'<div class="sc-hdr"><div><div class="sc-name">'+hdr+'</div></div></div>'
+      +'<div class="sc-body"><div class="assessment-box">'+para+'</div></div>'
+      +'</div>';
+  }).join('');
 }
 
 function renderRunnersSec(out, body, scored) {
