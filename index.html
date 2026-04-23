@@ -1825,14 +1825,27 @@ function runAnalysis(key) {
     var wr = wildcardPick.s.runner;
     var wres = wildcardPick.s.result;
     var wrank = scored.indexOf(wildcardPick.s) + 1;
-    var bons = Object.keys(wres.bonuses||{}).map(function(k){return k+'(+'+wres.bonuses[k]+')';}).join(', ');
-    var pens = Object.keys(wres.penalties||{}).map(function(k){return k+'('+wres.penalties[k]+')';}).join(', ');
+    // Translate scoring codes to plain English for the prompt
+    var codeMap = {
+      B1:'won last race', B2:'last run at 7f-8f', B3:'SI in ideal 9.0-10.5 range', B4:'pedigree triple-lock (DI+COD+JSI all ideal)',
+      B5:'Appleby trainer, fresh horse (0-1 preps)', B6:'RPR 110-118 + lightly raced + won last', B7:'G1 sire rated 123+',
+      BWR:'strong win rate for runs completed', BS:'top-performing sire',
+      P1:'did not win last completed run', P2:'last run not at 7f-8f', P3:'SI outside ideal 9.0-10.5 range',
+      P4:'top speed in the void zone (80-93) with 4+ career runs', P5:'exactly 2 prep runs this season (historical void)',
+      P6:'RPR below 108 (hard floor — no winners)', P7:'Dosage Index 1.50+ (too speed-biased)',
+      P8:'COD above 0.40 (outside ideal)', P9:'JSI below 16 (hard floor)', P10:"A P O'Brien trainer — 0 wins from 9 runners",
+      P11:'won neither 7f nor 8f', P12:'won 7f only and SI outside ideal range',
+      PWR:'weak win rate for runs completed', PS:'under-performing sire'
+    };
+    var bons = Object.keys(wres.bonuses||{}).map(function(k){return (codeMap[k]||k)+' (+'+wres.bonuses[k]+')';}).join(', ');
+    var pens = Object.keys(wres.penalties||{}).map(function(k){return (codeMap[k]||k)+' ('+wres.penalties[k]+')';}).join(', ');
+    var penDesc = wildcardPick.largestPenKey ? (codeMap[wildcardPick.largestPenKey]||wildcardPick.largestPenKey) : 'none';
     wildcardBlock = 'ONE TO WATCH — pre-computed pick (you MUST use this exact horse):\n'
       + 'Name: '+wr.name+' (currently ranked #'+wrank+', score '+wres.finalScore+')\n'
-      + 'Largest single penalty: '+(wildcardPick.largestPenKey||'none')+' = '+wildcardPick.largestPen+'pts\n'
+      + 'Largest single penalty: '+penDesc+' = '+wildcardPick.largestPen+'pts\n'
       + 'Notional score if that penalty were removed: '+wildcardPick.notionalScore+(wildcardPick.notionalScore>=WINNER_THRESHOLD?' (≥131 winner threshold)':' (below 131 threshold — closest profile match)')+'\n'
-      + 'Bonuses: '+(bons||'none')+'\n'
-      + 'Penalties: '+(pens||'none')+'\n\n';
+      + 'Bonuses firing: '+(bons||'none')+'\n'
+      + 'Penalties firing: '+(pens||'none')+'\n\n';
   }
 
   var prompt='2000 GUINEAS — PHASE 3 STATISTICAL ANALYSIS\n'
@@ -1857,11 +1870,11 @@ function runAnalysis(key) {
     +'## CONTENDER ANALYSIS\n'
     +'Cover ONLY the top '+cutoff+' horses by score. For each:\n\n'
     +'### [Rank]. [Horse Name] ([Score])\n'
-    +'2-3 sentences maximum. Be concise and direct — no padding, no re-explaining what the dataset is. Name the 1-2 strongest signals driving the score (cite codes: e.g. "B1+B7 fire"). Name the biggest concern if one exists. End with one plain-English verdict on what the profile supports or warns against. Do not repeat context already given in the scores above.\n\n'
+    +'2-3 sentences maximum. Be concise and direct — no padding, no re-explaining the dataset. Name the 1-2 strongest signals driving the score IN PLAIN ENGLISH (e.g. "won last time out", "G1 sire rated 123+", "ideal SI in the 9.0-10.5 range", "4 wins from 5 starts"). Name the biggest concern in plain English if one exists (e.g. "did not win last run", "sire has a poor record in this race", "outside the ideal SI range"). End with one verdict on what the profile supports or warns against. NEVER use internal scoring codes like B1, B2, P3, P10, BWR, PS etc. — the reader does not know what these mean. Translate every code into its plain meaning.\n\n'
     +'## ONE TO WATCH\n'
     +'Use the pre-computed ONE TO WATCH pick. Format:\n\n'
     +'### [Horse Name] ([Score], #[rank])\n'
-    +'2 sentences. Sentence 1: name the penalty holding the score down and what the notional score would be without it. Sentence 2: one reason the underlying profile is interesting. No bullet points. No hedging.';
+    +'2 sentences. Sentence 1: name the penalty holding the score down IN PLAIN ENGLISH (translate the code — e.g. P1 = "did not win last time out", P3 = "SI outside ideal 9.0-10.5 range", P10 = "O\'Brien trainer record at Newmarket", PS = "under-performing sire") and state what the score would be without it. Sentence 2: one reason the underlying profile is interesting, again in plain English. No bullet points. No hedging. NEVER use scoring codes.';
 
   fetch('https://racing-proxy.danmigo.workers.dev', {
     method:'POST',
