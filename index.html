@@ -836,6 +836,8 @@ function renderICPFactorBarsGuineas() {
      bands:[{n:'JSI <16',p:0,t:'poor'},{n:'JSI 16-17.5',p:60,t:'good'},{n:'JSI 17.5-19',p:80,t:'ideal'},{n:'JSI 19-21',p:100,t:'ideal'},{n:'JSI 21+',p:0,t:'poor'}]},
     {label:'Total Career Runs',ideal:'3-4 runs',stat:'3-4 runs: 4 winners (IV=2.08). 1-2 runs: 0 wins (too lightly raced). 5-6 runs: 1 winner (Chaldean). No horse with 7+ runs has won in the 5yr sample.',
      bands:[{n:'1-2 runs',p:15,t:'poor'},{n:'3-4 runs',p:100,t:'ideal'},{n:'5-6 runs',p:40,t:'ok'}]},
+    {label:'Win Rate × Runs',ideal:'3-4 runs, WR ≥66%',stat:'Completed runs only (F/U/P/R/B excluded). 3-4 runs at ≥66% WR is the strongest form profile — Chaldean 2023 qualified (5 completed runs / 4 wins = 80%). 2 completed runs alone is too little evidence. 3-4 runs with WR <34% is the weakest profile.',
+     bands:[{n:'3-4 runs, WR ≥66%',p:100,t:'ideal'},{n:'3-4 WR 34-66% · 5-6 WR ≥66%',p:70,t:'good'},{n:'5-6 runs, WR 34-66%',p:40,t:'ok'},{n:'2 runs · 5-6 runs WR <34%',p:15,t:'poor'},{n:'3-4 runs, WR <34%',p:0,t:'poor'}]},
     {label:'Trip Win (7f/8f)',ideal:'Won 8f preferred',stat:'Won 8f: 3 winners (IV=1.86, PRB 67%). Won 7f only: 2 winners (stepped up — Poetic Flare, Chaldean). Won neither: 0 winners from 15 runners. Speed pedigree only works with 8f track record.',
      bands:[{n:'Won 8f',p:100,t:'ideal'},{n:'Won 7f only',p:65,t:'good'},{n:'Won neither',p:0,t:'poor'}]},
     {label:'Draw',ideal:'Low draw',stat:'Low draw: 3 winners (IV=2.05). Mid: 1 winner (Notable Speech). High: 1 winner (Ruling Court 2025). Signal is real but weakens in smaller fields (11 runners). Clear Low advantage in full fields.',
@@ -1780,7 +1782,14 @@ function runAnalysis(key) {
     var r=s.result;
     var bons=Object.keys(r.bonuses||{}).join(',');
     var pens=Object.keys(r.penalties||{}).join(',');
-    return (i+1)+'. '+s.runner.name+' SCORE:'+r.finalScore+' (base:'+r.base+' bonus:+'+r.bonusTotal+' pen:'+r.penTotal+')'+(bons?' +['+bons+']':'')+(pens?' -['+pens+']':'');
+    var fm=parseFormFlat(s.runner.form||'');
+    var wrPct=fm.completedRunCount>0?Math.round((fm.completedWins/fm.completedRunCount)*100):0;
+    var wrStr='WR: '+fm.completedWins+'/'+fm.completedRunCount+' ('+wrPct+'%)';
+    var wlStr='Won last: '+(fm.wonLast?'Y':(fm.completedLast?'N':'—'));
+    var sire=s.runner.sire_name||'';
+    var sireSc=sire?scoreSireGuineas(sire):0;
+    var sireStr='Sire: '+(sire||'n/a')+(sire?(sireSc>0?' (+'+sireSc+')':(sireSc<0?' ('+sireSc+')':' (0)')):'');
+    return (i+1)+'. '+s.runner.name+' SCORE:'+r.finalScore+' (base:'+r.base+' bonus:+'+r.bonusTotal+' pen:'+r.penTotal+')'+(bons?' +['+bons+']':'')+(pens?' -['+pens+']':'')+' | '+wrStr+' | '+wlStr+' | '+sireStr;
   }).join('\n');
 
   var prompt='2000 GUINEAS — PHASE 3 STATISTICAL ANALYSIS\n'
@@ -1797,7 +1806,9 @@ function runAnalysis(key) {
     +'- Pace PATIENT (held up/rear): 3/5 winners, IV=1.62. PROMINENT: 2/5 winners, IV=0.63. Both viable.\n'
     +'- P1 Did not win last completed run: -10pts. Non-completions (F/U/P) disregarded — looks through to previous completed run.\n'
     +'- P3 SI outside 9.0-10.5: -6/-8/-10pts depending on band\n'
-    +'- P11 Won neither 7f nor 8f: -6pts (zero winners from 15 runners)\n\n'
+    +'- P11 Won neither 7f nor 8f: -6pts (zero winners from 15 runners)\n'
+    +'- BWR/PWR Win Rate × Runs: +8 for 3-4 runs at ≥66% WR; +5 for middle bands; -5 for 3-4 runs at <34% WR; -3 for only 2 completed runs. Completed runs only (F/U/P excluded).\n'
+    +'- BS/PS Sire: +8 top tier (Dubawi, Frankel, Justify, Dawn Approach), +5 Kingman, +3/+2 listed G1 sires, -3/-5 known under-performing sires.\n\n'
     +'OUTPUT — produce ONE section only:\n\n'
     +'## SCORE SUMMARY\n'
     +'One line per runner in score order. Format exactly:\n'
