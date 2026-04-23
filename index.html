@@ -954,21 +954,23 @@ function parseFormFlat(formStr) {
   var perf=allRuns.split('').filter(function(c){return /[0-9FURPB]/.test(c);});
   var l3=perf.slice(-3);
   var NON_COMPLETE=/^[FURPBC]$/;
-  // Find last completed run result (skip non-completions from right)
   var lastCompletedRun=null;
   var lastRunIsNonComplete=lastRun&&NON_COMPLETE.test(lastRun);
   for(var i=perf.length-1;i>=0;i--){
     if(!NON_COMPLETE.test(perf[i])){lastCompletedRun=perf[i];break;}
   }
-  // wonLast: true if last completed run was a win (ignoring F/U/P etc.)
   var wonLast=lastCompletedRun==='1';
-  // completedLast: true if the most recent run was a completion (number)
   var completedLast=lastRun&&!NON_COMPLETE.test(lastRun);
+  // Completed runs and wins (excluding F/U/P/R/B/C)
+  var completedRuns=perf.filter(function(c){return !NON_COMPLETE.test(c);});
+  var completedWins=completedRuns.filter(function(c){return c==='1';}).length;
   return {
     totalRuns:perf.length, prepRuns:prepRuns,
     wonLast:wonLast,
     completedLast:!!completedLast,
     lastCompletedRun:lastCompletedRun,
+    completedRunCount:completedRuns.length,
+    completedWins:completedWins,
     has12Last3:l3.some(function(c){return c==='1'||c==='2';})
   };
 }
@@ -1006,6 +1008,8 @@ function scoreRunnerGuineas(r, fieldSize) {
   var grpw=parseInt(r.grp_wins||r.grpWins)||0;
   var foalM=parseInt(r.foal_month)||3;
   var prep=fm.prepRuns, totRuns=fm.totalRuns, wonLast=fm.wonLast, completedLast=fm.completedLast;
+  var completedRunCount=fm.completedRunCount, completedWins=fm.completedWins;
+  var winRate=completedRunCount>0?completedWins/completedRunCount:0;
   var last78f=r.last_78f!==false&&r.last78f!==false;
   var won8f=r.won_8f===true||r.won8f===true;
   var won7f=r.won_7f===true||r.won7f===true;
@@ -1057,6 +1061,15 @@ function scoreRunnerGuineas(r, fieldSize) {
   if(trainer.indexOf("A P O'Brien")>=0&&trainer.indexOf('Joseph')<0){penalties['P10']=-3;penTotal-=3;}
   if(!won7f&&!won8f){penalties['P11']=-6;penTotal-=6;}
   if(won7f&&!won8f&&(si<9.0||si>10.5)){penalties['P12']=-3;penTotal-=3;}
+
+  // WIN RATE × RUNS (completed runs only)
+  if(completedRunCount===2){penalties['PWR']=-3;penTotal-=3;}
+  else if(completedRunCount>=5&&winRate<0.34){penalties['PWR']=-2;penTotal-=2;}
+  else if(winRate<0.34){penalties['PWR']=-5;penTotal-=5;}
+  else if(completedRunCount>=3&&completedRunCount<=4&&winRate>=0.665){bonuses['BWR']=8;bonusTotal+=8;}
+  else if(completedRunCount>=3&&completedRunCount<=4&&winRate>=0.34){bonuses['BWR']=5;bonusTotal+=5;}
+  else if(completedRunCount>=5&&winRate>=0.665){bonuses['BWR']=5;bonusTotal+=5;}
+  // 5-6 runs WR 34-66% = 0 (neutral)
 
   // SIRE BONUS/PENALTY
   var sireScore = scoreSireGuineas(r.sire_name||'');
