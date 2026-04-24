@@ -233,22 +233,39 @@ textarea{resize:vertical;min-height:52px}
 .icp-band-fill{height:100%;border-radius:4px}
 
 .nh-score-list{display:flex;flex-direction:column;gap:1px}
-.nh-score-row{display:flex;align-items:center;gap:10px;padding:9px 8px;border-radius:2px;transition:background .15s}
-.nh-score-row:hover{background:var(--cream)}
+.nh-score-row{display:flex;align-items:center;gap:10px;padding:9px 8px}
 .nh-rank{min-width:32px;text-align:center;font-size:16px;line-height:1}
 .nh-name{flex:0 0 210px;min-width:0}
 .nh-horse-name{font-family:'Playfair Display',serif;font-size:14px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .nh-meta{font-family:'IBM Plex Mono',monospace;font-size:8px;color:#aaa;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.nh-mods{display:flex;gap:4px;margin-top:3px;flex-wrap:wrap}
-.nh-mod-bon{font-family:'IBM Plex Mono',monospace;font-size:8px;background:rgba(184,151,42,.12);color:var(--gold-dim);padding:1px 5px;border-radius:2px}
-.nh-mod-pen{font-family:'IBM Plex Mono',monospace;font-size:8px;background:rgba(139,26,26,.08);color:var(--red);padding:1px 5px;border-radius:2px}
+.nh-mods{display:flex;gap:4px;margin-top:3px;flex-wrap:wrap;cursor:pointer;align-items:center}
+.nh-mods:hover .nh-mod-bon{background:rgba(184,151,42,.22)}
+.nh-mods:hover .nh-mod-pen{background:rgba(139,26,26,.16)}
+.nh-mod-bon{font-family:'IBM Plex Mono',monospace;font-size:8px;background:rgba(184,151,42,.12);color:var(--gold-dim);padding:2px 6px;border-radius:2px;transition:background .15s}
+.nh-mod-pen{font-family:'IBM Plex Mono',monospace;font-size:8px;background:rgba(139,26,26,.08);color:var(--red);padding:2px 6px;border-radius:2px;transition:background .15s}
+.nh-mods-hint{font-family:'IBM Plex Mono',monospace;font-size:8px;color:#bbb;margin-left:2px;font-style:italic}
+.nh-row-wrap{display:flex;flex-direction:column;border-radius:2px;transition:background .15s}
+.nh-row-wrap:hover{background:var(--cream)}
+.nh-row-wrap:hover .nh-mods-expansion.hover-enabled{display:block}
+.nh-row-wrap.expanded .nh-mods-expansion{display:block}
+.nh-mods-expansion{display:none;background:#f0ece0;border-left:3px solid var(--gold);padding:10px 14px;margin:2px 8px 6px 50px;font-family:'IBM Plex Mono',monospace;font-size:10px;line-height:1.7}
+.nh-mods-grp{margin-bottom:8px}
+.nh-mods-grp:last-child{margin-bottom:0}
+.nh-mods-grp-lbl{font-size:8px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:4px;font-weight:500}
+.nh-mods-grp-lbl.pen{color:var(--red)}
+.nh-mods-line{display:flex;justify-content:space-between;gap:14px;padding:1px 0}
+.nh-mods-line-name{flex:1;color:var(--ink)}
+.nh-mods-line-val{font-weight:500;min-width:36px;text-align:right}
+.nh-mods-line-val.pos{color:var(--gold-dim)}
+.nh-mods-line-val.neg{color:var(--red)}
 .nh-bar-col{flex:1;min-width:0}
-.nh-bar-track{position:relative;height:12px;background:rgba(0,0,0,.06);border-radius:3px;overflow:visible}
+.nh-bar-track{position:relative;height:14px;background:rgba(0,0,0,.06);border-radius:3px;overflow:visible}
 .nh-bar-fill{height:100%;border-radius:3px}
 .nh-bar-winner{background:linear-gradient(90deg,var(--gold-dim),var(--gold-light))}
 .nh-bar-top4{background:linear-gradient(90deg,#555,#888)}
 .nh-bar-low{background:linear-gradient(90deg,#8b1a1a,#c0392b)}
-.nh-ref-line{position:absolute;top:-2px;bottom:-2px;width:2px;background:var(--gold);opacity:.55;pointer-events:none;z-index:2}
+.nh-ref-line{position:absolute;top:-5px;bottom:-5px;width:3px;background:var(--gold);opacity:.85;pointer-events:none;z-index:2;border-radius:1px}
+.nh-ref-line.t4{background:#555;opacity:.6}
 .nh-score-num{font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:500;min-width:36px;text-align:right}
 .nh-stars{font-size:11px;min-width:68px;text-align:right;white-space:nowrap}
 </style>
@@ -764,6 +781,53 @@ function renderICPFactorBars() {
   grid.innerHTML=h;
 }
 
+// ─────────────────────────────────────────────
+// PLAIN-ENGLISH BONUS/PENALTY DESCRIPTIONS
+// Used by score card expansion AND by analysis prompts
+// ─────────────────────────────────────────────
+var GUINEAS_CODE_MAP = {
+  B1:'Won last race',
+  B2:'Last run at 7f-8f',
+  B3:'SI in ideal 9.0-10.5 range',
+  B4:'Pedigree triple-lock (DI+COD+JSI all ideal)',
+  B5:'Appleby-trained, fresh horse (0-1 preps)',
+  B6:'RPR 110-118, lightly raced, won last',
+  B7:'G1 sire rated 123+',
+  BWR:'Strong win rate for runs completed',
+  BS:'Top-performing sire',
+  P1:'Did not win last completed run',
+  P2:'Last run not at 7f-8f',
+  P3:'SI outside ideal 9.0-10.5 range',
+  P4:'Top speed in the void zone (80-93) with 4+ career runs',
+  P5:'Exactly 2 prep runs this season (historical void)',
+  P6:'RPR below 108 (hard floor, no winners)',
+  P7:'Dosage Index 1.50+ (too speed-biased)',
+  P8:'COD above 0.40 (outside ideal)',
+  P9:'JSI below 16 (hard floor)',
+  P10:"A P O'Brien trained (0 wins from 9 runners)",
+  P11:'Won neither 7f nor 8f',
+  P12:'Won 7f only with SI outside ideal range',
+  PWR:'Weak win rate for runs completed',
+  PS:'Under-performing sire'
+};
+
+var GN_CODE_MAP = {
+  B1a:'Young & Proven (age 7-8, lightly raced, has G1 form)',
+  B1b:'Young & Unexposed (age 7, no grade/distance form yet — Noble Yeats profile)',
+  B2:'Running well below true mark (well-handicapped)',
+  B3:'High-Class Stamina profile (I Am Maximus archetype)',
+  B4:'3 season runs (optimal freshness)',
+  B_MP:'Distance place specialist (young horse with 3m+ places)',
+  P2:'Class without stamina (G1 form but no 3m+ wins)',
+  P3:'Front-runner/prominent style (no winners in 5yr dataset)',
+  P4:'GB-bred (0 wins from 19 GB runners in dataset)',
+  P5:'High rated but undeserving (OR 160+ with no G1 wins and ≤1 3m+ wins)',
+  P6:'Did not complete last run',
+  P7:'No 1/2 in last 3 runs',
+  P_AGE:'Veteran penalty (age 10+)',
+  P_VET:'Veteran + high-rated double signal (age 10+ and OR 160+)'
+};
+
 function renderNHScoreCard(out, scored, winnerAvg, top4Avg) {
   var WINNER_AVG=winnerAvg||94, TOP4_AVG=top4Avg||75;
   var isFlat = CURRENT_RACE !== 'national';
@@ -785,12 +849,39 @@ function renderNHScoreCard(out, scored, winnerAvg, top4Avg) {
     var bCls=score>=WINNER_AVG?'nh-bar-winner':score>=TOP4_AVG?'nh-bar-top4':'nh-bar-low';
     var stars=score>=WINNER_AVG?5:score>=TOP4_AVG+10?4:score>=TOP4_AVG?3:score>=50?2:1;
     var st=''; for(var i=0;i<5;i++) st+=i<stars?'<span class="sf">★</span>':'<span class="se">☆</span>';
-    var bonN=Object.keys(s.result.bonuses||{}).length;
-    var penN=Object.keys(s.result.penalties||{}).length;
+    var bonObj=s.result.bonuses||{};
+    var penObj=s.result.penalties||{};
+    var bonKeys=Object.keys(bonObj);
+    var penKeys=Object.keys(penObj);
+    var bonN=bonKeys.length;
+    var penN=penKeys.length;
     var mods='';
-    if(bonN) mods+='<span class="nh-mod-bon">+'+bonN+' bonus'+(bonN>1?'es':'')+'</span>';
-    if(penN) mods+='<span class="nh-mod-pen">'+penN+' penalt'+(penN>1?'ies':'y')+'</span>';
+    if(bonN||penN){
+      if(bonN) mods+='<span class="nh-mod-bon">+'+bonN+' bonus'+(bonN>1?'es':'')+'</span>';
+      if(penN) mods+='<span class="nh-mod-pen">'+penN+' penalt'+(penN>1?'ies':'y')+'</span>';
+      mods+='<span class="nh-mods-hint">tap for detail</span>';
+    }
+    // Build expansion panel content
+    var codeMap = isFlat ? GUINEAS_CODE_MAP : GN_CODE_MAP;
+    var expansionHtml = '';
+    if (bonN) {
+      expansionHtml += '<div class="nh-mods-grp"><div class="nh-mods-grp-lbl">Bonuses (+'+bonKeys.reduce(function(a,k){return a+bonObj[k];},0)+')</div>';
+      bonKeys.forEach(function(k){
+        var v = bonObj[k];
+        expansionHtml += '<div class="nh-mods-line"><div class="nh-mods-line-name">'+(codeMap[k]||k)+'</div><div class="nh-mods-line-val pos">+'+v+'</div></div>';
+      });
+      expansionHtml += '</div>';
+    }
+    if (penN) {
+      expansionHtml += '<div class="nh-mods-grp"><div class="nh-mods-grp-lbl pen">Penalties ('+penKeys.reduce(function(a,k){return a+penObj[k];},0)+')</div>';
+      penKeys.forEach(function(k){
+        var v = penObj[k];
+        expansionHtml += '<div class="nh-mods-line"><div class="nh-mods-line-name">'+(codeMap[k]||k)+'</div><div class="nh-mods-line-val neg">'+v+'</div></div>';
+      });
+      expansionHtml += '</div>';
+    }
     var medal=idx===0?'&#129351;':idx===1?'&#129352;':idx===2?'&#129353;':'<span style="font-family:IBM Plex Mono,monospace;font-size:10px;color:var(--mid)">#'+(idx+1)+'</span>';
+    rows+='<div class="nh-row-wrap" data-row-idx="'+idx+'">';
     rows+='<div class="nh-score-row">';
     rows+='<div class="nh-rank">'+medal+'</div>';
     rows+='<div class="nh-name"><div class="nh-horse-name">'+s.runner.name+'</div>';
@@ -798,16 +889,20 @@ function renderNHScoreCard(out, scored, winnerAvg, top4Avg) {
       ? (s.runner.trainer+' · '+s.runner.sp+' · Stall '+(s.runner.draw||'?')+' · OR '+(s.runner.or||'?'))
       : (s.runner.trainer+' · '+s.runner.sp+' · Age '+(s.runner.age||'?')+' · OR '+(s.runner.or_||'?'));
     rows+='<div class="nh-meta">'+metaLine+'</div>';
-    if(mods) rows+='<div class="nh-mods">'+mods+'</div>';
+    if(mods) rows+='<div class="nh-mods" onclick="this.parentNode.parentNode.parentNode.classList.toggle(\'expanded\')">'+mods+'</div>';
     rows+='</div>';
     rows+='<div class="nh-bar-col"><div class="nh-bar-track">';
     rows+='<div class="nh-ref-line" style="left:'+winPct+'%"></div>';
-    rows+='<div class="nh-ref-line" style="left:'+t4Pct+'%;background:#888;opacity:.4"></div>';
+    rows+='<div class="nh-ref-line t4" style="left:'+t4Pct+'%"></div>';
     rows+='<div class="nh-bar-fill '+bCls+'" style="width:'+barPct+'%"></div>';
     rows+='</div></div>';
     rows+='<div class="nh-score-num">'+score+'</div>';
     rows+='<div class="nh-stars">'+st+'</div>';
-    rows+='</div>';
+    rows+='</div>'; // close nh-score-row
+    if (expansionHtml) {
+      rows+='<div class="nh-mods-expansion hover-enabled">'+expansionHtml+'</div>';
+    }
+    rows+='</div>'; // close nh-row-wrap
   });
   wrap.innerHTML='<div class="out-hdr"><span class="out-num">◎</span>Contender Rankings — '+(CURRENT_RACE==='national'?'Grand National':'2000 Guineas')+'</div><div class="out-body">'+leg+'<div class="nh-score-list">'+rows+'</div></div>';
   out.appendChild(wrap);
@@ -1750,20 +1845,18 @@ function renderProfile() {
 // GENERATE
 // ─────────────────────────────────────────────
 function goGenerate() {
-  var key=getKey();
-  if (!key||key.length<10) { openSettings(); return; }
   document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('active');});
   document.querySelectorAll('.tab').forEach(function(b){b.classList.remove('active');});
   document.getElementById('panel-analysis').classList.add('active');
   document.querySelectorAll('.tab')[2].classList.add('active');
-  runAnalysis(key);
+  runAnalysis(getKey());
 }
 
 function runAnalysis(key) {
   if (CURRENT_RACE==='national') { runAnalysisGN(key); return; }
   var out=document.getElementById('analysis-out');
   var loading=document.getElementById('analysis-loading');
-  out.innerHTML=''; loading.style.display='block';
+  out.innerHTML=''; loading.style.display='none';
 
   var fsEl=document.getElementById('field-size');
   var fieldSize=(fsEl&&parseInt(fsEl.value)>0)?parseInt(fsEl.value):runners.length;
@@ -1771,131 +1864,7 @@ function runAnalysis(key) {
   var scored=runners.map(function(r){ return {runner:r, result:scoreRunnerGuineas(r,fieldSize)}; });
   scored.sort(function(a,b){return (b.result.finalScore||0)-(a.result.finalScore||0);});
 
-  var W=RACE.weights;
-  var weightNote='Weights: Style '+W.style+'% · Draw '+W.draw+'% · OR '+W.or+'% · SP '+W.sp+'% · Form '+W.form+'% · Pedigree '+W.pedigree+'% · Trainer '+W.trainer+'% · Jockey '+W.jockey+'%';
-
-  var scoreSummary=scored.map(function(s,i){
-    return (i+1)+'. '+s.runner.name+' — composite '+s.result.composite+'/100 ('+starsFromScore(s.result.composite)+'★)';
-  }).join('\n');
-
-  var scoreSummaryG = scored.map(function(s,i){
-    var r=s.result;
-    var bons=Object.keys(r.bonuses||{}).join(',');
-    var pens=Object.keys(r.penalties||{}).join(',');
-    var fm=parseFormFlat(s.runner.form||'');
-    var wrPct=fm.completedRunCount>0?Math.round((fm.completedWins/fm.completedRunCount)*100):0;
-    var wrStr='WR: '+fm.completedWins+'/'+fm.completedRunCount+' ('+wrPct+'%)';
-    var wlStr='Won last: '+(fm.wonLast?'Y':(fm.completedLast?'N':'—'));
-    var sire=s.runner.sire_name||'';
-    var sireSc=sire?scoreSireGuineas(sire):0;
-    var sireStr='Sire: '+(sire||'n/a')+(sire?(sireSc>0?' (+'+sireSc+')':(sireSc<0?' ('+sireSc+')':' (0)')):'');
-    return (i+1)+'. '+s.runner.name+' SCORE:'+r.finalScore+' (base:'+r.base+' bonus:+'+r.bonusTotal+' pen:'+r.penTotal+')'+(bons?' +['+bons+']':'')+(pens?' -['+pens+']':'')+' | '+wrStr+' | '+wlStr+' | '+sireStr;
-  }).join('\n');
-
-  // Dynamic contender cutoff: ≤12 runners → top 3, ≥13 runners → top 4
-  var cutoff = runners.length >= 13 ? 4 : 3;
-  var WINNER_THRESHOLD = 131;
-
-  // Wildcard / One to Watch — deterministic:
-  //   Highest-scoring horse OUTSIDE the cutoff whose (finalScore − largest_penalty) ≥ 131.
-  //   Fallback: highest (finalScore − largest_penalty) regardless of threshold.
-  var wildcardPick = null;
-  if (scored.length > cutoff) {
-    var candidates = scored.slice(cutoff).map(function(s){
-      var pens = s.result.penalties || {};
-      var largestPen = 0, largestPenKey = null;
-      Object.keys(pens).forEach(function(k){
-        if (pens[k] < largestPen) { largestPen = pens[k]; largestPenKey = k; }
-      });
-      return {
-        s: s,
-        notionalScore: s.result.finalScore - largestPen, // subtract negative = add absolute value
-        largestPen: largestPen,
-        largestPenKey: largestPenKey
-      };
-    });
-    var qualifiers = candidates.filter(function(c){ return c.notionalScore >= WINNER_THRESHOLD; });
-    var pool = qualifiers.length ? qualifiers : candidates;
-    pool.sort(function(a,b){ return b.notionalScore - a.notionalScore; });
-    wildcardPick = pool[0] || null;
-  }
-
-  var wildcardBlock = '';
-  if (wildcardPick) {
-    var wr = wildcardPick.s.runner;
-    var wres = wildcardPick.s.result;
-    var wrank = scored.indexOf(wildcardPick.s) + 1;
-    // Translate scoring codes to plain English for the prompt
-    var codeMap = {
-      B1:'won last race', B2:'last run at 7f-8f', B3:'SI in ideal 9.0-10.5 range', B4:'pedigree triple-lock (DI+COD+JSI all ideal)',
-      B5:'Appleby trainer, fresh horse (0-1 preps)', B6:'RPR 110-118 + lightly raced + won last', B7:'G1 sire rated 123+',
-      BWR:'strong win rate for runs completed', BS:'top-performing sire',
-      P1:'did not win last completed run', P2:'last run not at 7f-8f', P3:'SI outside ideal 9.0-10.5 range',
-      P4:'top speed in the void zone (80-93) with 4+ career runs', P5:'exactly 2 prep runs this season (historical void)',
-      P6:'RPR below 108 (hard floor — no winners)', P7:'Dosage Index 1.50+ (too speed-biased)',
-      P8:'COD above 0.40 (outside ideal)', P9:'JSI below 16 (hard floor)', P10:"A P O'Brien trainer — 0 wins from 9 runners",
-      P11:'won neither 7f nor 8f', P12:'won 7f only and SI outside ideal range',
-      PWR:'weak win rate for runs completed', PS:'under-performing sire'
-    };
-    var bons = Object.keys(wres.bonuses||{}).map(function(k){return (codeMap[k]||k)+' (+'+wres.bonuses[k]+')';}).join(', ');
-    var pens = Object.keys(wres.penalties||{}).map(function(k){return (codeMap[k]||k)+' ('+wres.penalties[k]+')';}).join(', ');
-    var penDesc = wildcardPick.largestPenKey ? (codeMap[wildcardPick.largestPenKey]||wildcardPick.largestPenKey) : 'none';
-    wildcardBlock = 'ONE TO WATCH — pre-computed pick (you MUST use this exact horse):\n'
-      + 'Name: '+wr.name+' (currently ranked #'+wrank+', score '+wres.finalScore+')\n'
-      + 'Largest single penalty: '+penDesc+' = '+wildcardPick.largestPen+'pts\n'
-      + 'Notional score if that penalty were removed: '+wildcardPick.notionalScore+(wildcardPick.notionalScore>=WINNER_THRESHOLD?' (≥131 winner threshold)':' (below 131 threshold — closest profile match)')+'\n'
-      + 'Bonuses firing: '+(bons||'none')+'\n'
-      + 'Penalties firing: '+(pens||'none')+'\n\n';
-  }
-
-  var prompt='2000 GUINEAS — PHASE 3 STATISTICAL ANALYSIS\n'
-    +'Evidence base: 2021-2025 · 65 runners · 5 winners\n'
-    +'Winner avg score: 131 | Top-4 avg: 89\n\n'
-    +'PRE-CALCULATED SCORES (ranking MUST follow score order):\n'
-    +scoreSummaryG+'\n\n'
-    +'KEY MODEL SIGNALS:\n'
-    +'- B1 Won last race: 100% of winners (strongest single filter)\n'
-    +'- B2 Last run at 7f-8f: 100% of winners\n'
-    +'- B3 SI 9.0-10.5: 100% of winners — zero wins outside this range\n'
-    +'- B4 Pedigree triple lock (DI+COD+JSI all ideal): high confidence\n'
-    +'- B7 G1 Sire 123+ YES: all 5 winners qualify. IV=2.41. Zero wins from 38 runners without.\n'
-    +'- Pace PATIENT (held up/rear): 3/5 winners, IV=1.62. PROMINENT: 2/5 winners, IV=0.63. Both viable.\n'
-    +'- P1 Did not win last completed run: -10pts. Non-completions (F/U/P) disregarded — looks through to previous completed run.\n'
-    +'- P3 SI outside 9.0-10.5: -6/-8/-10pts depending on band\n'
-    +'- P11 Won neither 7f nor 8f: -6pts (zero winners from 15 runners)\n'
-    +'- BWR/PWR Win Rate × Runs: +8 for 3-4 runs at ≥66% WR; +5 for middle bands; -5 for 3-4 runs at <34% WR; -3 for only 2 completed runs. Completed runs only (F/U/P excluded).\n'
-    +'- BS/PS Sire: +8 top tier (Dubawi, Frankel, Justify, Dawn Approach), +5 Kingman, +3/+2 listed G1 sires, -3/-5 known under-performing sires.\n\n'
-    +wildcardBlock
-    +'OUTPUT — produce EXACTLY these two sections, in this order, using these exact headers:\n\n'
-    +'## CONTENDER ANALYSIS\n'
-    +'Cover ONLY the top '+cutoff+' horses by score. For each:\n\n'
-    +'### [Rank]. [Horse Name] ([Score])\n'
-    +'2-3 sentences maximum. Be concise and direct — no padding, no re-explaining the dataset. Name the 1-2 strongest signals driving the score IN PLAIN ENGLISH (e.g. "won last time out", "G1 sire rated 123+", "ideal SI in the 9.0-10.5 range", "4 wins from 5 starts"). Name the biggest concern in plain English if one exists (e.g. "did not win last run", "sire has a poor record in this race", "outside the ideal SI range"). End with one verdict on what the profile supports or warns against. NEVER use internal scoring codes like B1, B2, P3, P10, BWR, PS etc. — the reader does not know what these mean. Translate every code into its plain meaning.\n\n'
-    +'## ONE TO WATCH\n'
-    +'Use the pre-computed ONE TO WATCH pick. Format:\n\n'
-    +'### [Horse Name] ([Score], #[rank])\n'
-    +'2 sentences. Sentence 1: name the penalty holding the score down IN PLAIN ENGLISH (translate the code — e.g. P1 = "did not win last time out", P3 = "SI outside ideal 9.0-10.5 range", P10 = "O\'Brien trainer record at Newmarket", PS = "under-performing sire") and state what the score would be without it. Sentence 2: one reason the underlying profile is interesting, again in plain English. No bullet points. No hedging. NEVER use scoring codes.';
-
-  fetch('https://racing-proxy.danmigo.workers.dev', {
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:8000,messages:[{role:'user',content:prompt}]})
-  }).then(function(r){
-    if (!r.ok) return r.text().then(function(t){throw new Error('HTTP '+r.status+': '+t.slice(0,200));});
-    return r.json();
-  }).then(function(data){
-    loading.style.display='none';
-    var text='';
-    if (data.content&&Array.isArray(data.content)) {
-      text=data.content.filter(function(b){return b.type==='text';}).map(function(b){return b.text;}).join('');
-    } else { throw new Error('Unexpected response'); }
-    if (!text.trim()) throw new Error('Empty response');
-    renderWithScores(scored, text);
-  }).catch(function(err){
-    loading.style.display='none';
-    console.error('Error:',err);
-    out.innerHTML='<div class="err-box"><strong>Error generating analysis</strong><br><br>'+err.message+'</div>';
-  });
+  renderWithScores(scored, '');
 }
 
 // ─────────────────────────────────────────────
@@ -1907,67 +1876,10 @@ function renderWithScores(scored, text) {
   var isNH=CURRENT_RACE==='national';
   if (isNH) {
     renderNHScoreCard(out,scored);
-    if (text && text.trim()) {
-      var sections=text.split(/^## /m).filter(function(s){return s.trim();});
-      var secNum = 2;
-      sections.forEach(function(sec){
-        var lines=sec.split('\n'); var title=lines[0].trim(); var body=lines.slice(1).join('\n').trim();
-        if (/CONTENDER\s+ANALYSIS/i.test(title)) {
-          var d=document.createElement('div'); d.className='out-sec';
-          d.innerHTML='<div class="out-hdr"><span class="out-num">'+secNum+'</span>Contender Analysis</div><div class="out-body">'+renderContenderBody(body)+'</div>';
-          out.appendChild(d);
-          secNum++;
-        } else if (/ONE\s+TO\s+WATCH/i.test(title)) {
-          var d=document.createElement('div'); d.className='out-sec';
-          d.innerHTML='<div class="out-hdr"><span class="out-num">'+secNum+'</span>One to Watch</div><div class="out-body">'+renderContenderBody(body)+'</div>';
-          out.appendChild(d);
-          secNum++;
-        }
-      });
-    }
     return;
   }
   // Guineas — same NH-style score card, calibrated to 2021-2025 model
   renderNHScoreCard(out, scored, 131, 89);
-  if (text && text.trim()) {
-    var sections=text.split(/^## /m).filter(function(s){return s.trim();});
-    var secNum = 2;
-    sections.forEach(function(sec){
-      var lines=sec.split('\n'); var title=lines[0].trim(); var body=lines.slice(1).join('\n').trim();
-      if (/CONTENDER\s+ANALYSIS/i.test(title)) {
-        var d=document.createElement('div'); d.className='out-sec';
-        d.innerHTML='<div class="out-hdr"><span class="out-num">'+secNum+'</span>Contender Analysis</div><div class="out-body">'+renderContenderBody(body)+'</div>';
-        out.appendChild(d);
-        secNum++;
-      } else if (/ONE\s+TO\s+WATCH/i.test(title)) {
-        var d=document.createElement('div'); d.className='out-sec';
-        d.innerHTML='<div class="out-hdr"><span class="out-num">'+secNum+'</span>One to Watch</div><div class="out-body">'+renderContenderBody(body)+'</div>';
-        out.appendChild(d);
-        secNum++;
-      } else if (title.indexOf('SCORE')>=0||title.indexOf('SUMM')>=0) {
-        // Legacy fallback — should no longer be produced, but render as table if it appears
-        var d=document.createElement('div'); d.className='out-sec';
-        d.innerHTML='<div class="out-hdr"><span class="out-num">'+secNum+'</span>Profile Notes</div><div class="out-body">'+mdTable(body,false)+'</div>';
-        out.appendChild(d);
-        secNum++;
-      }
-    });
-  }
-}
-
-// Render a contender/one-to-watch body — ### headers become styled horse cards, paragraphs below
-function renderContenderBody(body) {
-  var blocks = body.split(/^###\s+/m).filter(function(b){return b.trim();});
-  if (!blocks.length) return '<p style="font-family:IBM Plex Sans,sans-serif;font-size:13px;line-height:1.7">'+body.replace(/\n\n+/g,'</p><p style="font-family:IBM Plex Sans,sans-serif;font-size:13px;line-height:1.7">')+'</p>';
-  return blocks.map(function(b){
-    var lines = b.split('\n');
-    var hdr = lines[0].trim();
-    var para = lines.slice(1).join(' ').trim();
-    return '<div class="scorecard">'
-      +'<div class="sc-hdr"><div><div class="sc-name">'+hdr+'</div></div></div>'
-      +'<div class="sc-body"><div class="assessment-box">'+para+'</div></div>'
-      +'</div>';
-  }).join('');
 }
 
 function renderRunnersSec(out, body, scored) {
@@ -2097,135 +2009,12 @@ function mdTable(text, isPred) {
 function runAnalysisGN(key) {
   var out=document.getElementById('analysis-out');
   var loading=document.getElementById('analysis-loading');
-  out.innerHTML=''; loading.style.display='block';
+  out.innerHTML=''; loading.style.display='none';
 
   var scored=runners.map(function(r){ return {runner:r, result:scoreRunnerGN(r)}; });
   scored.sort(function(a,b){return (b.result.finalScore||b.result.final_||b.result.composite||0)-(a.result.finalScore||a.result.final_||a.result.composite||0);});
 
-  // GN plain-English code translation map
-  var gnCodeMap = {
-    B1a:'Young & Proven (age 7-8, lightly raced, has G1 form)',
-    B1b:'Young & Unexposed (age 7, no grade/distance form yet — Noble Yeats profile)',
-    B2:'Running well below true mark (well-handicapped)',
-    B3:'High-Class Stamina profile (I Am Maximus archetype — high OR + G1 form + stamina + recent G1 top-3)',
-    B4:'3 season runs (optimal freshness)',
-    B_MP:'Distance place specialist (young horse with 3m+ places)',
-    P2:'Class without stamina (G1 form but no 3m+ wins)',
-    P3:'Front-runner/prominent style (no winners in 5yr dataset)',
-    P4:'GB-bred (0 wins from 19 GB runners in dataset)',
-    P5:'High rated but undeserving (OR 160+ with no G1 wins and ≤1 3m+ wins)',
-    P6:'Did not complete last run',
-    P7:'No 1/2 in last 3 runs',
-    P_AGE:'Veteran penalty (age 10+)',
-    P_VET:'Veteran + high-rated double signal (age 10+ and OR 160+)'
-  };
-
-  // Per-runner prompt line — includes plain-English bonus/penalty names
-  var scoreSummary=scored.map(function(s,i){
-    var res=s.result;
-    var bons=Object.keys(res.bonuses||{}).map(function(k){return (gnCodeMap[k]||k)+' (+'+res.bonuses[k]+')';}).join(', ');
-    var pens=Object.keys(res.penalties||{}).map(function(k){return (gnCodeMap[k]||k)+' ('+res.penalties[k]+')';}).join(', ');
-    var r=s.runner;
-    var cr=r.chase_runs||0, g1w=r.g1_wins||0, mw=r.dist3m_wins||0;
-    var sr=gnRunsSeason(r.form||'');
-    return (i+1)+'. '+r.name+' SCORE:'+res.finalScore+' (base:'+res.base+' bonus:+'+res.bonusTotal+' pen:'+res.penTotal+')'
-      +' | Age:'+(r.age||'?')+' OR:'+(r.or_||'?')+' Δ'+(r.or_delta||0)+' Wgt:'+(r.weight||'?')+' Style:'+(r.styleNH||r.style||'?')
-      +' | CR:'+cr+' G1W:'+g1w+' 3mW:'+mw+' SR:'+sr+' '+(r.bred||'?')+'-bred'+(r.grade_win||r.grpWin==='yes'?' GradeWin:Y':'')
-      +(bons?' | Bonuses: '+bons:'')+(pens?' | Penalties: '+pens:'');
-  }).join('\n');
-
-  // Dynamic contender cutoff — same rule as Guineas
-  var cutoff = runners.length >= 13 ? 4 : 3;
-  var WINNER_THRESHOLD = 94; // GN winner avg from renderNHScoreCard default
-
-  // One to Watch — deterministic wildcard
-  var wildcardPick = null;
-  if (scored.length > cutoff) {
-    var candidates = scored.slice(cutoff).map(function(s){
-      var pens = s.result.penalties || {};
-      var largestPen = 0, largestPenKey = null;
-      Object.keys(pens).forEach(function(k){
-        if (pens[k] < largestPen) { largestPen = pens[k]; largestPenKey = k; }
-      });
-      return {
-        s: s,
-        notionalScore: s.result.finalScore - largestPen,
-        largestPen: largestPen,
-        largestPenKey: largestPenKey
-      };
-    });
-    var qualifiers = candidates.filter(function(c){ return c.notionalScore >= WINNER_THRESHOLD; });
-    var pool = qualifiers.length ? qualifiers : candidates;
-    pool.sort(function(a,b){ return b.notionalScore - a.notionalScore; });
-    wildcardPick = pool[0] || null;
-  }
-
-  var wildcardBlock = '';
-  if (wildcardPick) {
-    var wr = wildcardPick.s.runner;
-    var wres = wildcardPick.s.result;
-    var wrank = scored.indexOf(wildcardPick.s) + 1;
-    var bons = Object.keys(wres.bonuses||{}).map(function(k){return (gnCodeMap[k]||k)+' (+'+wres.bonuses[k]+')';}).join(', ');
-    var pens = Object.keys(wres.penalties||{}).map(function(k){return (gnCodeMap[k]||k)+' ('+wres.penalties[k]+')';}).join(', ');
-    var penDesc = wildcardPick.largestPenKey ? (gnCodeMap[wildcardPick.largestPenKey]||wildcardPick.largestPenKey) : 'none';
-    wildcardBlock = 'ONE TO WATCH — pre-computed pick (you MUST use this exact horse):\n'
-      + 'Name: '+wr.name+' (currently ranked #'+wrank+', score '+wres.finalScore+')\n'
-      + 'Largest single penalty: '+penDesc+' = '+wildcardPick.largestPen+'pts\n'
-      + 'Notional score if that penalty were removed: '+wildcardPick.notionalScore+(wildcardPick.notionalScore>=WINNER_THRESHOLD?' (≥94 winner threshold)':' (below 94 threshold — closest profile match)')+'\n'
-      + 'Bonuses firing: '+(bons||'none')+'\n'
-      + 'Penalties firing: '+(pens||'none')+'\n\n';
-  }
-
-  var prompt='GRAND NATIONAL — PHASE 3 STATISTICAL ANALYSIS\n'
-    +'Aintree · 4m2½f · 30 fences · Open handicap chase\n'
-    +'Dataset: 2022–2026 (5 winners, 179 runners, 4/5 winners correctly top-scored)\n'
-    +'Winner avg score: 94 | Top-4 avg: 75\n\n'
-    +'PRE-CALCULATED SCORES (ranking MUST follow score order):\n'
-    +scoreSummary+'\n\n'
-    +'KEY MODEL SIGNALS:\n'
-    +'- Age 7-9 dominant — no winners aged 10+ except I Am Maximus (2026 exception)\n'
-    +'- OR 155-168 captures all 5 winners (IV=6.51 at 161-165 strongest band)\n'
-    +'- OR Delta +3 or more — all winners ran off their true mark or better\n'
-    +'- Weight 11-4+ — 11-6 to 11-9 band IV=4.21 (strongest single band)\n'
-    +'- Style MIDFIELD — 4/5 winners; prominent/led runners never win (IV=0.00 from 30 runners)\n'
-    +'- Chase runs 6-12 — 8-10 is peak sweet spot\n'
-    +'- 2-4 3m+ wins ideal; 0 wins acceptable only for young/unexposed horses\n'
-    +'- Grade Win — 4/5 winners held one; missing is a soft negative\n'
-    +'- G1 Wins — 0-1 optimal (3.25 IV at 1); 2+ G1 wins is a quality ceiling effect (IV=0.00)\n'
-    +'- IRE/FR-bred — 5/5 winners; GB-bred 0 wins from 19 runners\n'
-    +'- Mullins/Russell top tier; O\'Brien/Elliott/De Bromhead/Cromwell strong; others neutral\n'
-    +'- Falls/unseats in form (F/U/S/B) — do NOT treat as form concern, NH reality\n\n'
-    +wildcardBlock
-    +'OUTPUT — produce EXACTLY these two sections, in this order, using these exact headers:\n\n'
-    +'## CONTENDER ANALYSIS\n'
-    +'Cover ONLY the top '+cutoff+' horses by score. For each:\n\n'
-    +'### [Rank]. [Horse Name] ([Score])\n'
-    +'2-3 sentences maximum. Be concise and direct — no padding, no re-explaining the dataset. Name the 1-2 strongest signals driving the score IN PLAIN ENGLISH (e.g. "age 8 in the dominant band", "rated 163 with a +5 OR delta", "2 G1 wins at the ideal band", "Mullins-trained", "midfield style matches 4/5 winners"). Name the biggest concern in plain English if one exists (e.g. "age 10 veteran penalty", "front-running style has 0 winners in 5yr dataset", "GB-bred has 0 wins from 19 runners"). End with one verdict on what the profile supports or warns against. NEVER use internal scoring codes like B1a, B3, P_AGE, P_VET etc. — the reader does not know what these mean. The plain-English names in the per-runner lines above give you the translation; use them.\n\n'
-    +'## ONE TO WATCH\n'
-    +'Use the pre-computed ONE TO WATCH pick. Format:\n\n'
-    +'### [Horse Name] ([Score], #[rank])\n'
-    +'2 sentences. Sentence 1: name the penalty holding the score down IN PLAIN ENGLISH (the pre-computed pick above gives you the translation) and state what the score would be without it. Sentence 2: one reason the underlying profile is interesting, again in plain English, citing specific factors (age, OR, style, chase runs etc). No bullet points. No hedging. NEVER use scoring codes.';
-
-  fetch('https://racing-proxy.danmigo.workers.dev', {
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:8000,messages:[{role:'user',content:prompt}]})
-  }).then(function(r){
-    if (!r.ok) return r.text().then(function(t){throw new Error('HTTP '+r.status+': '+t.slice(0,200));});
-    return r.json();
-  }).then(function(data){
-    loading.style.display='none';
-    var text='';
-    if (data.content&&Array.isArray(data.content)) {
-      text=data.content.filter(function(b){return b.type==='text';}).map(function(b){return b.text;}).join('');
-    } else { throw new Error('Unexpected response'); }
-    if (!text.trim()) throw new Error('Empty response');
-    renderWithScores(scored, text);
-  }).catch(function(err){
-    loading.style.display='none';
-    console.error('Error:',err);
-    out.innerHTML='<div class="err-box"><strong>Error generating analysis</strong><br><br>'+err.message+'</div>';
-  });
+  renderWithScores(scored, '');
 }
 
 // ─────────────────────────────────────────────
