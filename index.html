@@ -150,13 +150,21 @@ textarea{resize:vertical;min-height:52px}
 .race-selector-bar{background:#111;border-bottom:1px solid #1c1c1c;padding:0 32px}
 .race-selector-inner{max-width:1140px;margin:0 auto;display:flex;align-items:center;gap:14px;padding:10px 0}
 .race-selector-label{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:#555;white-space:nowrap}
-.race-pill{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;padding:6px 14px;border:1px solid #2a2a2a;background:none;color:#555;cursor:pointer;transition:all .18s}
-.race-pill:hover{border-color:#444;color:#888}
-.race-pill.active{border-color:var(--gold);color:var(--gold);background:rgba(184,151,42,.08)}
-.race-pill-grp{display:flex;gap:0}
-.race-pill-grp .race-pill{border-right:none}
-.race-pill-grp .race-pill:last-child{border-right:1px solid #2a2a2a}
-.race-pill-grp .race-pill.active{border-right:1px solid var(--gold)}
+.disc-group{position:relative;display:inline-block}
+.disc-pill{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;padding:6px 14px;border:1px solid #2a2a2a;background:none;color:#555;cursor:pointer;transition:all .18s;display:inline-flex;align-items:center;gap:6px}
+.disc-pill:hover{border-color:#444;color:#888}
+.disc-pill.has-active{border-color:var(--gold);color:var(--gold);background:rgba(184,151,42,.08)}
+.disc-pill .caret{font-size:7px;margin-left:2px;transition:transform .15s}
+.disc-group.open .disc-pill .caret{transform:rotate(180deg)}
+.disc-menu{display:none;position:absolute;top:calc(100% + 4px);left:0;background:#151515;border:1px solid #2a2a2a;min-width:220px;z-index:50;box-shadow:0 8px 20px rgba(0,0,0,.4)}
+.disc-group.open .disc-menu{display:block}
+.disc-menu-item{display:block;width:100%;text-align:left;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;padding:9px 14px;background:none;border:none;color:#888;cursor:pointer;transition:all .15s;border-bottom:1px solid #1f1f1f}
+.disc-menu-item:last-child{border-bottom:none}
+.disc-menu-item:hover{background:rgba(184,151,42,.08);color:var(--gold)}
+.disc-menu-item.active{color:var(--gold);background:rgba(184,151,42,.12)}
+.disc-menu-item-sub{font-size:8px;color:#555;margin-top:2px;text-transform:none;letter-spacing:.03em}
+.current-race-label{font-family:'IBM Plex Mono',monospace;font-size:9px;color:#666;letter-spacing:.1em;margin-left:8px}
+.current-race-label b{color:var(--gold);font-weight:500}
 /* NH specific */
 .nh-badge{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:9px;padding:2px 7px;border:1px solid;margin-right:4px}
 .nh-badge.fence{background:#f8d7da;color:#58151c;border-color:#f5a5a5}
@@ -274,10 +282,15 @@ textarea{resize:vertical;min-height:52px}
 <div class="race-selector-bar">
 <div class="race-selector-inner">
   <span class="race-selector-label">Race</span>
-  <div class="race-pill-grp">
-    <button class="race-pill active" id="pill-guineas" onclick="selectRace('guineas')">2000 Guineas · Flat</button>
-    <button class="race-pill" id="pill-national" onclick="selectRace('national')">Grand National · NH</button>
+  <div class="disc-group" id="disc-flat" data-discipline="flat">
+    <button class="disc-pill" onclick="toggleDisc('flat')">Flat <span class="caret">▾</span></button>
+    <div class="disc-menu" id="disc-menu-flat"></div>
   </div>
+  <div class="disc-group" id="disc-nh" data-discipline="nh">
+    <button class="disc-pill" onclick="toggleDisc('nh')">NH <span class="caret">▾</span></button>
+    <div class="disc-menu" id="disc-menu-nh"></div>
+  </div>
+  <span class="current-race-label" id="current-race-label"></span>
 </div>
 </div>
 
@@ -1572,31 +1585,106 @@ function getDrawGroup(stall, fieldSize) {
 function starsFromScore(s) { return s>=80?5:s>=65?4:s>=50?3:s>=35?2:1; }
 
 // ─────────────────────────────────────────────
-// RACE SELECTOR
+// RACE SELECTOR — catalog-driven
+// Add new races by extending this config
 // ─────────────────────────────────────────────
-function selectRace(mode) {
-  // If switching with existing runners, confirm BEFORE any UI mutation
-  if (mode !== CURRENT_RACE && runners.length > 0) {
+var RACE_CATALOG = {
+  flat: {
+    label: 'Flat',
+    races: [
+      { id:'guineas', name:'2000 Guineas', course:'Newmarket', dist:'1 Mile', type:'Group 1 · 3yo' }
+      // Future: { id:'derby', name:'Epsom Derby', ... }
+    ]
+  },
+  nh: {
+    label: 'NH',
+    races: [
+      { id:'national', name:'Grand National', course:'Aintree', dist:'4m2½f', type:'Open Handicap Chase' }
+      // Future: { id:'cheltenham_gold', name:'Cheltenham Gold Cup', ... }
+    ]
+  }
+};
+
+// Map race id → discipline (helper)
+function getDiscipline(raceId) {
+  for (var d in RACE_CATALOG) {
+    if (RACE_CATALOG[d].races.some(function(r){return r.id===raceId;})) return d;
+  }
+  return null;
+}
+
+function renderDiscMenus() {
+  ['flat','nh'].forEach(function(disc){
+    var menu = document.getElementById('disc-menu-'+disc);
+    if (!menu) return;
+    menu.innerHTML = RACE_CATALOG[disc].races.map(function(r){
+      var isActive = r.id === CURRENT_RACE;
+      return '<button class="disc-menu-item'+(isActive?' active':'')+'" onclick="selectRace(\''+r.id+'\')">'
+        +r.name
+        +'<div class="disc-menu-item-sub">'+r.course+' · '+r.dist+' · '+r.type+'</div>'
+        +'</button>';
+    }).join('');
+    // Mark the discipline pill if it contains the active race
+    var pill = document.querySelector('#disc-'+disc+' .disc-pill');
+    var hasActive = RACE_CATALOG[disc].races.some(function(r){return r.id===CURRENT_RACE;});
+    if (pill) pill.classList.toggle('has-active', hasActive);
+  });
+  // Update the "current race" label next to the pills
+  var lbl = document.getElementById('current-race-label');
+  if (lbl) {
+    var race = null, discLabel = '';
+    for (var d in RACE_CATALOG) {
+      var found = RACE_CATALOG[d].races.find(function(r){return r.id===CURRENT_RACE;});
+      if (found) { race = found; discLabel = RACE_CATALOG[d].label; break; }
+    }
+    lbl.innerHTML = race ? (discLabel+' › <b>'+race.name+'</b>') : '';
+  }
+}
+
+function toggleDisc(disc) {
+  var group = document.getElementById('disc-'+disc);
+  var wasOpen = group.classList.contains('open');
+  // Close all
+  document.querySelectorAll('.disc-group').forEach(function(g){g.classList.remove('open');});
+  if (!wasOpen) group.classList.add('open');
+}
+
+// Click outside to close dropdowns
+document.addEventListener('click', function(e){
+  if (!e.target.closest('.disc-group')) {
+    document.querySelectorAll('.disc-group').forEach(function(g){g.classList.remove('open');});
+  }
+});
+
+function selectRace(raceId) {
+  // Map legacy 'guineas'/'national' ids are race ids; CURRENT_RACE stays the race id
+  if (raceId !== CURRENT_RACE && runners.length > 0) {
     if (!confirm('Switch race? This will clear the current runners list.')) {
-      return; // clean no-op
+      return;
     }
     runners = [];
   }
 
-  CURRENT_RACE = mode;
-  // Pills
-  document.getElementById('pill-guineas').className = 'race-pill'+(mode==='guineas'?' active':'');
-  document.getElementById('pill-national').className = 'race-pill'+(mode==='national'?' active':'');
+  CURRENT_RACE = raceId;
+  // Close any open dropdowns
+  document.querySelectorAll('.disc-group').forEach(function(g){g.classList.remove('open');});
 
-  var isNH = mode==='national';
+  var isNH = (getDiscipline(raceId) === 'nh');
 
-  // Header
-  if (isNH) {
+  // Header — uses RACE_CATALOG for the race's metadata
+  var race = null;
+  for (var d in RACE_CATALOG) {
+    var found = RACE_CATALOG[d].races.find(function(r){return r.id===raceId;});
+    if (found) { race = found; break; }
+  }
+
+  // Header text (race-specific copy kept as before for the two current races)
+  if (raceId === 'national') {
     document.getElementById('hdr-race-name').textContent = 'Grand National';
     document.getElementById('hdr-race-sub').textContent = 'Aintree · 4m2½f · Open Handicap Chase · 2022–2026 · 5 winners · Evidence-Based Model';
     document.getElementById('field-size-label').textContent = 'Total Declared';
     document.getElementById('field-size-hint').textContent = 'Declared runners in the Grand National (typically 34-40).';
-  } else {
+  } else if (raceId === 'guineas') {
     document.getElementById('hdr-race-name').textContent = '2000 Guineas';
     document.getElementById('hdr-race-sub').textContent = 'Newmarket · 1 Mile · 3yo · Group 1 · 2011–2025 · 15 winners';
     document.getElementById('field-size-label').textContent = 'Total Field Size';
@@ -1609,7 +1697,8 @@ function selectRace(mode) {
   document.querySelectorAll('.nh-only').forEach(function(el){el.style.display=isNH?'flex':'none';});
   document.getElementById('nh-block').style.display=isNH?'block':'none';
 
-  // Re-render runners list and profile for new race mode
+  // Re-render menus (to update active state), runners list and profile
+  renderDiscMenus();
   renderRunners();
   renderProfile();
   loadRunners();
@@ -2127,6 +2216,7 @@ function clearSavedRunners() {
   } catch(e) {}
 }
 
+renderDiscMenus();
 renderProfile();
 loadRunners();
 </script>
