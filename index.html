@@ -246,18 +246,22 @@ textarea{resize:vertical;min-height:52px}
 .nh-mods-hint{font-family:'IBM Plex Mono',monospace;font-size:8px;color:#bbb;margin-left:2px;font-style:italic}
 .nh-row-wrap{display:flex;flex-direction:column;border-radius:2px;transition:background .15s}
 .nh-row-wrap:hover{background:var(--cream)}
-.nh-row-wrap:hover .nh-mods-expansion.hover-enabled{display:block}
 .nh-row-wrap.expanded .nh-mods-expansion{display:block}
-.nh-mods-expansion{display:none;background:#f0ece0;border-left:3px solid var(--gold);padding:10px 14px;margin:2px 8px 6px 50px;font-family:'IBM Plex Mono',monospace;font-size:10px;line-height:1.7}
-.nh-mods-grp{margin-bottom:8px}
+.nh-mods-expansion{display:none;background:#f0ece0;border-left:3px solid var(--gold);padding:12px 14px;margin:2px 8px 6px 50px;font-family:'IBM Plex Mono',monospace;font-size:10px;line-height:1.6}
+.nh-mods-grp{margin-bottom:10px}
 .nh-mods-grp:last-child{margin-bottom:0}
-.nh-mods-grp-lbl{font-size:8px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:4px;font-weight:500}
-.nh-mods-grp-lbl.pen{color:var(--red)}
-.nh-mods-line{display:flex;justify-content:space-between;gap:14px;padding:1px 0}
-.nh-mods-line-name{flex:1;color:var(--ink)}
-.nh-mods-line-val{font-weight:500;min-width:36px;text-align:right}
+.nh-mods-grp-lbl{font-size:8px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:5px;font-weight:500;border-bottom:1px solid rgba(184,151,42,.2);padding-bottom:3px}
+.nh-mods-grp-lbl.pen{color:var(--red);border-bottom-color:rgba(139,26,26,.2)}
+.nh-mods-grp-lbl.base{color:var(--mid);border-bottom-color:rgba(0,0,0,.1)}
+.nh-mods-grp-lbl.total{color:var(--ink);border-bottom-color:var(--ink);font-size:9px}
+.nh-mods-line{display:flex;align-items:center;gap:8px;padding:2px 0}
+.nh-mods-line-tier{font-size:10px;line-height:1;width:14px;text-align:center;flex-shrink:0}
+.nh-mods-line-name{flex:1;color:var(--ink);min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nh-mods-line-val{font-weight:500;min-width:36px;text-align:right;color:var(--mid)}
 .nh-mods-line-val.pos{color:var(--gold-dim)}
 .nh-mods-line-val.neg{color:var(--red)}
+.nh-mods-line-detail{color:#888;font-size:9px;margin-left:4px;min-width:0;text-overflow:ellipsis;overflow:hidden;white-space:nowrap;max-width:90px}
+.nh-mods-total{display:flex;justify-content:space-between;padding:6px 0 2px;border-top:1px solid var(--ink);margin-top:4px;font-weight:500;color:var(--ink);font-size:11px}
 .nh-bar-col{flex:1;min-width:0}
 .nh-bar-track{position:relative;height:14px;background:rgba(0,0,0,.06);border-radius:3px;overflow:visible}
 .nh-bar-fill{height:100%;border-radius:3px}
@@ -851,34 +855,62 @@ function renderNHScoreCard(out, scored, winnerAvg, top4Avg) {
     var st=''; for(var i=0;i<5;i++) st+=i<stars?'<span class="sf">★</span>':'<span class="se">☆</span>';
     var bonObj=s.result.bonuses||{};
     var penObj=s.result.penalties||{};
+    var baseObj=s.result.baseFactors||{};
     var bonKeys=Object.keys(bonObj);
     var penKeys=Object.keys(penObj);
+    var baseKeys=Object.keys(baseObj);
     var bonN=bonKeys.length;
     var penN=penKeys.length;
     var mods='';
-    if(bonN||penN){
+    if(bonN||penN||baseKeys.length){
       if(bonN) mods+='<span class="nh-mod-bon">+'+bonN+' bonus'+(bonN>1?'es':'')+'</span>';
       if(penN) mods+='<span class="nh-mod-pen">'+penN+' penalt'+(penN>1?'ies':'y')+'</span>';
       mods+='<span class="nh-mods-hint">tap for detail</span>';
     }
     // Build expansion panel content
     var codeMap = isFlat ? GUINEAS_CODE_MAP : GN_CODE_MAP;
+    var tierIcon = {g:'🟢', y:'🟡', r:'🔴'};
     var expansionHtml = '';
+    // Base factors (with traffic lights)
+    if (baseKeys.length) {
+      expansionHtml += '<div class="nh-mods-grp"><div class="nh-mods-grp-lbl base">Base score (+'+s.result.base+')</div>';
+      baseKeys.forEach(function(k){
+        var f = baseObj[k];
+        expansionHtml += '<div class="nh-mods-line">'
+          +'<div class="nh-mods-line-tier">'+(tierIcon[f.tier]||'')+'</div>'
+          +'<div class="nh-mods-line-name">'+k+'</div>'
+          +'<div class="nh-mods-line-detail">'+f.val+'</div>'
+          +'<div class="nh-mods-line-val">+'+f.pts+'</div></div>';
+      });
+      expansionHtml += '</div>';
+    }
+    // Bonuses
     if (bonN) {
       expansionHtml += '<div class="nh-mods-grp"><div class="nh-mods-grp-lbl">Bonuses (+'+bonKeys.reduce(function(a,k){return a+bonObj[k];},0)+')</div>';
       bonKeys.forEach(function(k){
         var v = bonObj[k];
-        expansionHtml += '<div class="nh-mods-line"><div class="nh-mods-line-name">'+(codeMap[k]||k)+'</div><div class="nh-mods-line-val pos">+'+v+'</div></div>';
+        expansionHtml += '<div class="nh-mods-line">'
+          +'<div class="nh-mods-line-tier"></div>'
+          +'<div class="nh-mods-line-name">'+(codeMap[k]||k)+'</div>'
+          +'<div class="nh-mods-line-val pos">+'+v+'</div></div>';
       });
       expansionHtml += '</div>';
     }
+    // Penalties
     if (penN) {
       expansionHtml += '<div class="nh-mods-grp"><div class="nh-mods-grp-lbl pen">Penalties ('+penKeys.reduce(function(a,k){return a+penObj[k];},0)+')</div>';
       penKeys.forEach(function(k){
         var v = penObj[k];
-        expansionHtml += '<div class="nh-mods-line"><div class="nh-mods-line-name">'+(codeMap[k]||k)+'</div><div class="nh-mods-line-val neg">'+v+'</div></div>';
+        expansionHtml += '<div class="nh-mods-line">'
+          +'<div class="nh-mods-line-tier"></div>'
+          +'<div class="nh-mods-line-name">'+(codeMap[k]||k)+'</div>'
+          +'<div class="nh-mods-line-val neg">'+v+'</div></div>';
       });
       expansionHtml += '</div>';
+    }
+    // Total
+    if (expansionHtml) {
+      expansionHtml += '<div class="nh-mods-total"><div>Total</div><div>'+score+'</div></div>';
     }
     var medal=idx===0?'&#129351;':idx===1?'&#129352;':idx===2?'&#129353;':'<span style="font-family:IBM Plex Mono,monospace;font-size:10px;color:var(--mid)">#'+(idx+1)+'</span>';
     rows+='<div class="nh-row-wrap" data-row-idx="'+idx+'">';
@@ -900,7 +932,7 @@ function renderNHScoreCard(out, scored, winnerAvg, top4Avg) {
     rows+='<div class="nh-stars">'+st+'</div>';
     rows+='</div>'; // close nh-score-row
     if (expansionHtml) {
-      rows+='<div class="nh-mods-expansion hover-enabled">'+expansionHtml+'</div>';
+      rows+='<div class="nh-mods-expansion">'+expansionHtml+'</div>';
     }
     rows+='</div>'; // close nh-row-wrap
   });
@@ -1111,29 +1143,88 @@ function scoreRunnerGuineas(r, fieldSize) {
   var won8f=r.won_8f===true||r.won8f===true;
   var won7f=r.won_7f===true||r.won7f===true;
   var trainer=r.trainer||'';
-  var base=0,bonusTotal=0,penTotal=0,bonuses={},penalties={};
+  var base=0,bonusTotal=0,penTotal=0,bonuses={},penalties={},baseFactors={};
+  function bf(label, pts, tier, val) {
+    base += pts;
+    baseFactors[label] = {pts: pts, tier: tier, val: val};
+  }
 
-  // BASE
-  if(or_===0)base+=5; else if(or_<=109)base+=8; else if(or_<=115)base+=15; else if(or_<=121)base+=12; else base+=9;
-  if(rpr<108)base+=0; else if(rpr<=113)base+=15; else if(rpr<=118)base+=20; else base+=12;
+  // BASE — each factor records: points awarded, traffic-light tier (g/y/r), displayed value
+  if(or_===0)        bf('OR', 5, 'r', 'Unrated');
+  else if(or_<=109)  bf('OR', 8, 'y', or_);
+  else if(or_<=115)  bf('OR', 15,'g', or_);
+  else if(or_<=121)  bf('OR', 12,'y', or_);
+  else               bf('OR', 9, 'r', or_);
+
+  if(rpr<108)        bf('RPR', 0,  'r', rpr||'—');
+  else if(rpr<=113)  bf('RPR', 15, 'g', rpr);
+  else if(rpr<=118)  bf('RPR', 20, 'g', rpr);
+  else               bf('RPR', 12, 'y', rpr);
+
   var tsExcused=ts<80&&tsExc!=='none';
-  if(tsExcused)base+=7; else if(ts<80)base+=3; else if(ts<=93)base+=0; else if(ts<=100)base+=10; else base+=8;
-  if(si<7.5)base+=0; else if(si<9.0)base+=4; else if(si<=10.5)base+=15; else base+=3;
-  if(di<0.67)base+=0; else if(di<=1.30)base+=8; else if(di<=1.49)base+=5; else base+=1;
-  if(cod<-0.20)base+=0; else if(cod<=0.15)base+=7; else if(cod<=0.40)base+=3; else base+=0;
-  if(jsi<16)base+=0; else if(jsi<=17.5)base+=3; else if(jsi<=19)base+=5; else if(jsi<=21)base+=7; else base+=0;
-  if(totRuns<=2)base+=2; else if(totRuns<=4)base+=6; else base+=3;
-  if(won8f)base+=8; else if(won7f)base+=5;
-  if(dg==='Low')base+=5; else if(dg==='Mid')base+=3; else base+=1;
-  if(prep===0)base+=3; else if(prep===1)base+=4; else if(prep===2)base+=0; else base+=2;
-  if(foalM===3)base+=3; else if(foalM<=2)base+=1; else base+=2;
-  if(grpw===0)base+=0; else if(grpw===1)base+=2; else base+=3;
-  if(trainer.indexOf('Appleby')>=0||trainer.indexOf('Balding')>=0||trainer.indexOf('Bolger')>=0)base+=3;
-  else if(trainer.indexOf("A P O'Brien")>=0&&trainer.indexOf('Joseph')<0)base+=1;
-  else base+=2;
+  if(tsExcused)      bf('Top Speed', 7,  'y', ts+' (excused)');
+  else if(ts<80)     bf('Top Speed', 3,  'y', ts||'—');
+  else if(ts<=93)    bf('Top Speed', 0,  'r', ts);
+  else if(ts<=100)   bf('Top Speed', 10, 'g', ts);
+  else               bf('Top Speed', 8,  'g', ts);
+
+  if(si<7.5)         bf('SI', 0,  'r', si||'—');
+  else if(si<9.0)    bf('SI', 4,  'y', si);
+  else if(si<=10.5)  bf('SI', 15, 'g', si);
+  else               bf('SI', 3,  'r', si);
+
+  if(di<0.67)        bf('DI', 0,  'r', di);
+  else if(di<=1.30)  bf('DI', 8,  'g', di);
+  else if(di<=1.49)  bf('DI', 5,  'y', di);
+  else               bf('DI', 1,  'r', di);
+
+  if(cod<-0.20)      bf('COD', 0, 'r', cod);
+  else if(cod<=0.15) bf('COD', 7, 'g', cod);
+  else if(cod<=0.40) bf('COD', 3, 'y', cod);
+  else               bf('COD', 0, 'r', cod);
+
+  if(jsi<16)         bf('JSI', 0, 'r', jsi||'—');
+  else if(jsi<=17.5) bf('JSI', 3, 'y', jsi);
+  else if(jsi<=19)   bf('JSI', 5, 'g', jsi);
+  else if(jsi<=21)   bf('JSI', 7, 'g', jsi);
+  else               bf('JSI', 0, 'r', jsi);
+
+  if(totRuns<=2)     bf('Career Runs', 2, 'r', totRuns);
+  else if(totRuns<=4)bf('Career Runs', 6, 'g', totRuns);
+  else               bf('Career Runs', 3, 'y', totRuns);
+
+  if(won8f)          bf('Trip Win', 8, 'g', '8f');
+  else if(won7f)     bf('Trip Win', 5, 'y', '7f only');
+  else               bf('Trip Win', 0, 'r', 'neither');
+
+  if(dg==='Low')     bf('Draw', 5, 'g', 'Low ('+draw+')');
+  else if(dg==='Mid')bf('Draw', 3, 'y', 'Mid ('+draw+')');
+  else               bf('Draw', 1, 'r', 'High ('+draw+')');
+
+  if(prep===0)       bf('Prep Runs', 3, 'g', '0 (fresh)');
+  else if(prep===1)  bf('Prep Runs', 4, 'g', 1);
+  else if(prep===2)  bf('Prep Runs', 0, 'r', 2);
+  else               bf('Prep Runs', 2, 'y', prep);
+
+  if(foalM===3)      bf('Foal Month', 3, 'g', 'March');
+  else if(foalM<=2)  bf('Foal Month', 1, 'r', foalM===1?'January':'February');
+  else               bf('Foal Month', 2, 'y', ['','','','','April','May','June+'][foalM]||foalM);
+
+  if(grpw===0)       bf('Group Wins', 0, 'r', 0);
+  else if(grpw===1)  bf('Group Wins', 2, 'y', 1);
+  else               bf('Group Wins', 3, 'g', grpw);
+
+  if(trainer.indexOf('Appleby')>=0||trainer.indexOf('Balding')>=0||trainer.indexOf('Bolger')>=0)
+                     bf('Trainer', 3, 'g', trainer);
+  else if(trainer.indexOf("A P O'Brien")>=0&&trainer.indexOf('Joseph')<0)
+                     bf('Trainer', 1, 'r', trainer);
+  else               bf('Trainer', 2, 'y', trainer||'—');
+
   // PACE STYLE (5=PATIENT, 3=PROMINENT) — IV 1.62 vs 0.63
   var paceG=(r.pace_guineas||'PATIENT').toUpperCase();
-  if(paceG==='PATIENT'||paceG==='HOLD UP'||paceG==='HOLD_UP')base+=5; else base+=3;
+  if(paceG==='PATIENT'||paceG==='HOLD UP'||paceG==='HOLD_UP')
+                     bf('Pace Style', 5, 'g', 'Patient');
+  else               bf('Pace Style', 3, 'y', 'Prominent');
 
   // BONUSES
   if(wonLast){bonuses['B1']=10;bonusTotal+=10;}
@@ -1174,7 +1265,7 @@ function scoreRunnerGuineas(r, fieldSize) {
   else if(sireScore<0){penalties['PS']=sireScore;penTotal+=sireScore;}
 
   var finalScore=Math.max(0,base+bonusTotal+penTotal);
-  return {finalScore:finalScore,composite:finalScore,base:base,bonusTotal:bonusTotal,penTotal:penTotal,bonuses:bonuses,penalties:penalties,drawGroup:dg};
+  return {finalScore:finalScore,composite:finalScore,base:base,bonusTotal:bonusTotal,penTotal:penTotal,bonuses:bonuses,penalties:penalties,baseFactors:baseFactors,drawGroup:dg};
 }
 
 function scoreRunner(r,fieldSize){return scoreRunnerGuineas(r,fieldSize);}
@@ -1241,89 +1332,110 @@ function gnScoreRunnerNew(r) {
   var last3 = allRuns2.slice(-3);
   var has12last3 = last3.split('').some(function(c){return c==='1'||c==='2';});
 
+  // ── BASE SCORING — explicit per-band tier (g/y/r) recorded in baseFactors
+  // Rule: only the PEAK scoring band is 🟢. Other above-zero bands are 🟡. Worst band(s) are 🔴.
+  var baseFactors = {};
+  function gbf(label, key, pts, tier, val, msg) {
+    scores[key] = pts;
+    details[key] = (tier==='g'?'✅ ':tier==='y'?'🟡 ':'⚠️ ') + msg;
+    baseFactors[label] = {pts: pts, tier: tier, val: val};
+  }
+
   // ── OR (max 20) ─────────────────────────────────────────
-  if (or_ >= 166)       { scores.or_ = 20; details.or_ = '✅ OR '+or_+' — elite band (IV=3.98). Top of range.'; }
-  else if (or_ >= 161)  { scores.or_ = 18; details.or_ = '✅ OR '+or_+' — IV=6.51, strongest single band in dataset.'; }
-  else if (or_ >= 156)  { scores.or_ = 15; details.or_ = '✅ OR '+or_+' — IV=2.11, 4/5 winners rated 155+.'; }
-  else if (or_ >= 151)  { scores.or_ = 11; details.or_ = '🟡 OR '+or_+' — acceptable, some winners in this range.'; }
-  else if (or_ >= 148)  { scores.or_ = 7;  details.or_ = '🟡 OR '+or_+' — Noble Yeats won off 148. Below ideal.'; }
-  else if (or_ >= 143)  { scores.or_ = 3;  details.or_ = '⚠️ OR '+or_+' — below winner profile. Hard to win off this mark.'; }
-  else                   { scores.or_ = 0;  details.or_ = '❌ OR '+or_+' — no winners at this rating in dataset.'; }
+  // Peak band: 161-165 (IV=6.51, strongest single band in dataset)
+  if (or_ >= 166)       gbf('OR','or_',20,'y',or_,'OR '+or_+' — elite band (IV=3.98). Above peak.');
+  else if (or_ >= 161)  gbf('OR','or_',18,'g',or_,'OR '+or_+' — IV=6.51, strongest single band in dataset.');
+  else if (or_ >= 156)  gbf('OR','or_',15,'y',or_,'OR '+or_+' — IV=2.11, 4/5 winners rated 155+.');
+  else if (or_ >= 151)  gbf('OR','or_',11,'y',or_,'OR '+or_+' — acceptable, some winners in this range.');
+  else if (or_ >= 148)  gbf('OR','or_',7, 'y',or_,'OR '+or_+' — Noble Yeats won off 148. Below ideal.');
+  else if (or_ >= 143)  gbf('OR','or_',3, 'r',or_,'OR '+or_+' — below winner profile. Hard to win off this mark.');
+  else                  gbf('OR','or_',0, 'r',or_||'—','OR '+or_+' — no winners at this rating in dataset.');
 
   // ── OR DELTA (max 15) ────────────────────────────────────
-  if (orDelta >= 10)      { scores.or_delta = 15; details.or_delta = '✅ Delta +'+orDelta+' — running '+orDelta+'lb below true mark. Massive well-handicapped signal (IV=35.8).'; }
-  else if (orDelta >= 7)  { scores.or_delta = 12; details.or_delta = '✅ Delta +'+orDelta+' — significantly well-in (IV=3.58 band).'; }
-  else if (orDelta >= 4)  { scores.or_delta = 9;  details.or_delta = '✅ Delta +'+orDelta+' — well-handicapped (IV=2.56 band).'; }
-  else if (orDelta >= 1)  { scores.or_delta = 5;  details.or_delta = '🟡 Delta +'+orDelta+' — slight positive. Running close to mark.'; }
-  else                     { scores.or_delta = 0;  details.or_delta = '🟡 Delta 0 — running exactly to mark. Neutral.'; }
+  // Peak band: +10 or more (IV=35.8, massive signal)
+  if (orDelta >= 10)      gbf('OR Delta','or_delta',15,'g','+'+orDelta,'Delta +'+orDelta+' — running '+orDelta+'lb below true mark. Massive well-handicapped signal (IV=35.8).');
+  else if (orDelta >= 7)  gbf('OR Delta','or_delta',12,'y','+'+orDelta,'Delta +'+orDelta+' — significantly well-in (IV=3.58 band).');
+  else if (orDelta >= 4)  gbf('OR Delta','or_delta',9, 'y','+'+orDelta,'Delta +'+orDelta+' — well-handicapped (IV=2.56 band).');
+  else if (orDelta >= 1)  gbf('OR Delta','or_delta',5, 'y','+'+orDelta,'Delta +'+orDelta+' — slight positive. Running close to mark.');
+  else                    gbf('OR Delta','or_delta',0, 'r','+'+orDelta,'Delta 0 — running exactly to mark. Neutral.');
 
   // ── AGE (max 12) ─────────────────────────────────────────
-  if (age === 7)       { scores.age = 12; details.age = '✅ Age 7 — IV=1.79, highest age band. Noble Yeats, Iroko, Jordans all placed.'; }
-  else if (age === 8)  { scores.age = 11; details.age = '✅ Age 8 — IV=1.52, 2 winners (I Am Maximus 2024, Nick Rockett 2025).'; }
-  else if (age === 9)  { scores.age = 8;  details.age = '🟡 Age 9 — IV=0.85. Corach Rambler winner, Noble Yeats 4th. Below average IV.'; }
-  else if (age === 10) { scores.age = 5;  details.age = '⚠️ Age 10 — IV=0.51. I Am Maximus won 2026 but is exceptional case.'; }
-  else if (age === 11) { scores.age = 2;  details.age = '⚠️ Age 11 — IV=0.00 in 5yr dataset. No winners.'; }
-  else                  { scores.age = 0;  details.age = '❌ Age '+age+' — IV=0.00. No winners aged 12+ in sample.'; }
+  // Peak band: Age 7 (IV=1.79, highest age band)
+  if (age === 7)       gbf('Age','age',12,'g',age,'Age 7 — IV=1.79, highest age band. Noble Yeats, Iroko, Jordans all placed.');
+  else if (age === 8)  gbf('Age','age',11,'y',age,'Age 8 — IV=1.52, 2 winners (I Am Maximus 2024, Nick Rockett 2025).');
+  else if (age === 9)  gbf('Age','age',8, 'y',age,'Age 9 — IV=0.85. Corach Rambler winner, Noble Yeats 4th. Below average IV.');
+  else if (age === 10) gbf('Age','age',5, 'y',age,'Age 10 — IV=0.51. I Am Maximus won 2026 but is exceptional case.');
+  else if (age === 11) gbf('Age','age',2, 'r',age,'Age 11 — IV=0.00 in 5yr dataset. No winners.');
+  else                 gbf('Age','age',0, 'r',age||'—','Age '+age+' — IV=0.00. No winners aged 12+ in sample.');
 
   // ── WEIGHT (max 10) ──────────────────────────────────────
-  if (!lbs)                { scores.weight = 5; details.weight = '🟡 Weight not entered — neutral score applied.'; }
-  else if (lbs >= 164)     { scores.weight = 9; details.weight = '✅ '+gnLbsToSt(lbs)+' — 11-10+ band IV=3.25 (I Am Maximus 2026).'; }
-  else if (lbs >= 160)     { scores.weight = 10; details.weight = '✅ '+gnLbsToSt(lbs)+' — 11-6 to 11-9 band IV=4.21. Strongest weight band.'; }
-  else if (lbs >= 154)     { scores.weight = 6; details.weight = '🟡 '+gnLbsToSt(lbs)+' — 11-0 to 11-5. Viable but below ideal IV.'; }
-  else if (lbs >= 144)     { scores.weight = 4; details.weight = '🟡 '+gnLbsToSt(lbs)+' — 10-7 to 10-13. Low weight band IV=0.72.'; }
-  else                      { scores.weight = 1; details.weight = '⚠️ '+gnLbsToSt(lbs)+' — under 10-7. Corach Rambler (10-5) only sub-144lb winner and had +10 delta.'; }
+  // Peak band: 11-6 to 11-9 (160-163lbs, IV=4.21, strongest weight band)
+  if (!lbs)              gbf('Weight','weight',5, 'y','—','Weight not entered — neutral score applied.');
+  else if (lbs >= 164)   gbf('Weight','weight',9, 'y',gnLbsToSt(lbs),gnLbsToSt(lbs)+' — 11-10+ band IV=3.25 (I Am Maximus 2026).');
+  else if (lbs >= 160)   gbf('Weight','weight',10,'g',gnLbsToSt(lbs),gnLbsToSt(lbs)+' — 11-6 to 11-9 band IV=4.21. Strongest weight band.');
+  else if (lbs >= 154)   gbf('Weight','weight',6, 'y',gnLbsToSt(lbs),gnLbsToSt(lbs)+' — 11-0 to 11-5. Viable but below ideal IV.');
+  else if (lbs >= 144)   gbf('Weight','weight',4, 'y',gnLbsToSt(lbs),gnLbsToSt(lbs)+' — 10-7 to 10-13. Low weight band IV=0.72.');
+  else                   gbf('Weight','weight',1, 'r',gnLbsToSt(lbs),gnLbsToSt(lbs)+' — under 10-7. Corach Rambler (10-5) only sub-144lb winner and had +10 delta.');
 
   // ── CHASE RUNS (max 10) ──────────────────────────────────
-  if (cr >= 8 && cr <= 10)      { scores.chase_runs = 10; details.chase_runs = '✅ '+cr+' chase runs — prime sweet spot (IV=2.11, 3/5 winners).'; }
-  else if (cr >= 6 && cr <= 7)  { scores.chase_runs = 8;  details.chase_runs = '✅ '+cr+' chase runs — very good (IV=1.63, Noble Yeats had 7).'; }
-  else if (cr >= 11 && cr <= 12){ scores.chase_runs = 7;  details.chase_runs = '🟡 '+cr+' chase runs — slightly exposed but viable.'; }
-  else if (cr <= 5)              { scores.chase_runs = 5;  details.chase_runs = '🟡 '+cr+' chase runs — lightly raced. Few runs, limited data.'; }
-  else if (cr >= 13 && cr <= 16){ scores.chase_runs = 4;  details.chase_runs = '⚠️ '+cr+' chase runs — exposed. Only I Am Maximus (16) won in this band.'; }
-  else if (cr >= 17 && cr <= 20){ scores.chase_runs = 2;  details.chase_runs = '⚠️ '+cr+' chase runs — very exposed. IV below average.'; }
-  else                            { scores.chase_runs = 0;  details.chase_runs = '❌ 21+ chase runs — IV=0.00. No winners from heavily exposed horses.'; }
+  // Peak band: 8-10 runs (IV=2.11, prime sweet spot)
+  if (cr >= 8 && cr <= 10)       gbf('Chase Runs','chase_runs',10,'g',cr,cr+' chase runs — prime sweet spot (IV=2.11, 3/5 winners).');
+  else if (cr >= 6 && cr <= 7)   gbf('Chase Runs','chase_runs',8, 'y',cr,cr+' chase runs — very good (IV=1.63, Noble Yeats had 7).');
+  else if (cr >= 11 && cr <= 12) gbf('Chase Runs','chase_runs',7, 'y',cr,cr+' chase runs — slightly exposed but viable.');
+  else if (cr <= 5)              gbf('Chase Runs','chase_runs',5, 'y',cr,cr+' chase runs — lightly raced. Few runs, limited data.');
+  else if (cr >= 13 && cr <= 16) gbf('Chase Runs','chase_runs',4, 'r',cr,cr+' chase runs — exposed. Only I Am Maximus (16) won in this band.');
+  else if (cr >= 17 && cr <= 20) gbf('Chase Runs','chase_runs',2, 'r',cr,cr+' chase runs — very exposed. IV below average.');
+  else                           gbf('Chase Runs','chase_runs',0, 'r',cr,'21+ chase runs — IV=0.00. No winners from heavily exposed horses.');
 
   // ── 3M+ WINS (max 10) ────────────────────────────────────
-  if (mw >= 3 && mw <= 4)  { scores.dist3m = 10; details.dist3m = '✅ '+mw+' 3m+ wins — IV=2.86. Optimal distance experience band.'; }
-  else if (mw >= 5)         { scores.dist3m = 8;  details.dist3m = '✅ '+mw+' 3m+ wins — strong stamina proof, diminishing returns above 4.'; }
-  else if (mw === 2)        { scores.dist3m = 8;  details.dist3m = '✅ 2 3m+ wins — IV=1.84. Strong signal.'; }
-  else if (mw === 1)        { scores.dist3m = 3;  details.dist3m = '⚠️ 1 3m+ win — IV=0.00 (quirk of dataset). Still some positive value.'; }
-  else                       { scores.dist3m = 2;  details.dist3m = '🟡 0 3m+ wins — IV=0.61. Noble Yeats won from here but was age 7, 7 chase runs.'; }
+  // Peak band: 3-4 wins (IV=2.86, optimal distance experience)
+  if (mw >= 3 && mw <= 4)  gbf('3M+ Wins','dist3m',10,'g',mw,mw+' 3m+ wins — IV=2.86. Optimal distance experience band.');
+  else if (mw >= 5)        gbf('3M+ Wins','dist3m',8, 'y',mw,mw+' 3m+ wins — strong stamina proof, diminishing returns above 4.');
+  else if (mw === 2)       gbf('3M+ Wins','dist3m',8, 'y',mw,'2 3m+ wins — IV=1.84. Strong signal.');
+  else if (mw === 1)       gbf('3M+ Wins','dist3m',3, 'r',mw,'1 3m+ win — IV=0.00 (quirk of dataset). Still some positive value.');
+  else                     gbf('3M+ Wins','dist3m',2, 'r',mw,'0 3m+ wins — IV=0.61. Noble Yeats won from here but was age 7, 7 chase runs.');
 
   // ── GRADE WIN (max 8) ────────────────────────────────────
-  if (gradeWin) { scores.grade_win = 8; details.grade_win = '✅ Grade win — IV=1.33. 4/5 winners held a grade win.'; }
-  else           { scores.grade_win = 2; details.grade_win = '⚠️ No grade win — IV=0.50. Only Noble Yeats (50/1) won without one.'; }
+  // Peak band: Yes (binary, 4/5 winners)
+  if (gradeWin) gbf('Grade Win','grade_win',8,'g','Yes','Grade win — IV=1.33. 4/5 winners held a grade win.');
+  else          gbf('Grade Win','grade_win',2,'r','No','No grade win — IV=0.50. Only Noble Yeats (50/1) won without one.');
 
   // ── G1 WINS (max 8) ──────────────────────────────────────
-  if (g1w === 1)       { scores.g1_wins = 8; details.g1_wins = '✅ 1 G1 win — IV=3.25. Strongest G1 wins band.'; }
-  else if (g1w === 0)  { scores.g1_wins = 4; details.g1_wins = '🟡 0 G1 wins — IV=0.78. 3/5 winners had no G1 wins.'; }
-  else if (g1w === 2)  { scores.g1_wins = 2; details.g1_wins = '⚠️ 2 G1 wins — IV=0.00. Quality ceiling effect — over-exposed at top level.'; }
-  else                  { scores.g1_wins = 1; details.g1_wins = '⚠️ 3+ G1 wins — IV=0.00. Multiple G1 winners consistently underperform here.'; }
+  // Peak band: 1 G1 win (IV=3.25, strongest band)
+  if (g1w === 1)       gbf('G1 Wins','g1_wins',8,'g',g1w,'1 G1 win — IV=3.25. Strongest G1 wins band.');
+  else if (g1w === 0)  gbf('G1 Wins','g1_wins',4,'y',g1w,'0 G1 wins — IV=0.78. 3/5 winners had no G1 wins.');
+  else if (g1w === 2)  gbf('G1 Wins','g1_wins',2,'r',g1w,'2 G1 wins — IV=0.00. Quality ceiling effect — over-exposed at top level.');
+  else                 gbf('G1 Wins','g1_wins',1,'r',g1w,'3+ G1 wins — IV=0.00. Multiple G1 winners consistently underperform here.');
 
   // ── SEASON RUNS (max 8) ──────────────────────────────────
-  if (sr === 3)       { scores.season_runs = 8; details.season_runs = '✅ 3 season runs — IV=2.11, 3/5 winners. Optimal freshness.'; }
-  else if (sr === 4)  { scores.season_runs = 6; details.season_runs = '✅ 4 season runs — viable. 7/20 top-4 finishers had 4 runs.'; }
-  else if (sr === 6)  { scores.season_runs = 5; details.season_runs = '🟡 6 season runs — IV=1.33 (Noble Yeats had 6). Acceptable.'; }
-  else if (sr === 5)  { scores.season_runs = 4; details.season_runs = '🟡 5 season runs — IV=0.00 in winners but top-4 instances exist.'; }
-  else if (sr === 2)  { scores.season_runs = 1; details.season_runs = '⚠️ 2 season runs — IV=0.00 in winners. Too few runs this season.'; }
-  else                 { scores.season_runs = 0; details.season_runs = '❌ 1 season run or 7+ — IV=0.00. Outside winner profile.'; }
+  // Peak band: 3 season runs (IV=2.11, optimal freshness)
+  if (sr === 3)       gbf('Season Runs','season_runs',8,'g',sr,'3 season runs — IV=2.11, 3/5 winners. Optimal freshness.');
+  else if (sr === 4)  gbf('Season Runs','season_runs',6,'y',sr,'4 season runs — viable. 7/20 top-4 finishers had 4 runs.');
+  else if (sr === 6)  gbf('Season Runs','season_runs',5,'y',sr,'6 season runs — IV=1.33 (Noble Yeats had 6). Acceptable.');
+  else if (sr === 5)  gbf('Season Runs','season_runs',4,'y',sr,'5 season runs — IV=0.00 in winners but top-4 instances exist.');
+  else if (sr === 2)  gbf('Season Runs','season_runs',1,'r',sr,'2 season runs — IV=0.00 in winners. Too few runs this season.');
+  else                gbf('Season Runs','season_runs',0,'r',sr,'1 season run or 7+ — IV=0.00. Outside winner profile.');
 
   // ── COUNTRY (max 5) ──────────────────────────────────────
+  // Peak band: IRE/FR (binary, 5/5 winners)
   var ctry = r.bred || r.country || '';
-  if (ctry === 'FR' || ctry === 'IRE') { scores.country = 5; details.country = '✅ '+ctry+'-bred — IV≈1.1. 5/5 winners bred in IRE or FR.'; }
-  else                                  { scores.country = 1; details.country = '⚠️ '+ctry+'-bred — IV=0.00 from 19 GB runners. 0 winners.'; }
+  if (ctry === 'FR' || ctry === 'IRE') gbf('Country','country',5,'g',ctry,ctry+'-bred — IV≈1.1. 5/5 winners bred in IRE or FR.');
+  else                                 gbf('Country','country',1,'r',ctry||'—',ctry+'-bred — IV=0.00 from 19 GB runners. 0 winners.');
 
   // ── PACE STYLE (max 4) ───────────────────────────────────
+  // Peak band: MIDFIELD (IV=1.56, 4/5 winners)
   var styleVal = (r.styleNH || r.style || 'MIDFIELD').toUpperCase().replace('_', ' ').replace('HOLD UP','HOLD_UP');
-  if (styleVal === 'MIDFIELD')          { scores.pace = 4; details.pace = '✅ MIDFIELD — IV=1.56. 4/5 winners raced midfield.'; }
-  else if (styleVal === 'HOLD_UP' || styleVal === 'HOLD UP') { scores.pace = 2; details.pace = '🟡 HELD UP — IV=0.63. Noble Yeats only winner from rear.'; }
-  else if (styleVal === 'PROMINENT')    { scores.pace = 0; details.pace = '❌ PROMINENT — IV=0.00 from 30 prominent runners. No winners.'; }
-  else                                   { scores.pace = 0; details.pace = '❌ LED — IV=0.00. No front-runners won in 5yr dataset.'; }
+  if (styleVal === 'MIDFIELD')                              gbf('Pace Style','pace',4,'g','Midfield','MIDFIELD — IV=1.56. 4/5 winners raced midfield.');
+  else if (styleVal === 'HOLD_UP' || styleVal === 'HOLD UP')gbf('Pace Style','pace',2,'y','Hold Up','HELD UP — IV=0.63. Noble Yeats only winner from rear.');
+  else if (styleVal === 'PROMINENT')                        gbf('Pace Style','pace',0,'r','Prominent','PROMINENT — IV=0.00 from 30 prominent runners. No winners.');
+  else                                                      gbf('Pace Style','pace',0,'r','Led','LED — IV=0.00. No front-runners won in 5yr dataset.');
 
   // ── TRAINER (max 3) ──────────────────────────────────────
+  // Peak band: Mullins / Russell (top hit-rate group)
   var tl = (r.trainer || '').toLowerCase();
-  if (tl.includes('mullins') || tl.includes('russell')) { scores.trainer = 3; details.trainer = '✅ Top trainer — W P Mullins (9.7% win), Emmet Mullins / L Russell (33% win rate each).'; }
-  else if (tl.includes('elliott') || tl.includes('bromhead') || tl.includes('cromwell') || tl.includes("o'brien")) { scores.trainer = 2; details.trainer = '🟡 Strong trainer — multiple top-4 runners in dataset.'; }
-  else { scores.trainer = 1; details.trainer = '🟡 '+r.trainer+' — outside elite trainer group. Neutral.'; }
+  if (tl.includes('mullins') || tl.includes('russell'))                                                                             gbf('Trainer','trainer',3,'g',r.trainer||'—','Top trainer — W P Mullins (9.7% win), Emmet Mullins / L Russell (33% win rate each).');
+  else if (tl.includes('elliott') || tl.includes('bromhead') || tl.includes('cromwell') || tl.includes("o'brien"))                  gbf('Trainer','trainer',2,'y',r.trainer||'—','Strong trainer — multiple top-4 runners in dataset.');
+  else                                                                                                                              gbf('Trainer','trainer',1,'r',r.trainer||'—',(r.trainer||'?')+' — outside elite trainer group. Neutral.');
 
   var base = 0;
   Object.keys(scores).forEach(function(k){ base += scores[k]; });
@@ -1448,6 +1560,7 @@ function gnScoreRunnerNew(r) {
     scores: scores,
     bonuses: bonuses,
     penalties: penalties,
+    baseFactors: baseFactors,
     details: details,
     sr: sr,
     lbs: lbs,
