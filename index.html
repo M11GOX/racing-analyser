@@ -514,6 +514,40 @@ var GN_WINNERS = [
 ];
 // Note: 2020 cancelled (COVID). Data corrected from official Racing Post records.
 
+// ─────────────────────────────────────────────
+// 1000 GUINEAS WINNER DATA — 2021–2025
+// ─────────────────────────────────────────────
+var G1000_WINNERS = [
+  {year:2025,winner:'Desert Flower', bred:'IRE',draw:1, drawGrp:'Low',  style:'PROMINENT',trainer:'Charlie Appleby',     jockey:'William Buick',          sp:'1/1F', or:117,form:'1111-',  lastRun:'1st',grpWin:'yes',si:8.0, dsi:8.5, jsi:16.5,di:0.91,cod:-0.05,field:10,rpr:115,ts:106,foal:'March',   won8f:true, won7f:true},
+  {year:2024,winner:'Elmalka',       bred:'GB', draw:16,drawGrp:'High', style:'PATIENT',  trainer:'Roger Varian',          jockey:'Silvestre De Sousa',     sp:'28/1', or:100,form:'1-3',    lastRun:'3rd',grpWin:'no', si:8.6, dsi:9.2, jsi:17.8,di:1.86,cod:0.50, field:16,rpr:103,ts:55, foal:'March',   won8f:false,won7f:true},
+  {year:2023,winner:'Mawj',          bred:'IRE',draw:17,drawGrp:'High', style:'PROMINENT',trainer:'Saeed bin Suroor',      jockey:'Oisin Murphy',           sp:'9/1',  or:110,form:'2143-11',lastRun:'1st',grpWin:'yes',si:6.8, dsi:10.0,jsi:16.8,di:1.35,cod:0.35, field:20,rpr:111,ts:101,foal:'April',   won8f:true, won7f:true},
+  {year:2022,winner:'Cachet',        bred:'IRE',draw:3, drawGrp:'Low',  style:'PROMINENT',trainer:'George Boughey',        jockey:'James Doyle',            sp:'16/1', or:109,form:'37234-1',lastRun:'1st',grpWin:'yes',si:6.7, dsi:10.9,jsi:17.6,di:0.33,cod:-0.50,field:13,rpr:111,ts:91, foal:'March',   won8f:false,won7f:true},
+  {year:2021,winner:'Mother Earth',  bred:'IRE',draw:2, drawGrp:'Low',  style:'PATIENT',  trainer:"A P O'Brien",           jockey:'Frankie Dettori',        sp:'10/1', or:111,form:'133032-',lastRun:'2nd',grpWin:'yes',si:9.5, dsi:7.8, jsi:17.3,di:1.00,cod:0.05, field:11,rpr:111,ts:98, foal:'March',   won8f:false,won7f:false},
+];
+
+var G1000_PROFILE_FACTORS = [
+  {label:'RPR (Best Rating)',    ideal:'RPR 111+',      stats:'RPR 111+: 4/5 winners, IV=5.09, T4%=54.5%, PRB=77.5% — by far the strongest single signal.\nRPR 106-110: 0 wins from 18 runners despite competitive PRB=54.4% — a genuine void zone.\nRPR 100-105: 1 win from 19 runners (Elmalka outlier), IV=0.38.\nRPR <100: 0 wins from 22 runners. Hard floor.'},
+  {label:'JSI (Joint Sire Index)',ideal:'JSI 16.0–17.9',stats:'All 5 winners had JSI 16.0-17.9. Zero wins from 48 runners outside this range.\nJSI 18+: 0 wins from 31 runners (competitive placers but don\'t win).\nJSI <16: 0 wins, T4%=5.9% — the worst band on every metric.\nTightest pedigree filter in the dataset.'},
+  {label:'OR (Official Rating)',  ideal:'OR 116+',       stats:'OR 116+: IV=3.50, T4%=50%, PRB=73.1% — small sample (4 runners) but strong.\nOR 106-115: 3 winners, IV=1.31, the main contender band.\nUnrated: 0 wins but T4%=37.5%, PRB=52.9% — lightly raced horses with limited data.\nOR ≤105: IV=0.54. Elmalka (OR 100) is the sole outlier winner.'},
+  {label:'Country of Breeding',  ideal:'IRE',           stats:'IRE: 4/5 winners, IV=1.56, T4%=36.1%, PRB=56.3%.\nGB: 1 win (Elmalka outlier), IV=0.47, T4%=13.3%, PRB=39.6% — clear negative signal.\nFR/USA/Other: 0 wins from 4 runners but PRB=70.5% — too few runners to draw conclusions.'},
+  {label:'Top Speed (TS)',        ideal:'TS 101+',       stats:'TS 101+: IV=4.00, T4%=42.9%, PRB=77.9% — highest scoring band.\nTS 91-100: 2 winners, IV=1.17. Solid middle band.\nTS <80 (excused): 1 winner, IV=0.88 — limited/AW/soft ground excuse is genuine, not poor ability.\nTS ≤90 (no excuse): 0 wins from 23 runners, T4%=13.0% — hard void.'},
+  {label:'Group Wins',            ideal:'2+ group wins', stats:'2+ wins: IV=1.00, PRB=61.7% — highest PRB of any band. These horses place above average consistently.\n1 win: 3/5 winners, IV=2.00, T4%=38.1%. The winning band.\n0 wins: IV=0.40. Only Elmalka (28/1 outlier) won without a group win.\nNot linear on IV alone — talent shown by PRB for 2+ band.'},
+  {label:'Draw Group',            ideal:'Low draw',      stats:'Low: 3/5 winners, IV=1.83, PRB=56.6%.\nHigh: 2/5 winners, IV=1.22, T4%=34.8%. Acceptable.\nMid: 0 wins from 24 runners, T4%=4.2%, PRB=31.6% — complete void on every metric.'},
+  {label:'Dosage Index (DI)',     ideal:'DI 0.75–1.49',  stats:'DI 0.75-1.49: 3 winners, IV=1.68, PRB=54.2% — ideal balance.\nDI 1.50-1.99: 1 winner, IV=1.75, PRB=57.3%. Viable.\nDI <0.75: 1 winner, IV=0.93. Acceptable.\nDI 2.0+: 0 wins from 22 runners — over-speed biased for this trip.'},
+  {label:'Sire Index (SI)',       ideal:'SI <7.5',       stats:'Opposite to 2000 Guineas — lower SI (speed sires) performs better here.\nSI <7.5: IV=1.56, wins most often (Cachet SI 6.7, Mawj SI 6.8).\nSI 7.5-8.9: IV=1.08, best sample — Elmalka (8.6), Desert Flower (8.0) won.\nSI 9.0-10.4: IV=0.93 but PRB=58.6%, T4%=46.7% — these horses place very well.\nSI 10.5+: 0 wins. Too stamina-heavy for this race.'},
+  {label:'Foal Month',            ideal:'March',         stats:'March: 4/5 winners, IV=1.56. Dominant band.\nJan-Feb: 0 wins but T4%=39.1%, PRB=63.1% — consistently competitive placers, highest PRB of any band.\nApr-May: 1 winner (Mawj, April), IV=1.40. Acceptable.\nJune+: 1 runner only — insufficient data.'},
+  {label:'Running Style',         ideal:'Prominent',     stats:'PROMINENT: 3/5 winners, IV=1.20, T4%=31.4%. Reversed from 2000 Guineas where Patient dominates.\nPATIENT: 2/5 winners, IV=0.80, PRB=52.8% (higher than Prominent).\nBoth styles produce winners — neither is disqualifying. Modest PROMINENT edge on wins.'},
+  {label:'Trip Win (8f)',         ideal:'Won 8f',        stats:'Won 8f: IV=1.65, T4%=41.2%, PRB=56.4% — best band on every metric.\nWon neither / Won 7f only: similar metrics, insufficient differentiation to score differently.\nOnly rewarded for 8f win; 7f only and neither are treated equally.'},
+];
+
+var G1000_DOSAGE_CELLS = [
+  {label:'RPR 111+ (key)',       sweet:'111+',           note:'4/5 winners. IV=5.09. PRB=77.5%. RPR 106-110 is a void zone (0/18). The strongest single filter.'},
+  {label:'JSI 16.0-17.9',       sweet:'16.0 – 17.9',    note:'All 5 winners. 0 wins from 48 runners outside. The hard pedigree binary — narrower than 2000G (16-21).'},
+  {label:'DI 0.75-1.49',        sweet:'0.75 – 1.49',    note:'3/5 winners. DI 2.0+ is a void (0/22). Broader sweet spot than 2000G.'},
+  {label:'SI <7.5 (reversed)',   sweet:'< 7.5',          note:'Lower SI favoured — opposite to 2000G. Speed sires (Exceed And Excel, No Nay Never) dominate here.'},
+  {label:'Draw: avoid Mid',      sweet:'Low or High',    note:'Mid draw: 0 wins from 24 runners, PRB=31.6%. Low and High both viable. Unique to 1000G.'},
+];
+
 var GN_PROFILE_FACTORS = [
   {label:'Official Rating', ideal:'OR 155–168 · highest signal', stats:'IV 6.51 at OR 161-165 — strongest band in dataset\nAll 5 winners rated 148-168 · 4/5 rated 155+\nOR 166+: IV=3.98 · OR 155+: IV=2.11\nNoble Yeats at 148 is the sole outlier (50/1)\nIdeal: 155+ · Acceptable: 148-154'},
   {label:'OR Delta (Well-Handicapped)', ideal:'+3 or more · all winners ≥0', stats:'No winner ran off a lower mark than their ability\nDelta negative: IV=0.00 (12 runners, 0 wins)\nCorach Rambler +10: IV=35.8 (extreme signal)\nDelta +4-7: IV=3.58 · Delta +1-3: IV=2.56\nIdeal: Delta +3 or more · Acceptable: Delta 0-2'},
@@ -771,6 +805,21 @@ function renderICPFactorBars() {
 // PLAIN-ENGLISH BONUS/PENALTY DESCRIPTIONS
 // Used by score card expansion AND by analysis prompts
 // ─────────────────────────────────────────────
+var G1000_CODE_MAP = {
+  B1:'Won last race',
+  B2:'Last run at 7f-8f',
+  B3:'JSI 16-18 AND SI below 9.0 (speed-stamina pedigree balance)',
+  B4:'IRE-bred with exactly 1 group win (classic 1000G winner profile)',
+  BWR:'Strong win rate for runs completed',
+  P1:'Did not win last completed run',
+  P2:'JSI outside 16.0-17.9 (hard pedigree filter — 0 wins outside this range)',
+  P3:'Dosage Index 2.0+ (too speed-biased for this trip)',
+  P4:'Top speed ≤90 without excuse (void zone — 0 wins from 23 runners)',
+  P5:'January or February foal (0 wins from 23 runners)',
+  P6:'Mid draw (void — 0 wins from 24 runners, PRB=31.6%)',
+  PWR:'Weak win rate for runs completed'
+};
+
 var GUINEAS_CODE_MAP = {
   B1:'Won last race',
   B2:'Last run at 7f-8f',
@@ -850,7 +899,7 @@ function renderNHScoreCard(out, scored, winnerAvg, top4Avg) {
       mods+='<span class="nh-mods-hint">tap for detail</span>';
     }
     // Build expansion panel content
-    var codeMap = isFlat ? GUINEAS_CODE_MAP : GN_CODE_MAP;
+    var codeMap = CURRENT_RACE==='national' ? GN_CODE_MAP : (CURRENT_RACE==='g1000' ? G1000_CODE_MAP : GUINEAS_CODE_MAP);
     var tierIcon = {g:'🟢', y:'🟡', r:'🔴'};
     var expansionHtml = '';
     // Base factors (with traffic lights)
@@ -918,7 +967,8 @@ function renderNHScoreCard(out, scored, winnerAvg, top4Avg) {
     }
     rows+='</div>'; // close nh-row-wrap
   });
-  wrap.innerHTML='<div class="out-hdr"><span class="out-num">◎</span>Contender Rankings — '+(CURRENT_RACE==='national'?'Grand National':'2000 Guineas')+'</div><div class="out-body">'+leg+'<div class="nh-score-list">'+rows+'</div></div>';
+  var raceName = CURRENT_RACE==='national'?'Grand National':(CURRENT_RACE==='g1000'?'1000 Guineas':'2000 Guineas');
+  wrap.innerHTML='<div class="out-hdr"><span class="out-num">◎</span>Contender Rankings — '+raceName+'</div><div class="out-body">'+leg+'<div class="nh-score-list">'+rows+'</div></div>';
   out.appendChild(wrap);
 }
 
@@ -1250,7 +1300,142 @@ function scoreRunnerGuineas(r, fieldSize) {
   return {finalScore:finalScore,composite:finalScore,base:base,bonusTotal:bonusTotal,penTotal:penTotal,bonuses:bonuses,penalties:penalties,baseFactors:baseFactors,drawGroup:dg};
 }
 
-function scoreRunner(r,fieldSize){return scoreRunnerGuineas(r,fieldSize);}
+function scoreRunner(r,fieldSize){
+  if(CURRENT_RACE==='g1000') return scoreRunner1000G(r,fieldSize);
+  return scoreRunnerGuineas(r,fieldSize);
+}
+
+// ─────────────────────────────────────────────
+// 1000 GUINEAS SCORING ENGINE — Evidence-based 2021-2025
+// Winner avg 125 | Top-4 avg 81 | 70 runners · 5 winners
+// ─────────────────────────────────────────────
+function scoreRunner1000G(r, fieldSize) {
+  var fm=parseFormFlat(r.form||'');
+  var draw=parseInt(r.draw)||1;
+  var dg=drawGroupFlat(draw, fieldSize||11);
+  var or_=parseInt(r.or||r.or_)||0;
+  var rpr=parseInt(r.rpr)||0;
+  var ts=parseInt(r.ts)||0;
+  var tsExc=r.ts_excuse||'none';
+  var si=parseFloat(r.si)||0;
+  var di=parseFloat(r.di)||0;
+  var jsi=parseFloat(r.jsi)||(si+(parseFloat(r.dsi||0)))||0;
+  var grpw=parseInt(r.grp_wins||r.grpWins)||0;
+  var foalM=parseInt(r.foal_month)||3;
+  var prep=fm.prepRuns,totRuns=fm.totalRuns;
+  var completedRunCount=fm.completedRunCount,completedWins=fm.completedWins;
+  var winRate=completedRunCount>0?completedWins/completedRunCount:0;
+  var won8f=r.won_8f===true||r.won8f===true;
+  var won7f=r.won_7f===true||r.won7f===true;
+  var last78f=r.last_78f!==false&&r.last78f!==false;
+  var trainer=r.trainer||'';
+  var country=r.bred||r.country||'';
+  var base=0,bonusTotal=0,penTotal=0,bonuses={},penalties={},baseFactors={};
+
+  function bf(label,pts,tier,val){
+    base+=pts;
+    baseFactors[label]={pts:pts,tier:tier,val:val};
+  }
+
+  // F1: RPR (max 20)
+  if(rpr>=111)       bf('RPR',20,'g',rpr);
+  else if(rpr>=100)  bf('RPR',5, 'r',rpr);
+  else if(rpr>0)     bf('RPR',0, 'r',rpr||'—');
+  else               bf('RPR',0, 'r','—');
+
+  // F2: JSI (max 18) — hard binary filter 16.0-17.9
+  if(jsi>=16.0&&jsi<18.0) bf('JSI',18,'g',jsi);
+  else if(jsi>=18.0)       bf('JSI',5, 'r',jsi||'—');
+  else if(jsi>=15.0)       bf('JSI',2, 'r',jsi||'—');
+  else                     bf('JSI',0, 'r',jsi||'—');
+
+  // F3: OR (max 15)
+  if(or_>=116)       bf('OR',15,'g',or_);
+  else if(or_>=106)  bf('OR',12,'y',or_);
+  else if(or_===0)   bf('OR',8, 'y','Unrated');
+  else               bf('OR',5, 'r',or_);
+
+  // F4: Country (max 12)
+  if(country==='IRE')      bf('Country',12,'g',country);
+  else if(country==='GB')  bf('Country',4, 'r',country);
+  else                     bf('Country',5, 'y',country||'—');
+
+  // F5: TS (max 12)
+  var tsExcused=ts<80&&tsExc!=='none';
+  if(ts>=101)             bf('Top Speed',12,'g',ts);
+  else if(ts>=91)         bf('Top Speed',8, 'y',ts);
+  else if(tsExcused)      bf('Top Speed',7, 'y',ts+' (excused)');
+  else if(ts>0)           bf('Top Speed',0, 'r',ts);
+  else                    bf('Top Speed',7, 'y','—');
+
+  // F6: Group Wins (max 10)
+  if(grpw>=2)       bf('Group Wins',10,'g',grpw);
+  else if(grpw===1) bf('Group Wins',8, 'y',grpw);
+  else              bf('Group Wins',3, 'r',0);
+
+  // F7: Draw (max 5) — Mid is void
+  if(dg==='Low')       bf('Draw',5,'g','Low ('+draw+')');
+  else if(dg==='High') bf('Draw',3,'y','High ('+draw+')');
+  else                 bf('Draw',1,'r','Mid ('+draw+')');
+
+  // F8: DI (max 8)
+  if(di>=0.75&&di<1.5)   bf('DI',8,'g',di);
+  else if(di>=1.5&&di<2) bf('DI',7,'y',di);
+  else if(di>0&&di<0.75) bf('DI',4,'y',di);
+  else if(di>=2)         bf('DI',0,'r',di);
+  else                   bf('DI',4,'y','—');
+
+  // F9: SI (max 8) — lower favoured (speed sires)
+  if(si>0&&si<7.5)       bf('SI',8,'g',si);
+  else if(si>=7.5&&si<9) bf('SI',7,'y',si);
+  else if(si>=9&&si<10.5)bf('SI',6,'y',si);
+  else if(si>=10.5)      bf('SI',1,'r',si);
+  else                   bf('SI',6,'y','—');
+
+  // F10: Foal Month (max 7)
+  if(foalM===3)      bf('Foal Month',7,'g','March');
+  else if(foalM<=2)  bf('Foal Month',6,'y',foalM===1?'January':'February');
+  else if(foalM<=5)  bf('Foal Month',5,'y',['','','','','April','May'][foalM]||'Apr-May');
+  else               bf('Foal Month',3,'r','June+');
+
+  // F11: Running Style (max 6)
+  var paceG=(r.pace_guineas||'PATIENT').toUpperCase();
+  if(paceG==='PROMINENT')                          bf('Pace Style',6,'g','Prominent');
+  else                                             bf('Pace Style',4,'y','Patient');
+
+  // F12: Trip (max 6) — only 8f win rewarded
+  if(won8f) bf('Trip Win',6,'g','Won 8f');
+  else      bf('Trip Win',0,'r',won7f?'Won 7f only':'Won neither');
+
+  // BONUSES
+  var wonLast=fm.wonLast;
+  var completedLast=fm.completedLast;
+
+  if(wonLast){bonuses['B1']=10;bonusTotal+=10;}
+  if(last78f){bonuses['B2']=8;bonusTotal+=8;}
+  if(jsi>=16.0&&jsi<18.0&&si>0&&si<9.0){bonuses['B3']=6;bonusTotal+=6;}
+  if(country==='IRE'&&grpw===1){bonuses['B4']=5;bonusTotal+=5;}
+  // BWR — same structure as 2000G
+  if(completedRunCount>=3&&completedRunCount<=4&&winRate>=0.665){bonuses['BWR']=8;bonusTotal+=8;}
+  else if(completedRunCount>=3&&completedRunCount<=4&&winRate>=0.34){bonuses['BWR']=5;bonusTotal+=5;}
+  else if(completedRunCount>=5&&winRate>=0.665){bonuses['BWR']=5;bonusTotal+=5;}
+
+  // PENALTIES
+  if(!wonLast&&completedLast){penalties['P1']=-8;penTotal-=8;}
+  if(!(jsi>=16.0&&jsi<18.0)){penalties['P2']=-8;penTotal-=8;}
+  if(di>=2.0){penalties['P3']=-6;penTotal-=6;}
+  var tsFloor=ts>0&&ts<=90&&!tsExcused;
+  if(tsFloor){penalties['P4']=-6;penTotal-=6;}
+  if(foalM<=2&&foalM>0){penalties['P5']=-4;penTotal-=4;}
+  if(dg==='Mid'){penalties['P6']=-5;penTotal-=5;}
+  // PWR — same as 2000G
+  if(completedRunCount===2){penalties['PWR']=-3;penTotal-=3;}
+  else if(completedRunCount>=5&&winRate<0.34){penalties['PWR']=-2;penTotal-=2;}
+  else if(winRate<0.34&&completedRunCount>=3){penalties['PWR']=-5;penTotal-=5;}
+
+  var finalScore=Math.max(0,base+bonusTotal+penTotal);
+  return {finalScore:finalScore,composite:finalScore,base:base,bonusTotal:bonusTotal,penTotal:penTotal,bonuses:bonuses,penalties:penalties,baseFactors:baseFactors,drawGroup:dg};
+}
 
 function gnParseWeightLbs(w) {
   if (!w) return null;
@@ -1592,15 +1777,14 @@ var RACE_CATALOG = {
   flat: {
     label: 'Flat',
     races: [
-      { id:'guineas', name:'2000 Guineas', course:'Newmarket', dist:'1 Mile', type:'Group 1 · 3yo' }
-      // Future: { id:'derby', name:'Epsom Derby', ... }
+      { id:'guineas',  name:'2000 Guineas',  course:'Newmarket', dist:'1 Mile',   type:'Group 1 · 3yo' },
+      { id:'g1000',    name:'1000 Guineas',  course:'Newmarket', dist:'1 Mile',   type:'Group 1 · 3yo Fillies' }
     ]
   },
   nh: {
     label: 'NH',
     races: [
-      { id:'national', name:'Grand National', course:'Aintree', dist:'4m2½f', type:'Open Handicap Chase' }
-      // Future: { id:'cheltenham_gold', name:'Cheltenham Gold Cup', ... }
+      { id:'national', name:'Grand National', course:'Aintree',   dist:'4m2½f',   type:'Open Handicap Chase' }
     ]
   }
 };
@@ -1684,6 +1868,11 @@ function selectRace(raceId) {
     document.getElementById('hdr-race-sub').textContent = 'Aintree · 4m2½f · Open Handicap Chase · 2022–2026 · 5 winners · Evidence-Based Model';
     document.getElementById('field-size-label').textContent = 'Total Declared';
     document.getElementById('field-size-hint').textContent = 'Declared runners in the Grand National (typically 34-40).';
+  } else if (raceId === 'g1000') {
+    document.getElementById('hdr-race-name').textContent = '1000 Guineas';
+    document.getElementById('hdr-race-sub').textContent = 'Newmarket · 1 Mile · 3yo Fillies · Group 1 · 2021–2025 · 5 winners';
+    document.getElementById('field-size-label').textContent = 'Total Field Size';
+    document.getElementById('field-size-hint').textContent = 'Declared runners — used for draw groupings.';
   } else if (raceId === 'guineas') {
     document.getElementById('hdr-race-name').textContent = '2000 Guineas';
     document.getElementById('hdr-race-sub').textContent = 'Newmarket · 1 Mile · 3yo · Group 1 · 2011–2025 · 15 winners';
@@ -1959,20 +2148,21 @@ var DOSAGE_CELLS = [
 
 function renderProfile() {
   var isNH = CURRENT_RACE==='national';
-  var factors = isNH ? GN_PROFILE_FACTORS : PROFILE_FACTORS;
-  var dosageCells = isNH ? GN_DOSAGE_CELLS : DOSAGE_CELLS;
-  var winners = isNH ? GN_WINNERS : WINNERS;
+  var is1000 = CURRENT_RACE==='g1000';
+  var factors = isNH ? GN_PROFILE_FACTORS : (is1000 ? G1000_PROFILE_FACTORS : PROFILE_FACTORS);
+  var dosageCells = isNH ? GN_DOSAGE_CELLS : (is1000 ? G1000_DOSAGE_CELLS : DOSAGE_CELLS);
+  var winners = isNH ? GN_WINNERS : (is1000 ? G1000_WINNERS : WINNERS);
 
   // Update profile panel header
   var panelHdr = document.querySelector('#panel-profile .panel-title');
-  if (panelHdr) panelHdr.textContent = isNH ? '2022–2026 · 5 Winners · 179 Runners · Evidence-Based Model' : '2011–2025 · 15 Winners';
+  if (panelHdr) panelHdr.textContent = isNH ? '2022–2026 · 5 Winners · 179 Runners · Evidence-Based Model' : (is1000 ? '2021–2025 · 5 Winners · 70 Runners · Evidence-Based Model' : '2011–2025 · 15 Winners');
 
   var grid=document.getElementById('icp-grid');
   grid.innerHTML=factors.map(function(f){
     return '<div class="icp-cell"><div class="icp-label">'+f.label+'</div><div class="icp-value">'+f.ideal+'</div><div class="icp-stats">'+f.stats.replace(/\n/g,'<br>')+'</div></div>';
   }).join('');
   var dgrid=document.getElementById('dos-grid');
-  if (isNH) { renderICPFactorBars(); } else { renderICPFactorBarsGuineas(); }
+  if (isNH) { renderICPFactorBars(); } else if (is1000) { renderICPFactorBars1000G(); } else { renderICPFactorBarsGuineas(); }
   renderICPCharts(runners);
   if (dgrid) dgrid.innerHTML=dosageCells.map(function(d){
     return '<div class="dos-cell"><div class="dos-metric">'+d.label+'</div><div class="dos-sweet">'+d.sweet+'</div><div class="dos-note">'+d.note+'</div></div>';
@@ -1985,6 +2175,21 @@ function renderProfile() {
         +'<td>'+w.age+'</td><td style="font-family:IBM Plex Mono,monospace">'+w.weight+'</td>'
         +'<td>'+w.or_+'</td><td>'+w.style+'</td><td>'+w.trainer+'</td>'
         +'<td>'+w.sp+'</td><td style="font-family:IBM Plex Mono,monospace;letter-spacing:.05em">'+w.form+'</td>'
+        +'<td>'+w.field+'</td></tr>';
+    }).join('');
+  } else if (is1000) {
+    document.querySelector('.wtable thead tr').innerHTML='<th>Year</th><th>Winner</th><th>Bred</th><th>Draw</th><th>OR</th><th>RPR</th><th>8f Win</th><th>Grp Win</th><th>Trainer</th><th>Jockey</th><th>SP</th><th>Form</th><th>Field</th>';
+    tbody.innerHTML=winners.map(function(w){
+      return '<tr><td><strong>'+w.year+'</strong></td><td>'+w.winner+'</td><td>'+w.bred+'</td>'
+        +'<td>'+w.draw+' ('+w.drawGrp+')</td>'
+        +'<td>'+(w.or||'—')+'</td>'
+        +'<td>'+(w.rpr||'—')+'</td>'
+        +'<td>'+(w.won8f?'✓':'✗')+'</td>'
+        +'<td>'+(w.grpWin==='yes'?'✓':'✗')+'</td>'
+        +'<td>'+w.trainer+'</td>'
+        +'<td>'+(w.jockey||'—')+'</td>'
+        +'<td>'+w.sp+'</td>'
+        +'<td style="font-family:IBM Plex Mono,monospace;letter-spacing:.05em">'+w.form+'</td>'
         +'<td>'+w.field+'</td></tr>';
     }).join('');
   } else {
@@ -2000,6 +2205,54 @@ function renderProfile() {
         +'<td>'+w.field+'</td></tr>';
     }).join('');
   }
+}
+
+function renderICPFactorBars1000G() {
+  var grid=document.getElementById('icp-grid');
+  if(!grid) return;
+  var C={ideal:'var(--gold)',good:'#4a7c5a',ok:'#888',poor:'#c0392b'};
+  var B={ideal:'rgba(184,151,42,.12)',good:'rgba(74,124,90,.08)',ok:'rgba(136,136,136,.06)',poor:'rgba(192,57,43,.06)'};
+  var factors=[
+    {label:'RPR (Best Rating)',ideal:'RPR 111+',stat:'RPR 111+: IV=5.09, PRB=77.5%, 4/5 winners. RPR 106-110: void (0/18). Hard floor below 100.',
+     bands:[{n:'RPR 111+',p:100,t:'ideal'},{n:'RPR 100-110',p:20,t:'poor'},{n:'RPR <100',p:0,t:'poor'}]},
+    {label:'JSI (Joint Sire Index)',ideal:'JSI 16.0-17.9',stat:'All 5 winners in JSI 16.0-17.9. Zero wins from 48 runners outside. JSI <16: T4%=5.9% — worst band. JSI 18+: competitive placers but never win.',
+     bands:[{n:'JSI 16.0-17.9',p:100,t:'ideal'},{n:'JSI 18+',p:25,t:'poor'},{n:'JSI 15-15.9',p:8,t:'poor'},{n:'JSI <15',p:0,t:'poor'}]},
+    {label:'OR (Official Rating)',ideal:'OR 116+',stat:'OR 116+: IV=3.50, T4%=50% (small sample). OR 106-115: main contender band, 3 winners. Unrated: PRB=52.9%, lightly raced. OR ≤105: 1 outlier win (Elmalka).',
+     bands:[{n:'OR 116+',p:100,t:'ideal'},{n:'OR 106-115',p:80,t:'good'},{n:'Unrated',p:55,t:'ok'},{n:'OR ≤105',p:30,t:'poor'}]},
+    {label:'Country of Breeding',ideal:'IRE',stat:'IRE: 4/5 winners, IV=1.56, PRB=56.3%. GB: IV=0.47, T4%=13.3% — clear negative. FR/USA/Other: 0 wins but PRB=70.5% (only 4 runners).',
+     bands:[{n:'IRE',p:100,t:'ideal'},{n:'Other (FR/USA)',p:40,t:'ok'},{n:'GB',p:20,t:'poor'}]},
+    {label:'Top Speed (TS)',ideal:'TS 101+',stat:'TS 101+: IV=4.00, PRB=77.9%. TS 91-100: solid middle band. TS <80 (excused): lightly raced/AW — genuine excuse. TS ≤90 (no excuse): 0 wins from 23 runners, T4%=13.0%.',
+     bands:[{n:'TS 101+',p:100,t:'ideal'},{n:'TS 91-100',p:65,t:'good'},{n:'TS <80 (excused)',p:55,t:'ok'},{n:'TS ≤90 (no excuse)',p:0,t:'poor'}]},
+    {label:'Group Wins',ideal:'2+ group wins (talent) · 1 win (winning)',stat:'2+ wins: PRB=61.7% — highest talent signal. 1 win: 3/5 winners, IV=2.00 — the winning band. 0 wins: IV=0.40, only Elmalka (28/1) won without.',
+     bands:[{n:'2+ group wins',p:100,t:'ideal'},{n:'1 group win',p:85,t:'good'},{n:'0 group wins',p:25,t:'poor'}]},
+    {label:'Draw Group',ideal:'Low draw',stat:'Low: 3/5 winners, IV=1.83. High: 2/5 winners, viable. Mid: 0 wins from 24 runners, PRB=31.6% — complete void. Unique to 1000G vs 2000G.',
+     bands:[{n:'Low',p:100,t:'ideal'},{n:'High',p:60,t:'good'},{n:'Mid',p:0,t:'poor'}]},
+    {label:'Dosage Index (DI)',ideal:'DI 0.75-1.49',stat:'DI 0.75-1.49: 3 winners, IV=1.68. DI 1.50-1.99: 1 winner, PRB=57.3%. DI <0.75: 1 winner, acceptable. DI 2.0+: 0 wins from 22 runners — void.',
+     bands:[{n:'DI 0.75-1.49',p:100,t:'ideal'},{n:'DI 1.50-1.99',p:80,t:'good'},{n:'DI <0.75',p:45,t:'ok'},{n:'DI 2.0+',p:0,t:'poor'}]},
+    {label:'Sire Index (SI)',ideal:'SI <7.5 (speed sires)',stat:'Reversed from 2000G. SI <7.5: IV=1.56 (Cachet SI 6.7, Mawj SI 6.8). SI 7.5-8.9: strong sample, 2 winners. SI 9.0-10.4: PRB=58.6% but 1 win. SI 10.5+: void.',
+     bands:[{n:'SI <7.5',p:100,t:'ideal'},{n:'SI 7.5-8.9',p:80,t:'good'},{n:'SI 9.0-10.4',p:70,t:'good'},{n:'SI 10.5+',p:5,t:'poor'}]},
+    {label:'Foal Month',ideal:'March',stat:'March: 4/5 winners, IV=1.56. Jan-Feb: 0 wins but T4%=39.1%, PRB=63.1% — highly competitive placers. Apr-May: 1 winner. June+: 1 runner only.',
+     bands:[{n:'March',p:100,t:'ideal'},{n:'Jan-Feb',p:80,t:'good'},{n:'Apr-May',p:70,t:'good'},{n:'June+',p:20,t:'poor'}]},
+    {label:'Running Style',ideal:'Prominent (slight edge)',stat:'PROMINENT: 3/5 winners, IV=1.20, T4%=31.4%. Reversed from 2000G where Patient dominates. PATIENT: 2/5 winners, PRB=52.8%. Both viable — modest difference.',
+     bands:[{n:'Prominent',p:100,t:'ideal'},{n:'Patient',p:65,t:'good'}]},
+    {label:'Trip Win (8f)',ideal:'Won 8f',stat:'Won 8f: IV=1.65, T4%=41.2%, PRB=56.4% — best on every metric. Won neither and Won 7f only are too similar to differentiate. Only 8f win rewarded.',
+     bands:[{n:'Won 8f',p:100,t:'ideal'},{n:'Won 7f/Won neither',p:35,t:'ok'}]},
+  ];
+  var h='';
+  factors.forEach(function(f){
+    h+='<div class="icp-factor-card">';
+    h+='<div class="icp-factor-header"><div class="icp-factor-label">'+f.label+'</div><div class="icp-factor-ideal">Ideal: '+f.ideal+'</div></div>';
+    h+='<div class="icp-factor-stat">'+f.stat+'</div>';
+    h+='<div class="icp-factor-bars">';
+    f.bands.forEach(function(b){
+      h+='<div class="icp-band" style="background:'+B[b.t]+'">';
+      h+='<div class="icp-band-name">'+b.n+'</div>';
+      h+='<div class="icp-band-track"><div class="icp-band-fill" style="width:'+b.p+'%;background:'+C[b.t]+'"></div></div>';
+      h+='</div>';
+    });
+    h+='</div></div>';
+  });
+  grid.innerHTML=h;
 }
 
 // ─────────────────────────────────────────────
@@ -2022,16 +2275,20 @@ function runAnalysis() {
   var fsEl=document.getElementById('field-size');
   var fieldSize=(fsEl&&parseInt(fsEl.value)>0)?parseInt(fsEl.value):runners.length;
 
-  var scored=runners.map(function(r){ return {runner:r, result:scoreRunnerGuineas(r,fieldSize)}; });
+  var scored=runners.map(function(r){ return {runner:r, result:scoreRunner(r,fieldSize)}; });
   scored.sort(function(a,b){return (b.result.finalScore||0)-(a.result.finalScore||0);});
 
-  renderWithScores(scored, '');
+  // Winner avg and top-4 avg differ per race
+  var winnerAvg = CURRENT_RACE==='g1000' ? 125 : 131;
+  var top4Avg   = CURRENT_RACE==='g1000' ? 81  : 89;
+
+  renderWithScores(scored, '', winnerAvg, top4Avg);
 }
 
 // ─────────────────────────────────────────────
 // RENDER
 // ─────────────────────────────────────────────
-function renderWithScores(scored, text) {
+function renderWithScores(scored, text, winnerAvg, top4Avg) {
   var out=document.getElementById('analysis-out');
   out.innerHTML='';
   var isNH=CURRENT_RACE==='national';
@@ -2039,8 +2296,8 @@ function renderWithScores(scored, text) {
     renderNHScoreCard(out,scored);
     return;
   }
-  // Guineas — same NH-style score card, calibrated to 2021-2025 model
-  renderNHScoreCard(out, scored, 131, 89);
+  // Guineas / 1000G — pass race-specific thresholds
+  renderNHScoreCard(out, scored, winnerAvg||131, top4Avg||89);
 }
 
 function renderRunnersSec(out, body, scored) {
