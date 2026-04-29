@@ -372,6 +372,7 @@ textarea{resize:vertical;min-height:52px}
         <input id="f-form" placeholder="e.g. 121-1 or 13-1 or 111" maxlength="13" style="font-family:'IBM Plex Mono',monospace;font-size:15px;letter-spacing:.12em" oninput="validateForm(this)">
       </div>
       <div class="fg flat-only"><label>Group Wins</label><input id="f-grp-wins" type="number" min="0" max="10" placeholder="0"></div>
+      <div class="fg flat-only g1000-hide"><label>G1-2 at 2, or Prep Run?</label><select id="f-prep-g1"><option value="N">No</option><option value="Y">Yes</option></select></div>
       <div class="fg flat-only"><label>Best RPR <span style="color:var(--gold);font-size:8px">CAREER BEST PRIOR TO RACE</span></label><input id="f-rpr" type="number" min="70" max="135" placeholder="e.g. 113"></div>
       <div class="fg flat-only"><label>Best TS <span style="color:var(--gold);font-size:8px">TOP SPEED FIGURE</span></label>
         <div style="display:flex;gap:6px">
@@ -394,6 +395,7 @@ textarea{resize:vertical;min-height:52px}
       <div class="fg flat-only"><label>Dosage Index (DI)</label><input id="f-di" type="number" step="0.01" min="0.1" max="5" placeholder="e.g. 0.67"></div>
       <div class="fg flat-only"><label>COD Index</label><input id="f-cod" type="number" step="0.01" min="-1" max="1.5" placeholder="e.g. -0.15"></div>
       <div class="fg flat-only g1000-hide"><label>2 B Pts or 6 Speed Pts?</label><select id="f-dosage-speed"><option value="N">No</option><option value="Y">Yes</option></select></div>
+      <div class="fg flat-only g1000-hide"><label>Galileo / Dubawi Bloodline?</label><select id="f-gal-dub"><option value="N">No</option><option value="Y">Yes</option></select></div>
       <div class="fg flat-only g1000-hide"><label>G1 Sire (RPR 120+)?</label><select id="f-g1sire"><option value="no">No</option><option value="yes">Yes</option></select></div>
       <div class="fg flat-only"><label>Foal Month</label><select id="f-foal-month"><option value="">— Select —</option><option value="1">January</option><option value="2">February</option><option value="3">March</option><option value="4">April</option><option value="5">May</option><option value="6">June+</option></select></div>
       <div class="fg flat-only g1000-hide"><label>Sire</label><select id="f-sire"><option value="">— Unknown / Not listed —</option><option value="American Pharoah">American Pharoah</option><option value="Ardad">Ardad</option><option value="Australia">Australia</option><option value="Blue Point">Blue Point</option><option value="Camacho">Camacho</option><option value="Camelot">Camelot</option><option value="Dandy Man">Dandy Man</option><option value="Dark Angel">Dark Angel</option><option value="Dawn Approach">Dawn Approach</option><option value="Deep Impact">Deep Impact</option><option value="Dubawi">Dubawi</option><option value="Fast Company">Fast Company</option><option value="Frankel">Frankel</option><option value="Galileo">Galileo</option><option value="Galileo Gold">Galileo Gold</option><option value="Gleneagles">Gleneagles</option><option value="Invincible Spirit">Invincible Spirit</option><option value="Justify">Justify</option><option value="Kameko">Kameko</option><option value="Kingman">Kingman</option><option value="Kodiac">Kodiac</option><option value="Kodi Bear">Kodi Bear</option><option value="Lope De Vega">Lope De Vega</option><option value="Mehmas">Mehmas</option><option value="Mohaather">Mohaather</option><option value="Night Of Thunder">Night Of Thunder</option><option value="No Nay Never">No Nay Never</option><option value="Oasis Dream">Oasis Dream</option><option value="Olden Times">Olden Times</option><option value="Palace Pier">Palace Pier</option><option value="Phoenix Of Spain">Phoenix Of Spain</option><option value="Roaring Lion">Roaring Lion</option><option value="Sea The Moon">Sea The Moon</option><option value="Sea The Stars">Sea The Stars</option><option value="Shamardal">Shamardal</option><option value="Sioux Nation">Sioux Nation</option><option value="Space Blues">Space Blues</option><option value="St Mark's Basilica">St Mark's Basilica</option><option value="Starman">Starman</option><option value="Starspangledbanner">Starspangledbanner</option><option value="Teofilo">Teofilo</option><option value="Too Darn Hot">Too Darn Hot</option><option value="Ulysses">Ulysses</option><option value="Universal">Universal</option><option value="War Front">War Front</option><option value="Without Parole">Without Parole</option><option value="Wootton Bassett">Wootton Bassett</option><option value="Zoffany">Zoffany</option></select></div>
@@ -830,6 +832,7 @@ var GUINEAS_CODE_MAP = {
   B6:'RPR 110-118, lightly raced, won last',
   B7:'G1 sire rated 123+',
   B8:'Dosage profile: 2 B pts or 6 Speed pts',
+  B9:'Galileo and/or Dubawi bloodline',
   BWR:'Strong win rate for runs completed',
   BS:'Top-performing sire',
   P1:'Did not win last completed run',
@@ -844,6 +847,7 @@ var GUINEAS_CODE_MAP = {
   P10:"A P O'Brien trained (0 wins from 9 runners)",
   P11:'Won neither 7f nor 8f',
   P12:'Won 7f only with SI outside ideal range',
+  P13:'0 group wins AND no G1-2 at 2 or prep run (blind-spot profile)',
   PWR:'Weak win rate for runs completed',
   PS:'Under-performing sire'
 };
@@ -1270,6 +1274,7 @@ function scoreRunnerGuineas(r, fieldSize) {
   // B7 — G1 Sire 123+ YES (IV=2.41, all 5 winners qualify)
   if(r.g1_sire_123===true){bonuses['B7']=5;bonusTotal+=5;}
   if(r.dosage_speed==='Y'){bonuses['B8']=5;bonusTotal+=5;}
+  if(r.gal_dub==='Y'){bonuses['B9']=3;bonusTotal+=3;}
 
   // PENALTIES
   if(!wonLast&&completedLast){penalties['P1']=-10;penTotal-=10;}
@@ -1284,6 +1289,7 @@ function scoreRunnerGuineas(r, fieldSize) {
   if(trainer.indexOf("A P O'Brien")>=0&&trainer.indexOf('Joseph')<0){penalties['P10']=-3;penTotal-=3;}
   if(!won7f&&!won8f){penalties['P11']=-6;penTotal-=6;}
   if(won7f&&!won8f&&(si<9.0||si>10.5)){penalties['P12']=-3;penTotal-=3;}
+  if(grpw===0&&r.prep_g1_2!=='Y'){penalties['P13']=-8;penTotal-=8;}
 
   // WIN RATE × RUNS (completed runs only)
   if(completedRunCount===2){penalties['PWR']=-3;penTotal-=3;}
@@ -2010,6 +2016,8 @@ function addRunner() {
     won_7f:!!(document.getElementById('f-won7f')&&document.getElementById('f-won7f').value==='yes'),
     pace_guineas:(document.getElementById('f-pace-guineas')||{value:'PATIENT'}).value||'PATIENT',
     dosage_speed:(document.getElementById('f-dosage-speed')||{value:'N'}).value||'N',
+    gal_dub:(document.getElementById('f-gal-dub')||{value:'N'}).value||'N',
+    prep_g1_2:(document.getElementById('f-prep-g1')||{value:'N'}).value||'N',
     g1_sire_123:!!(document.getElementById('f-g1sire')&&document.getElementById('f-g1sire').value==='yes'),
     sire_name:(document.getElementById('f-sire')||{value:''}).value||'',
   };
@@ -2058,6 +2066,8 @@ function editRunner(i) {
   var codEl=document.getElementById('f-cod'); if(codEl) codEl.value=r.cod||'';
   var fmEl=document.getElementById('f-foal-month'); if(fmEl) fmEl.value=r.foal_month||'';
   var dSpEl=document.getElementById('f-dosage-speed'); if(dSpEl) dSpEl.value=r.dosage_speed||'N';
+  var galEl=document.getElementById('f-gal-dub'); if(galEl) galEl.value=r.gal_dub||'N';
+  var prepEl=document.getElementById('f-prep-g1'); if(prepEl) prepEl.value=r.prep_g1_2||'N';
   var gwEl=document.getElementById('f-grp-wins'); if(gwEl) gwEl.value=r.grp_wins||0;
   var l78El=document.getElementById('f-last78f'); if(l78El) l78El.value=r.last_78f?'yes':'no';
   var w8El=document.getElementById('f-won8f'); if(w8El) w8El.value=r.won_8f?'yes':'no';
@@ -2084,6 +2094,8 @@ function clearForm() {
   var g1s=document.getElementById('f-g1sire'); if(g1s) g1s.value='no';
   var tse=document.getElementById('f-ts-excuse'); if(tse) tse.value='none';
   var dsp=document.getElementById('f-dosage-speed'); if(dsp) dsp.value='N';
+  var gal=document.getElementById('f-gal-dub'); if(gal) gal.value='N';
+  var prepg=document.getElementById('f-prep-g1'); if(prepg) prepg.value='N';
   editIdx=-1; document.getElementById('form-title').textContent='Add Runner';
 }
 
