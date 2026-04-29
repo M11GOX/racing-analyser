@@ -848,6 +848,7 @@ var GUINEAS_CODE_MAP = {
   P11:'Won neither 7f nor 8f',
   P12:'Won 7f only with SI outside ideal range',
   P13:'0 group wins AND no G1-2 at 2 or prep run (blind-spot profile)',
+  P14:'2+ completed runs finishing 4th or worse (form vulnerability)',
   PWR:'Weak win rate for runs completed',
   PS:'Under-performing sire'
 };
@@ -1290,6 +1291,9 @@ function scoreRunnerGuineas(r, fieldSize) {
   if(!won7f&&!won8f){penalties['P11']=-6;penTotal-=6;}
   if(won7f&&!won8f&&(si<9.0||si>10.5)){penalties['P12']=-3;penTotal-=3;}
   if(grpw===0&&r.prep_g1_2!=='Y'){penalties['P13']=-8;penTotal-=8;}
+  // P14 — 2+ completed runs finishing 4th or worse (digits 4-9 and 0 which = 10th+)
+  var poorFinishCount=(r.form||'').replace(/-/g,'').split('').filter(function(c){return /[4567890]/.test(c);}).length;
+  if(poorFinishCount>=2){penalties['P14']=-5;penTotal-=5;}
 
   // WIN RATE × RUNS (completed runs only)
   if(completedRunCount===2){penalties['PWR']=-3;penTotal-=3;}
