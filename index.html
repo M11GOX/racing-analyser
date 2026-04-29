@@ -410,6 +410,7 @@ textarea{resize:vertical;min-height:52px}
     <div class="fa">
       <button class="btn btn-ink" onclick="addRunner()">Add Runner</button>
       <button class="btn btn-ghost" onclick="clearForm()">Clear</button>
+      <button class="btn btn-ghost flat-only" onclick="openImportModal()" style="margin-left:auto">Import JSON</button>
     </div>
   </div>
 
@@ -418,6 +419,26 @@ textarea{resize:vertical;min-height:52px}
     <button class="btn btn-gold" style="padding:12px 28px;font-size:11px" onclick="goGenerate()">Generate Phase 3 Analysis →</button>
     <button class="btn btn-ghost" style="font-size:9px;padding:8px 14px" onclick="if(confirm('Clear all runners?'))clearSavedRunners()">Clear All</button>
     <span class="gen-info" id="gen-info"></span>
+  </div>
+</div>
+
+<!-- IMPORT JSON MODAL -->
+<div id="import-modal" style="display:none;position:fixed;inset:0;background:rgba(14,14,14,.7);z-index:1000;align-items:flex-start;justify-content:center;padding:40px 16px;overflow-y:auto">
+  <div style="background:var(--paper);border:1px solid var(--rule);max-width:640px;width:100%;padding:24px">
+    <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:14px">
+      <div>
+        <div class="sec-label">Bulk Import</div>
+        <div class="panel-title" style="font-size:18px">Paste Runner JSON</div>
+      </div>
+      <button class="btn btn-ghost" style="font-size:9px;padding:6px 10px" onclick="closeImportModal()">Close</button>
+    </div>
+    <div class="hint" style="margin-bottom:8px">Paste a JSON array of runner objects. Existing runners will be replaced.</div>
+    <textarea id="import-json" placeholder='[{"name":"Horse 1","trainer":"...","sire_name":"...","or":"112",...}, {...}]' style="width:100%;min-height:240px;font-family:'IBM Plex Mono',monospace;font-size:11px;line-height:1.4"></textarea>
+    <div id="import-msg" style="font-family:'IBM Plex Mono',monospace;font-size:10px;margin-top:8px;min-height:14px"></div>
+    <div class="fa" style="margin-top:14px">
+      <button class="btn btn-ink" onclick="runImport()">Import</button>
+      <button class="btn btn-ghost" onclick="closeImportModal()">Cancel</button>
+    </div>
   </div>
 </div>
 
@@ -2468,6 +2489,94 @@ function runAnalysisGN() {
 // ─────────────────────────────────────────────
 // PERSIST RUNNERS TO LOCALSTORAGE
 // ─────────────────────────────────────────────
+function openImportModal() {
+  var m = document.getElementById('import-modal');
+  if (!m) return;
+  m.style.display = 'flex';
+  document.getElementById('import-msg').textContent = '';
+  document.getElementById('import-json').value = '';
+}
+
+function closeImportModal() {
+  var m = document.getElementById('import-modal');
+  if (m) m.style.display = 'none';
+}
+
+function runImport() {
+  var msg = document.getElementById('import-msg');
+  var ta = document.getElementById('import-json');
+  var raw = (ta.value || '').trim();
+  if (!raw) { msg.style.color = 'var(--red)'; msg.textContent = 'Paste JSON first.'; return; }
+  var parsed;
+  try { parsed = JSON.parse(raw); }
+  catch (e) { msg.style.color = 'var(--red)'; msg.textContent = 'Invalid JSON: ' + e.message; return; }
+  if (!Array.isArray(parsed) || parsed.length === 0) {
+    msg.style.color = 'var(--red)'; msg.textContent = 'JSON must be a non-empty array.'; return;
+  }
+  if (runners.length > 0 && !confirm('Replace ' + runners.length + ' existing runners with ' + parsed.length + ' new ones?')) return;
+
+  runners.length = 0;
+  parsed.forEach(function(d){
+    var draw = parseInt(d.draw)||0;
+    var siVal = parseFloat(d.si)||0;
+    var dsiVal = parseFloat(d.dsi)||0;
+    var jsiVal = parseFloat(d.jsi)|| (siVal+dsiVal) || 0;
+    runners.push({
+      name: d.name || 'Unnamed',
+      bred: d.bred || d.country || 'IRE',
+      country: d.country || d.bred || 'IRE',
+      draw: draw,
+      weight: d.weight || '',
+      sp: d.sp || '---',
+      trainer: d.trainer || '---',
+      jockey: d.jockey || '---',
+      or_: d.or_ || '',
+      or: d.or != null ? String(d.or) : '---',
+      style: d.pace_guineas || d.style || 'PATIENT',
+      styleNH: d.styleNH || 'MIDFIELD',
+      form: d.form || '',
+      grpWin: d.grpWin || '',
+      grade_win: !!d.grade_win,
+      notes: d.notes || '',
+      age: parseInt(d.age)||0,
+      chase_runs: parseInt(d.chase_runs)||0,
+      chase_wins: parseInt(d.chase_wins)||0,
+      g1_wins: parseInt(d.g1_wins)||0,
+      g1_places: parseInt(d.g1_places)||0,
+      dist3m_wins: parseInt(d.dist3m_wins)||0,
+      dist3m_places: parseInt(d.dist3m_places)||0,
+      or_delta: parseInt(d.or_delta)||0,
+      recent_g1_top3: !!d.recent_g1_top3,
+      dist_win: !!d.dist_win,
+      raceMode: CURRENT_RACE,
+      rpr: parseInt(d.rpr)||0,
+      ts: parseInt(d.ts)||0,
+      ts_excuse: d.ts_excuse || 'none',
+      si: siVal, dsi: dsiVal, jsi: jsiVal,
+      di: parseFloat(d.di)||0,
+      cod: parseFloat(d.cod)||0,
+      foal_month: parseInt(d.foal_month)||3,
+      grp_wins: parseInt(d.grp_wins)||0,
+      last_78f: d.last_78f !== false,
+      won_8f: d.won_8f === true,
+      won_7f: d.won_7f === true,
+      pace_guineas: d.pace_guineas || d.style || 'PATIENT',
+      dosage_speed: d.dosage_speed || 'N',
+      gal_dub: d.gal_dub || 'N',
+      prep_g1_2: d.prep_g1_2 || 'N',
+      g1_sire_123: !!d.g1_sire_123,
+      sire_name: d.sire_name || ''
+    });
+  });
+  renderRunners();
+  saveRunners();
+  var fsEl = document.getElementById('field-size');
+  if (fsEl && !fsEl.value) fsEl.value = runners.length;
+  msg.style.color = 'var(--green)';
+  msg.textContent = '✓ Imported ' + runners.length + ' runners.';
+  setTimeout(closeImportModal, 900);
+}
+
 function saveRunners() {
   try {
     var key = 'ra_runners_' + CURRENT_RACE;
