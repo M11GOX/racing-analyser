@@ -926,8 +926,8 @@ function renderNHScoreCard(out, scored, winnerAvg, top4Avg) {
   var wrap=document.createElement('div');
   wrap.className='out-sec';
   var leg='<div style="display:flex;gap:16px;margin-bottom:14px;font-family:IBM Plex Mono,monospace;font-size:8px;color:var(--mid);flex-wrap:wrap">';
-  leg+='<span><span style="display:inline-block;width:10px;height:10px;background:linear-gradient(90deg,var(--gold-dim),var(--gold-light));border-radius:2px;margin-right:4px;vertical-align:middle"></span>Winner territory (&gt;'+WINNER_AVG+')</span>';
-  leg+='<span><span style="display:inline-block;width:10px;height:10px;background:linear-gradient(90deg,#555,#888);border-radius:2px;margin-right:4px;vertical-align:middle"></span>Top-4 territory ('+TOP4_AVG+'–'+WINNER_AVG+')</span>';
+  leg+='<span><span style="display:inline-block;width:10px;height:10px;background:linear-gradient(90deg,var(--gold-dim),var(--gold-light));border-radius:2px;margin-right:4px;vertical-align:middle"></span>Winner territory (&ge;'+WINNER_AVG+')</span>';
+  leg+='<span><span style="display:inline-block;width:10px;height:10px;background:linear-gradient(90deg,#555,#888);border-radius:2px;margin-right:4px;vertical-align:middle"></span>Top-4 territory ('+TOP4_AVG+'–'+(WINNER_AVG-1)+')</span>';
   leg+='<span><span style="display:inline-block;width:10px;height:10px;background:linear-gradient(90deg,#8b1a1a,#c0392b);border-radius:2px;margin-right:4px;vertical-align:middle"></span>Below top-4 avg</span>';
   leg+='<span>│ Gold = winner avg ('+WINNER_AVG+')</span><span>│ Grey = top-4 avg ('+TOP4_AVG+')</span>';
   leg+='</div>';
@@ -2379,8 +2379,10 @@ function runAnalysis() {
   scored.sort(function(a,b){return (b.result.finalScore||0)-(a.result.finalScore||0);});
 
   // Winner avg and top-4 avg differ per race
-  var winnerAvg = CURRENT_RACE==='g1000' ? 125 : 131;
-  var top4Avg   = CURRENT_RACE==='g1000' ? 81  : 89;
+  // 2000G recalibrated 2026: 5 historic winners scored 158-197 under updated engine.
+  // 145 captures all winners with margin while preserving practical signal in current field.
+  var winnerAvg = CURRENT_RACE==='g1000' ? 125 : 145;
+  var top4Avg   = CURRENT_RACE==='g1000' ? 81  : 90;
 
   renderWithScores(scored, '', winnerAvg, top4Avg);
 }
@@ -2397,7 +2399,7 @@ function renderWithScores(scored, text, winnerAvg, top4Avg) {
     return;
   }
   // Guineas / 1000G — pass race-specific thresholds
-  renderNHScoreCard(out, scored, winnerAvg||131, top4Avg||89);
+  renderNHScoreCard(out, scored, winnerAvg||145, top4Avg||90);
 }
 
 function renderRunnersSec(out, body, scored) {
