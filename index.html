@@ -890,7 +890,7 @@ var GUINEAS_CODE_MAP = {
   P7:'Dosage Index 1.50+ (skipped if won 8f)',
   P8:'COD above 0.40 (outside ideal)',
   P9:'JSI below 16 (hard floor)',
-  P10:"A P O'Brien trained (0 wins from 9 runners)",
+  P10:'(Retired 2026 — long-term record outweighs 5-yr drought)',
   P11:'Won neither 7f nor 8f',
   P12:'Won 7f only with SI outside ideal range',
   P13:'0 group wins AND no G1-2 at 2 or prep run (blind-spot profile)',
@@ -965,7 +965,7 @@ function renderNHScoreCard(out, scored, winnerAvg, top4Avg) {
           +'<div class="nh-mods-line-tier">'+(tierIcon[f.tier]||'')+'</div>'
           +'<div class="nh-mods-line-name">'+k+'</div>'
           +'<div class="nh-mods-line-detail">'+f.val+'</div>'
-          +'<div class="nh-mods-line-val">+'+f.pts+'</div></div>';
+          +'<div class="nh-mods-line-val">'+(f.pts>=0?'+':'')+f.pts+'</div></div>';
       });
       expansionHtml += '</div>';
     }
@@ -1033,10 +1033,10 @@ function renderICPFactorBarsGuineas() {
   var C={ideal:'var(--gold)',good:'#4a7c5a',ok:'#888',poor:'#c0392b'};
   var B={ideal:'rgba(184,151,42,.12)',good:'rgba(74,124,90,.08)',ok:'rgba(136,136,136,.06)',poor:'rgba(192,57,43,.06)'};
   var factors = [
-    {label:'Official Rating (OR)',ideal:'OR 109-119',stat:'OR 122+: 0 wins. OR 110-115: ideal (2 winners, IV=0.90). OR 109: 2 winners (A/E=3.47 — market underrates). OR 116-121: 1 winner. Unrated horses: 0 wins.',
-     bands:[{n:'Unrated',p:15,t:'ok'},{n:'OR 99-109',p:55,t:'good'},{n:'OR 110-115',p:100,t:'ideal'},{n:'OR 116-121',p:80,t:'good'},{n:'OR 122+',p:30,t:'ok'}]},
-    {label:'Best RPR',ideal:'RPR 108-118',stat:'RPR <108: 0 wins from 17 runners (hard floor). RPR 108-113: 3 winners (ideal). RPR 114-118: 2 winners. RPR 119+: 0 wins — exposed/expected horses consistently beaten.',
-     bands:[{n:'RPR <108',p:0,t:'poor'},{n:'RPR 108-113',p:100,t:'ideal'},{n:'RPR 114-118',p:85,t:'ideal'},{n:'RPR 119+',p:20,t:'poor'}]},
+    {label:'Official Rating (OR)',ideal:'OR 109+',stat:'OR ≤108: 0 wins from 13 runners (hard floor). OR 109-113: 3 winners (IV=1.70, AE=2.35 — strongest band, market underrates). OR ≥114: 2 winners (IV=0.96, market-priced). Unrated horses: 0 wins from 2.',
+     bands:[{n:'Unrated',p:25,t:'ok'},{n:'OR ≤108',p:0,t:'poor'},{n:'OR 109-113',p:100,t:'ideal'},{n:'OR ≥114',p:100,t:'ideal'}]},
+    {label:'Best RPR',ideal:'RPR 109+',stat:'RPR ≤108: 0 wins from 20 runners (hard floor). RPR 109-113: 3 winners (IV=1.62, AE=1.60 — value band). RPR ≥114: 2 winners (T4%=47.6%, PRB=59.5%, IV=1.24). IV/AE favours middle band, placement metrics favour top — equal scoring reflects tradeoff.',
+     bands:[{n:'RPR ≤108',p:0,t:'poor'},{n:'RPR 109-113',p:100,t:'ideal'},{n:'RPR ≥114',p:100,t:'ideal'}]},
     {label:'Best TS (Top Speed)',ideal:'TS 94-100',stat:'TS 80-93: void zone — 0 wins from 23 runners. TS 94-100: 3 winners (IV=1.86). TS <80 with AW/soft excuse = neutral (unexposed, not slow). TS 101+: 1 winner.',
      bands:[{n:'TS <80 (excused)',p:45,t:'ok'},{n:'TS 80-93',p:0,t:'poor'},{n:'TS 94-100',p:100,t:'ideal'},{n:'TS 101+',p:65,t:'good'}]},
     {label:'Sire Index (SI)',ideal:'SI 9.0-10.5',stat:'All 5 winners had SI 9.0-10.5. Zero wins from 40 runners outside. The decisive pedigree filter. SI 7.5-8.9: 0 wins from 25 runners. SI <7.5: 0 wins from 9 runners.',
@@ -1057,10 +1057,10 @@ function renderICPFactorBarsGuineas() {
      bands:[{n:'Low',p:100,t:'ideal'},{n:'Mid',p:40,t:'ok'},{n:'High',p:15,t:'poor'}]},
     {label:'Prep Runs',ideal:'0-1 preps',stat:'Fresh (0): 2 winners. 1 prep: 2 winners. 2 preps: 0 wins from 4 runners (void zone). 3+ preps: 1 winner (Notable Speech, unusual). Ideal is 0-1 preps this season before the Guineas.',
      bands:[{n:'Fresh (0)',p:85,t:'ideal'},{n:'1 prep',p:100,t:'ideal'},{n:'2 preps',p:0,t:'poor'},{n:'3+ preps',p:25,t:'ok'}]},
-    {label:'Foal Date',ideal:'March',stat:'March foals: 3 winners (IV=1.30). Late Apr-May: 1 winner. Early Jan-Feb: 1 winner (IV=0.57). March foals represent planned priority matings and are typically more physically mature at age 3.',
-     bands:[{n:'Early Jan-Feb',p:30,t:'ok'},{n:'March',p:100,t:'ideal'},{n:'Late Apr-May',p:55,t:'good'}]},
-    {label:'Trainer',ideal:'Appleby · Balding',stat:"Charlie Appleby: 3 wins (IV=3.90). Andrew Balding: 1 win (IV=4.33). J S Bolger: 1 win. A P O'Brien: 0 wins from 9 runners — consistent negative across 5 years.",
-     bands:[{n:"A P O'Brien",p:0,t:'poor'},{n:'Other',p:30,t:'ok'},{n:'Balding/Bolger',p:80,t:'ideal'},{n:'Appleby',p:100,t:'ideal'}]},
+    {label:'Foal Date',ideal:'March',stat:'20-yr record (2006-2025): March 40% of winners (8/20). Jan-Feb 20% each (4 wins each — equal weight). April 15%. May 5% (single winner — Chaldean 2023). March foals represent peak Guineas profile; Jan/Feb solid; Apr/May rare but possible.',
+     bands:[{n:'March',p:100,t:'ideal'},{n:'January / February',p:65,t:'good'},{n:'April / May',p:30,t:'ok'}]},
+    {label:'Trainer',ideal:'Powerful stables',stat:"Powerful Guineas stables: A P O'Brien, Charlie Appleby, Andrew Balding, J S Bolger. Hugo Palmer and Richard Hannon have proven knowledge of what it takes. All other yards score neutral until they prove themselves at the elite level.",
+     bands:[{n:'Other yards',p:0,t:'poor'},{n:'Palmer / Hannon',p:50,t:'ok'},{n:"O'Brien / Appleby / Balding / Bolger",p:100,t:'ideal'}]},
     {label:'Pace Style',ideal:'Patient (held up/rear)',stat:'PATIENT: 3/5 winners, IV=1.62, PRB=57%. PROMINENT: 2/5 winners, IV=0.63, PRB=46%. Both styles produce winners — scoring rewards patient but does not eliminate prominent.',
      bands:[{n:'Prominent/Led',p:55,t:'ok'},{n:'Patient (held up/rear)',p:100,t:'ideal'}]},
     {label:'G1 Sire (RPR 123+)',ideal:'Yes — all 5 winners',stat:'YES: 27 runners, 5 winners, IV=2.41, PRB=61.6%. NO: 38 runners, 0 winners, IV=0.00. All 5 winners had a G1 sire rated 123+ RPR. The strongest binary filter after form.',
@@ -1292,19 +1292,33 @@ function scoreRunnerGuineas(r, fieldSize) {
   else if(prep===2)  bf('Prep Runs', 0, 'r', 2);
   else               bf('Prep Runs', 2, 'y', prep);
 
+  // Foal month — calibrated against 20-yr record: March 40%, Jan/Feb 20% each, Apr 15%, May 5%
   if(foalM===3)      bf('Foal Month', 3, 'g', 'March');
-  else if(foalM<=2)  bf('Foal Month', 1, 'r', foalM===1?'January':'February');
-  else               bf('Foal Month', 2, 'y', ['','','','','April','May','June+'][foalM]||foalM);
+  else if(foalM<=2)  bf('Foal Month', 2, 'y', foalM===1?'January':'February');
+  else               bf('Foal Month', 1, 'r', ['','','','','April','May','June+'][foalM]||foalM);
 
   if(grpw===0)       bf('Group Wins', 0, 'r', 0);
   else if(grpw===1)  bf('Group Wins', 2, 'y', 1);
   else               bf('Group Wins', 3, 'g', grpw);
 
-  if(trainer.indexOf('Appleby')>=0||trainer.indexOf('Balding')>=0||trainer.indexOf('Bolger')>=0)
+  // Trainer scoring (calibrated against 20-yr record + 5-yr recent — see Stage 5 review notes)
+  if(trainer.indexOf("A P O'Brien")>=0&&trainer.indexOf('Joseph')<0)
                      bf('Trainer', 3, 'g', trainer);
-  else if(trainer.indexOf("A P O'Brien")>=0&&trainer.indexOf('Joseph')<0)
-                     bf('Trainer', 1, 'r', trainer);
-  else               bf('Trainer', 2, 'y', trainer||'—');
+  else if(trainer.indexOf('Appleby')>=0||trainer.indexOf('Balding')>=0||trainer.indexOf('Bolger')>=0)
+                     bf('Trainer', 3, 'g', trainer);
+  else if(trainer.indexOf('Hugo Palmer')>=0||trainer.indexOf('Richard Hannon')>=0||trainer.indexOf('Hannon')>=0)
+                     bf('Trainer', 1, 'y', trainer);
+  else               bf('Trainer', 0, 'r', trainer||'—');
+
+  // Jockey scoring (data-driven + opinion based — see Stage 5 review notes)
+  var jk = (r.jockey || '').toLowerCase();
+  if(jk.indexOf('buick')>=0||jk.indexOf('james doyle')>=0)
+                     bf('Jockey', 2, 'g', r.jockey);
+  else if(jk.indexOf('shoemark')>=0||jk.indexOf('murphy')>=0||jk.indexOf('moore')>=0||jk.indexOf('levey')>=0||jk.indexOf('crowley')>=0||jk.indexOf('foley')>=0)
+                     bf('Jockey', 1, 'y', r.jockey);
+  else if(jk.indexOf('egan')>=0||jk.indexOf('tudhope')>=0||jk.indexOf('marquand')>=0)
+                     bf('Jockey', -1, 'r', r.jockey);
+  else               bf('Jockey', 0, 'y', r.jockey||'—');
 
   // PACE STYLE (5=PATIENT, 3=PROMINENT) — IV 1.62 vs 0.63
   var paceG=(r.pace_guineas||'PATIENT').toUpperCase();
@@ -1338,7 +1352,7 @@ function scoreRunnerGuineas(r, fieldSize) {
   if(di>=1.50&&!won8f){var p7=di>=2.00?-8:-4;penalties['P7']=p7;penTotal+=p7;}
   if(cod>0.40){var p8=won8f?-2:-5;penalties['P8']=p8;penTotal+=p8;}
   if(jsi<16){penalties['P9']=-5;penTotal-=5;}
-  if(trainer.indexOf("A P O'Brien")>=0&&trainer.indexOf('Joseph')<0){penalties['P10']=-3;penTotal-=3;}
+  // P10 retired (2026): A P O'Brien penalty removed. 20-yr record (7 winners) treated as Bayesian prior over 5-yr sample.
   if(!won7f&&!won8f){penalties['P11']=-6;penTotal-=6;}
   if(won7f&&!won8f&&(si<9.0||si>10.5)){penalties['P12']=-3;penTotal-=3;}
   if(grpw===0&&r.prep_g1_2!=='Y'){penalties['P13']=-8;penTotal-=8;}
