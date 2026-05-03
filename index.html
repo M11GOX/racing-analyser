@@ -508,11 +508,11 @@ var RACE = {
 // To update: paste new result here in chat
 // ─────────────────────────────────────────────
 var WINNERS = [
-  {year:2021,winner:'Poetic Flare',  bred:'IRE',draw:4, drawGrp:'Low', style:'PROMINENT',trainer:'J S Bolger',      sp:'16/1', or:109,wgt:'9-0',form:'101-1',   lastRun:'1st',grpWin:'yes',si:9.3, dsi:9.0, jsi:18.3,di:1.46,cod:0.31, field:14,rpr:110,ts:98, foal:'March', won8f:false,won7f:true},
   {year:2022,winner:'Coroebus',      bred:'IRE',draw:1, drawGrp:'Low', style:'PATIENT',  trainer:'Charlie Appleby', sp:'5/1',  or:115,wgt:'9-0',form:'121-1',   lastRun:'1st',grpWin:'yes',si:9.6, dsi:10.9,jsi:20.5,di:0.76,cod:-0.13,field:15,rpr:116,ts:96, foal:'March', won8f:true, won7f:false},
   {year:2023,winner:'Chaldean',      bred:'GB', draw:3, drawGrp:'Low', style:'PROMINENT',trainer:'Andrew Balding',  sp:'7/2',  or:119,wgt:'9-2',form:'51111-U', lastRun:'U',  grpWin:'yes',si:10.5,dsi:7.8, jsi:18.3,di:0.67,cod:-0.15,field:14,rpr:118,ts:106,foal:'May',   won8f:false,won7f:true},
   {year:2024,winner:'Notable Speech',bred:'GB', draw:6, drawGrp:'Mid', style:'PATIENT',  trainer:'Charlie Appleby', sp:'16/1', or:109,wgt:'9-2',form:'111',    lastRun:'1st',grpWin:'no', si:9.6, dsi:7.5, jsi:17.1,di:1.26,cod:0.12, field:11,rpr:113,ts:64, foal:'March', won8f:true, won7f:false},
   {year:2025,winner:'Ruling Court',  bred:'USA',draw:11,drawGrp:'High',style:'PATIENT',  trainer:'Charlie Appleby', sp:'9/2',  or:112,wgt:'9-2',form:'13-1',   lastRun:'1st',grpWin:'no', si:9.8, dsi:10.7,jsi:20.5,di:1.00,cod:0.11, field:11,rpr:113,ts:96, foal:'February', won8f:true, won7f:false},
+  {year:2026,winner:'Bow Echo',      bred:'IRE',draw:15,drawGrp:'High',style:'PATIENT',  trainer:'George Boughey', sp:'9/2',  or:115,wgt:'9-0',form:'111-',    lastRun:'1st',grpWin:'yes',si:8.1, dsi:7.5, jsi:15.6,di:0.76,cod:-0.09,field:14,rpr:111,ts:106,foal:'March', won8f:true, won7f:false},
 ]
 
 var CURRENT_RACE = 'guineas'; 
@@ -554,7 +554,7 @@ function renderICPFactorBars() {} // NH
 function renderNHScoreCard(out, scored, winnerAvg, top4Avg) {
   var WINNER_AVG=winnerAvg||100, TOP4_AVG=top4Avg||75;
   var isFlat = CURRENT_RACE !== 'national';
-  var maxScore=Math.max(120, scored.length?(scored[0].result.finalScore||0)+10:120);
+  var maxScore=80;
   var winPct=Math.round(WINNER_AVG/maxScore*100);
   var t4Pct=Math.round(TOP4_AVG/maxScore*100);
   var wrap=document.createElement('div');
@@ -568,7 +568,7 @@ function renderNHScoreCard(out, scored, winnerAvg, top4Avg) {
   var rows='';
   scored.forEach(function(s,idx){
     var score=s.result.finalScore||0;
-    var barPct=Math.round(score/maxScore*100);
+    var barPct=Math.round(Math.min(score,80)/80*100);
     var bCls=score>=WINNER_AVG?'nh-bar-winner':score>=TOP4_AVG?'nh-bar-top4':'nh-bar-low';
     var stars=score>=WINNER_AVG?5:score>=TOP4_AVG+10?4:score>=TOP4_AVG?3:score>=50?2:1;
     var st=''; for(var i=0;i<5;i++) st+=i<stars?'<span class="sf">★</span>':'<span class="se">☆</span>';
@@ -666,170 +666,172 @@ function renderICPFactorBarsGuineas() {
     {
       label: 'Official Rating (OR)', icon: '⚖',
       bands: [
-        { label: '109–113', pts: '+10', tier: 'g', note: '2/5 winners · IV 2.35 · value zone' },
-        { label: '≥114',    pts: '+10', tier: 'g', note: '3/5 winners · T4% 47.6% · placement zone' },
-        { label: 'Unrated', pts: '+2',  tier: 'y', note: 'Neutral — insufficient data' },
-        { label: '≤108',    pts: '−5',  tier: 'r', note: '0/13 · complete void' }
+        { label: '≥114',    pts: '+5', tier: 'g', note: '3W/65R · IV 1.56 · dominant peak' },
+        { label: '109–113', pts: '+5', tier: 'g', note: '2W/65R · IV 1.30 · equal tier' },
+        { label: 'Unrated', pts: '+2', tier: 'y', note: 'Small sample · soft positive' },
+        { label: '≤108',    pts: '0',  tier: 'y', note: '0/18 wins · floor' }
       ]
     },
     {
       label: 'Best RPR', icon: '📊',
       bands: [
-        { label: '≥109', pts: '+10', tier: 'g', note: 'IV 1.62 · T4% 47.6% · all winners' },
-        { label: '≤108', pts: '−5',  tier: 'r', note: '0/20 · absolute floor' }
+        { label: '≥109', pts: '+5', tier: 'g', note: '5/5 winners · IV 1.67 · near-absolute' },
+        { label: '≤108', pts: '0',  tier: 'y', note: 'Floor · OR covers same horses' }
       ]
     },
     {
       label: 'Top Speed (TS)', icon: '⚡',
       bands: [
-        { label: '≥95',           pts: '+10', tier: 'g', note: '4/5 winners · IV 2.00 · PRB 68.7' },
-        { label: '≤94 + excused', pts: '+5',  tier: 'y', note: 'Appleby AW prep pattern · AE 4.10' },
-        { label: '≤94 no excuse', pts: '−5',  tier: 'r', note: '0/31 · T4% 12.9% · real void' }
+        { label: '≥95',           pts: '+5', tier: 'g', note: '4/5 winners · IV 1.93 · PRB 68.7' },
+        { label: '≤94 + excused', pts: '+3', tier: 'y', note: 'Appleby AW prep pattern · AE 4.10' },
+        { label: '≤94 no excuse', pts: '−2', tier: 'r', note: '0/27 · only surviving base negative' }
       ]
     },
     {
       label: 'RPR–OR Delta', icon: '△',
       bands: [
-        { label: 'Positive (RPR > OR)', pts: '+10', tier: 'g', note: 'Improving profile · strong win signal' },
-        { label: 'Neutral (RPR = OR)',  pts: '+5',  tier: 'y', note: 'Stable — neither penalised nor peak' },
-        { label: '−1',                 pts: '0',   tier: 'y', note: 'Chaldean profile · soft only' },
-        { label: '≤−2',               pts: '−5',  tier: 'r', note: '0 T2 from 11 runners' }
+        { label: 'Positive (RPR > OR)', pts: '+5', tier: 'g', note: '3/5 winners · IV 3.00 · strongest signal' },
+        { label: 'Zero (RPR = OR)',     pts: '+2', tier: 'y', note: 'Stable profile' },
+        { label: 'Negative (any)',      pts: '0',  tier: 'y', note: 'Bow Echo −4 won 2026 · floor confirmed' }
       ]
     },
     {
       label: 'RPR 110+ as 2yo', icon: '🌟',
       bands: [
-        { label: 'Yes', pts: '+5', tier: 'g', note: 'Precocious ability confirmed' },
-        { label: 'No',  pts: '−5', tier: 'r', note: 'Absence of 2yo form signal' }
-      ]
-    },
-    {
-      label: 'Won Last Race', icon: '✓',
-      bands: [
-        { label: 'Yes', pts: '+5', tier: 'g', note: 'Momentum confirmed' },
-        { label: 'No',  pts: '−5', tier: 'r', note: 'Form concern' }
-      ]
-    },
-    {
-      label: 'Group Win?', icon: '🏆',
-      bands: [
-        { label: '1+',                  pts: '+5', tier: 'g', note: 'Group class proven' },
-        { label: '0 + RPR 110+ 2yo',   pts: '+5', tier: 'y', note: 'Unexposed — quality gate met' },
-        { label: '0 + RPR <110',        pts: '−5', tier: 'r', note: 'Neither proven nor promising' }
-      ]
-    },
-    {
-      label: 'Trip Win', icon: '🏇',
-      bands: [
-        { label: 'Won 8f',    pts: '+10', tier: 'g', note: '3/5 winners · IV 1.62 · PRB 66.3' },
-        { label: 'Won 7f only', pts: '+5', tier: 'y', note: '2/5 winners · IV 1.00 · neutral signal' },
-        { label: 'Neither',   pts: '−5',  tier: 'r', note: '0/15 · complete void' }
-      ]
-    },
-    {
-      label: 'Last Run at 7f–8f', icon: '📍',
-      bands: [
-        { label: 'Yes', pts: '0',  tier: 'y', note: 'Standard prep — expected' },
-        { label: 'No',  pts: '−5', tier: 'r', note: 'Distance concern — below-par signal' }
+        { label: 'Yes', pts: '+5', tier: 'g', note: '5/5 winners · IV 2.03 · near-absolute' },
+        { label: 'No',  pts: '0',  tier: 'y', note: 'Floor' }
       ]
     },
     {
       label: 'Sire Index (SI)', icon: '🧬',
       bands: [
-        { label: '9.0–9.9',  pts: '+10', tier: 'g', note: '4/5 winners · IV 2.48 · AE 1.82' },
-        { label: '≥10.0',    pts: '+5',  tier: 'y', note: '1/10 · IV 1.30 · competitive but not peak' },
-        { label: '8.0–8.9',  pts: '0',   tier: 'y', note: '0/18 · T4% 22% · almost there' },
-        { label: '≤7.9',     pts: '−5',  tier: 'r', note: '0/16 · speed-sire zone' }
-      ]
-    },
-    {
-      label: 'Dosage Index (DI)', icon: '⚗',
-      bands: [
-        { label: '0.67–1.50', pts: '+10', tier: 'g', note: '5/5 winners · IV 1.67 · dominant' },
-        { label: '<0.67',     pts: '−5',  tier: 'r', note: '0/9 · T4% 11.1% · stamina-heavy' },
-        { label: '>1.50',     pts: '−5',  tier: 'r', note: '0/17 · speed-heavy · never wins' }
-      ]
-    },
-    {
-      label: 'COD Index', icon: '⚗',
-      bands: [
-        { label: '−0.20 to 0.15', pts: '+10', tier: 'g', note: '4/5 winners · IV 1.93 · peak zone' },
-        { label: '0.16 to 0.40',  pts: '+5',  tier: 'y', note: '1/5 winners · PRB 51.8 · second tier' },
-        { label: '>0.40',         pts: '0',   tier: 'y', note: '0 wins but places · not a void' },
-        { label: '<−0.20',        pts: '−5',  tier: 'r', note: '0/8 · T2% 0%' }
-      ]
-    },
-    {
-      label: 'JSI (Joint Sire Index)', icon: '🧬',
-      bands: [
-        { label: '17.0–19.0', pts: '+10', tier: 'g', note: '3/5 winners · IV 1.56 · PRB 60.1' },
-        { label: '≥19.1',     pts: '+5',  tier: 'y', note: '2/5 winners · IV 1.18 · second tier' },
-        { label: '≤16.9',     pts: '−5',  tier: 'r', note: '0/18 · T4% 11.1% · complete void' }
-      ]
-    },
-    {
-      label: 'Dosage Speed/B Points', icon: '⚡',
-      bands: [
-        { label: 'Yes', pts: '+5', tier: 'g', note: '2B pts or 6 Speed pts on dosage profile' },
-        { label: 'No',  pts: '0',  tier: 'y', note: 'Neutral' }
-      ]
-    },
-    {
-      label: 'Foal Month', icon: '📅',
-      bands: [
-        { label: 'March',    pts: '+5', tier: 'g', note: '3/5 winners · peak birth month' },
-        { label: 'February', pts: '+3', tier: 'y', note: 'Ruling Court 2025 · strong second tier' },
-        { label: 'January',  pts: '−2', tier: 'r', note: 'Early but loses season advantage' },
-        { label: '≥April',   pts: '0',  tier: 'y', note: 'Neutral — Chaldean (May) won' }
-      ]
-    },
-    {
-      label: 'Draw', icon: '🎯',
-      bands: [
-        { label: 'Low stalls',  pts: '+3', tier: 'g', note: '3/5 winners · favours rail at Newmarket' },
-        { label: 'Mid stalls',  pts: '+2', tier: 'y', note: '1/5 winners · Notable Speech 2024' },
-        { label: 'High stalls', pts: '0',  tier: 'y', note: '1/5 winners · Ruling Court high draw' }
+        { label: '9.0–9.9',  pts: '+3', tier: 'g', note: '3/5 winners · IV 2.79 · peak band' },
+        { label: '≥10.0',    pts: '+2', tier: 'y', note: '1 winner · IV 1.08 · second tier' },
+        { label: '8.0–8.9',  pts: '0',  tier: 'y', note: '0 wins · T4% 22% · neutral' },
+        { label: '≤7.9',     pts: '0',  tier: 'y', note: 'Places well (PRB 56.0) but 0 wins · floor' }
       ]
     },
     {
       label: 'Sire (Named)', icon: '🐎',
       bands: [
-        { label: 'Dubawi / Frankel / Justify / Dawn Approach / Kingman / Night Of Thunder', pts: '+5', tier: 'g', note: 'Proven Classic sire group — all produced Guineas winners' },
-        { label: 'Oasis Dream / Blue Point / Camelot / Gleneagles / PhoenixOfSpain / Olden Times / Camacho / Invincible Spirit', pts: '+3', tier: 'y', note: 'Strong secondary sire group' },
-        { label: 'Too Darn Hot / Roaring Lion / Kameko', pts: '+2', tier: 'y', note: 'Emerging positive sires' },
-        { label: 'Unlisted', pts: '0',  tier: 'y', note: 'No data signal — neutral' },
-        { label: 'Lope De Vega / Kodiac / Mehmas / Dark Angel / Wootton Bassett', pts: '−3', tier: 'r', note: '0 wins, weak placement in window' },
-        { label: 'Zoffany / Fast Company / Galileo Gold', pts: '−5', tier: 'r', note: 'Consistent non-performers' }
+        { label: 'Dubawi / Frankel / Justify / Dawn Approach / Kingman / Night Of Thunder', pts: '+3', tier: 'g', note: 'Proven Classic sire group' },
+        { label: 'Oasis Dream / Blue Point / Camelot / Gleneagles / Invincible Spirit etc.', pts: '+2', tier: 'y', note: 'Strong secondary sire group' },
+        { label: 'Unlisted', pts: '0', tier: 'y', note: 'Neutral' },
+        { label: 'Penalty sires (Lope / Kodiac / Mehmas / Dark Angel / Wootton Bassett / Zoffany / Fast Company / Galileo Gold)', pts: '−2', tier: 'r', note: 'Consistent non-performers in window' }
       ]
     },
     {
-      label: 'Trainer', icon: '🎩',
+      label: 'Dosage Index (DI)', icon: '⚗',
       bands: [
-        { label: "Charlie Appleby / A P O'Brien", pts: "+5", tier: "g", note: "Appleby 3/5 winners IV 4.33 · O'Brien consistent presence" },
-        { label: 'Andrew Balding / J S Bolger',   pts: '+3', tier: 'y', note: 'Balding 1 winner · Bolger Poetic Flare 2021' },
-        { label: 'Hugo Palmer / Richard Hannon / George Boughey', pts: '+2', tier: 'y', note: 'Know what it takes to win — previous winning trainers' },
-        { label: 'Other', pts: '0', tier: 'y', note: 'No penalty — neutral' }
+        { label: '0.67–1.50',     pts: '+3', tier: 'g', note: '5/5 winners · IV 1.67 · dominant' },
+        { label: '<0.67 or >1.50', pts: '0',  tier: 'y', note: 'Floor · 0 wins but not double-penalised' }
       ]
     },
     {
-      label: 'Jockey', icon: '🧑',
+      label: 'COD Index', icon: '⚗',
       bands: [
-        { label: 'William Buick / James Doyle', pts: '+5', tier: 'g', note: 'Buick 2 wins IV 5.20 · Doyle 1 win IV 3.25' },
-        { label: 'Billy Loughnane / Ryan Moore / Kieran Shoemark / Sean Levey / Oisin Murphy', pts: '+2', tier: 'y', note: 'Loughnane 2026 winner · Moore/Shoemark/Murphy strong placement' },
-        { label: 'David Egan / Tom Marquand / Daniel Tudhope', pts: '−2', tier: 'r', note: '0 wins, poor PRB across window' },
-        { label: 'Other', pts: '0', tier: 'y', note: 'Neutral' }
+        { label: '−0.20 to 0.15',    pts: '+3', tier: 'g', note: '5/5 winners · IV 1.97 · peak zone' },
+        { label: '0.16 to 0.40',     pts: '+2', tier: 'y', note: '0 wins · T4% 33.3% · PRB 52.2 · competitive' },
+        { label: '>0.40 or <−0.20',  pts: '0',  tier: 'y', note: 'Floor' }
+      ]
+    },
+    {
+      label: 'JSI (Joint Sire Index)', icon: '🧬',
+      bands: [
+        { label: '17.0–19.0', pts: '+3', tier: 'g', note: '2/5 winners · IV 1.18 · PRB 60.1' },
+        { label: '≥19.1',     pts: '+2', tier: 'y', note: '2/5 winners · IV 1.30 · second tier' },
+        { label: '≤16.9',     pts: '0',  tier: 'y', note: 'Floor · Bow Echo 15.6 won 2026' }
+      ]
+    },
+    {
+      label: 'Dosage Speed/B Points', icon: '⚡',
+      bands: [
+        { label: 'Yes', pts: '+3', tier: 'g', note: '2B pts or 6 Speed pts on dosage profile' },
+        { label: 'No',  pts: '0',  tier: 'y', note: 'Neutral' }
+      ]
+    },
+    {
+      label: 'Won Last Race', icon: '✓',
+      bands: [
+        { label: 'Yes', pts: '+5', tier: 'g', note: '5/5 winners · IV 1.91 · near-absolute' },
+        { label: 'No',  pts: '−2', tier: 'r', note: 'Momentum concern · 7pt swing justified' }
+      ]
+    },
+    {
+      label: 'Win Rate ≥60%', icon: '📈',
+      bands: [
+        { label: '≥60% (≥3 runs)', pts: '+3', tier: 'g', note: 'Consistent improver' },
+        { label: 'Other',          pts: '0',  tier: 'y', note: 'Neutral' }
+      ]
+    },
+    {
+      label: 'Group Win?', icon: '🏆',
+      bands: [
+        { label: 'Yes',               pts: '+3', tier: 'g', note: 'IV 1.08 · group class proven' },
+        { label: 'No + RPR 110+ 2yo', pts: '+2', tier: 'y', note: 'Unexposed quality gate met' },
+        { label: 'No + RPR <110',     pts: '0',  tier: 'y', note: 'Floor' }
+      ]
+    },
+    {
+      label: 'Trip Win', icon: '🏇',
+      bands: [
+        { label: 'Won 8f',      pts: '+3', tier: 'g', note: '4/5 winners · IV 2.08 · PRB 66.3' },
+        { label: 'Won 7f only', pts: '+2', tier: 'y', note: '1/5 winners · IV 0.52 · weaker but real' },
+        { label: 'Neither',     pts: '0',  tier: 'y', note: 'Floor' }
+      ]
+    },
+    {
+      label: 'Last Run at 7f–8f', icon: '📍',
+      bands: [
+        { label: 'Yes', pts: '+2', tier: 'g', note: 'Standard Guineas prep' },
+        { label: 'No',  pts: '−2', tier: 'r', note: 'Distance concern' }
+      ]
+    },
+    {
+      label: 'Foal Month', icon: '📅',
+      bands: [
+        { label: 'March',    pts: '+5', tier: 'g', note: '3/5 winners · IV 1.39' },
+        { label: 'February', pts: '+3', tier: 'y', note: '1/5 winners · IV 0.72' },
+        { label: '≥April',   pts: '+2', tier: 'y', note: 'Chaldean (May) won · soft positive' },
+        { label: 'January',  pts: '0',  tier: 'y', note: 'Floor · 0/6 in window' }
+      ]
+    },
+    {
+      label: 'Draw', icon: '🎯',
+      bands: [
+        { label: 'Low stalls',  pts: '+2', tier: 'g', note: '2/5 winners · IV 1.44' },
+        { label: 'Mid stalls',  pts: '+2', tier: 'y', note: '1/5 winners · similar to Low' },
+        { label: 'High stalls', pts: '0',  tier: 'y', note: 'Bow Echo won from High 2026 · neutral confirmed' }
       ]
     },
     {
       label: 'Running Style', icon: '🏃',
       bands: [
-        { label: 'Patient / Hold Up', pts: '+2', tier: 'g', note: '3/5 winners run patient — slight lean' },
-        { label: 'Prominent',         pts: '0',  tier: 'y', note: '2/5 winners — Poetic Flare, Chaldean' }
+        { label: 'Patient / Hold Up', pts: '+2', tier: 'g', note: '4/5 winners run patient' },
+        { label: 'Prominent',         pts: '0',  tier: 'y', note: 'Chaldean / Bow Echo · neutral' }
+      ]
+    },
+    {
+      label: 'Trainer', icon: '🎩',
+      bands: [
+        { label: "Charlie Appleby / A P O'Brien", pts: '+3', tier: 'g', note: "Appleby 3/5 winners IV 4.33" },
+        { label: 'Andrew Balding / J S Bolger',   pts: '+2', tier: 'y', note: 'Both winners in window' },
+        { label: 'Hugo Palmer / Richard Hannon / George Boughey', pts: '+2', tier: 'y', note: 'Know what it takes' },
+        { label: 'Other', pts: '0', tier: 'y', note: 'Neutral' }
+      ]
+    },
+    {
+      label: 'Jockey', icon: '🧑',
+      bands: [
+        { label: 'William Buick / James Doyle', pts: '+3', tier: 'g', note: 'Buick 2 wins IV 5.20 · Doyle 1 win IV 3.25' },
+        { label: 'Loughnane / Moore / Shoemark / Levey / Murphy', pts: '+2', tier: 'y', note: 'Loughnane 2026 winner · strong placement' },
+        { label: 'Other', pts: '0', tier: 'y', note: 'Neutral · no penalties' }
       ]
     }
+  
   ];
 
-  var tierColor = { g: 'var(--green)', y: 'var(--amber)', r: 'var(--red)' };
+    var tierColor = { g: 'var(--green)', y: 'var(--amber)', r: 'var(--red)' };
   var tierBg    = { g: 'rgba(26,92,46,.08)', y: 'rgba(133,100,4,.07)', r: 'rgba(139,26,26,.07)' };
 
   var html = '';
@@ -907,11 +909,10 @@ function drawGroupFlat(draw, fs) {
 
 function scoreSireGuineas(sire) {
   var s = (sire||'').trim();
-  if(['Dubawi','Frankel','Justify','Dawn Approach','Kingman','Night Of Thunder'].indexOf(s)>=0) return 5;
-  if(['Oasis Dream','Blue Point','Camelot','Gleneagles','Phoenix Of Spain','Olden Times','Camacho','Invincible Spirit'].indexOf(s)>=0) return 3;
-  if(['Too Darn Hot','Roaring Lion','Kameko'].indexOf(s)>=0) return 2;
-  if(['Lope De Vega','Kodiac','Mehmas','Dark Angel','Wootton Bassett'].indexOf(s)>=0) return -3;
-  if(['Zoffany','Fast Company','Galileo Gold'].indexOf(s)>=0) return -5;
+  if(['Dubawi','Frankel','Justify','Dawn Approach','Kingman','Night Of Thunder'].indexOf(s)>=0) return 3;
+  if(['Oasis Dream','Blue Point','Camelot','Gleneagles','Phoenix Of Spain','Olden Times','Camacho','Invincible Spirit'].indexOf(s)>=0) return 2;
+  if(['Lope De Vega','Kodiac','Mehmas','Dark Angel','Wootton Bassett'].indexOf(s)>=0) return -2;
+  if(['Zoffany','Fast Company','Galileo Gold'].indexOf(s)>=0) return -2;
   return 0;
 }
 
@@ -922,7 +923,6 @@ var GUINEAS_CODE_MAP = {
   BPED:'Pedigree Power (Hits out of 3: G1 Sire 123+, Gal/Dub, Top Sire)',
   B12:'Elite improver (Won last + Pos delta + ≤4 career runs)',
   B14:'Precocity maintained (RPR 110+ as 2yo + Won last)',
-  P13:'0 Group Wins AND RPR <110 at 2yo',
   P14:'Exposed/vulnerable (2+ completed runs finishing 4th or worse)',
   P16:'Highly-rated maiden (OR/RPR ≥114 with 0 group wins)',
   PS:'Sire penalty'
@@ -955,98 +955,103 @@ function scoreRunnerGuineas(r, fieldSize) {
     base += pts; baseFactors[label] = {pts: pts, tier: tier, val: val};
   }
 
-  // BASE FACTORS (±10 Max)
+  // BASE FACTORS — new scale: -2, 0, 2, 3, 5
   // OR
   if(or_===0) bf('OR', 2, 'y', 'Unrated');
-  else if(or_<=108) bf('OR', -5, 'r', or_);
-  else if(or_<=113) bf('OR', 10, 'g', or_);
-  else bf('OR', 10, 'g', or_);
+  else if(or_<=108) bf('OR', 0, 'y', or_);
+  else if(or_<=113) bf('OR', 5, 'g', or_);
+  else bf('OR', 5, 'g', or_);
 
   // RPR
   if(rpr===0) bf('RPR', 0, 'y', '—');
-  else if(rpr<=108) bf('RPR', -5, 'r', rpr);
-  else bf('RPR', 10, 'g', rpr);
+  else if(rpr<=108) bf('RPR', 0, 'y', rpr);
+  else bf('RPR', 5, 'g', rpr);
 
   // Top Speed
   var tsExcused=ts<=94&&tsExc!=='none';
-  if(ts>=95) bf('Top Speed', 10, 'g', ts);
-  else if(tsExcused) bf('Top Speed', 5, 'y', ts+' (excused)');
-  else if(ts>0) bf('Top Speed', -5, 'r', ts);
+  if(ts>=95) bf('Top Speed', 5, 'g', ts);
+  else if(tsExcused) bf('Top Speed', 3, 'y', ts+' (excused)');
+  else if(ts>0) bf('Top Speed', -2, 'r', ts);
   else bf('Top Speed', 0, 'y', '—');
 
   // RPR-OR Delta
   if(or_>0){
     var d = rpr - or_;
-    if(d>0) bf('RPR-OR Delta', 10, 'g', '+'+d);
-    else if(d===0) bf('RPR-OR Delta', 5, 'y', '0');
-    else if(d===-1) bf('RPR-OR Delta', 0, 'y', '-1');
-    else bf('RPR-OR Delta', -5, 'r', d);
+    if(d>0) bf('RPR-OR Delta', 5, 'g', '+'+d);
+    else if(d===0) bf('RPR-OR Delta', 2, 'y', '0');
+    else bf('RPR-OR Delta', 0, 'y', d);
   }
 
   // RPR 110+ 2yo
   if(r.rpr110_2yo) bf('RPR 110+ 2yo', 5, 'g', 'Yes');
-  else bf('RPR 110+ 2yo', -5, 'r', 'No');
+  else bf('RPR 110+ 2yo', 0, 'y', 'No');
 
-  // SI
-  if(si>0&&si<=7.9) bf('SI', -5, 'r', si);
+  // Sire Index (SI) — move before sire name so ordering matches ICP
+  if(si>=9.0&&si<=9.9) bf('SI', 3, 'g', si);
+  else if(si>=10.0) bf('SI', 2, 'y', si);
   else if(si>=8.0&&si<=8.9) bf('SI', 0, 'y', si);
-  else if(si>=9.0&&si<=9.9) bf('SI', 10, 'g', si);
-  else if(si>=10.0) bf('SI', 5, 'y', si);
+  else if(si>0&&si<=7.9) bf('SI', 0, 'y', si);
   else bf('SI', 0, 'y', '—');
 
+  // Sire (Named) — independent of SI
+  var sireScore = scoreSireGuineas(r.sire_name||'');
+  var sireName = (r.sire_name||'').trim() || '—';
+  if(sireScore > 0)      bf('Sire', sireScore, 'g', sireName);
+  else if(sireScore < 0) bf('Sire', sireScore, 'r', sireName);
+  else                   bf('Sire', 0, 'y', sireName);
+
   // DI
-  if(di>0&&di<0.67) bf('DI', -5, 'r', di);
-  else if(di>=0.67&&di<=1.50) bf('DI', 10, 'g', di);
-  else if(di>1.50) bf('DI', -5, 'r', di);
+  if(di>=0.67&&di<=1.50) bf('DI', 3, 'g', di);
+  else if(di>0) bf('DI', 0, 'y', di);
   else bf('DI', 0, 'y', '—');
 
   // COD
-  if(cod<-0.20) bf('COD', -5, 'r', cod);
-  else if(cod>=-0.20&&cod<=0.15) bf('COD', 10, 'g', cod);
-  else if(cod>=0.16&&cod<=0.40) bf('COD', 5, 'y', cod);
+  if(cod>=-0.20&&cod<=0.15) bf('COD', 3, 'g', cod);
+  else if(cod>=0.16&&cod<=0.40) bf('COD', 2, 'y', cod);
   else if(cod>0.40) bf('COD', 0, 'y', cod);
+  else if(cod<-0.20) bf('COD', 0, 'y', cod);
   else bf('COD', 0, 'y', '—');
 
   // JSI
-  if(jsi>0&&jsi<=16.9) bf('JSI', -5, 'r', jsi);
-  else if(jsi>=17.0&&jsi<=19.0) bf('JSI', 10, 'g', jsi);
-  else if(jsi>=19.1) bf('JSI', 5, 'y', jsi);
+  if(jsi>=17.0&&jsi<=19.0) bf('JSI', 3, 'g', jsi);
+  else if(jsi>=19.1) bf('JSI', 2, 'y', jsi);
+  else if(jsi>0&&jsi<=16.9) bf('JSI', 0, 'y', jsi);
   else bf('JSI', 0, 'y', '—');
 
   // Dosage Speed Pts
-  if(r.dosage_speed==='Y') bf('Dosage Speed/B', 5, 'g', 'Yes');
+  if(r.dosage_speed==='Y') bf('Dosage Speed/B', 3, 'g', 'Yes');
   else bf('Dosage Speed/B', 0, 'y', 'No');
 
   // Won Last Race
   if(wonLast) bf('Won Last Race', 5, 'g', 'Yes');
-  else bf('Won Last Race', -5, 'r', 'No');
+  else bf('Won Last Race', -2, 'r', 'No');
 
   // Win Rate (>=3 runs & >=60%)
-  if(completedRunCount>=3 && winRate>=0.60) bf('Win Rate', 5, 'g', '≥60%');
+  if(completedRunCount>=3 && winRate>=0.60) bf('Win Rate', 3, 'g', '≥60%');
   else bf('Win Rate', 0, 'y', '<60% or <3 runs');
 
   // Group Wins
-  if(grpw>=1) bf('Group Win?', 5, 'g', 'Yes');
-  else if(grpw===0 && r.rpr110_2yo) bf('Group Win?', 5, 'y', 'No (RPR 110+ 2yo)');
-  else bf('Group Win?', -5, 'r', 'No');
+  if(grpw>=1) bf('Group Win?', 3, 'g', 'Yes');
+  else if(grpw===0 && r.rpr110_2yo) bf('Group Win?', 2, 'y', 'No (RPR 110+ 2yo)');
+  else bf('Group Win?', 0, 'y', 'No');
 
   // Trip Win
-  if(won8f) bf('Trip Win', 10, 'g', '8f');
-  else if(won7f) bf('Trip Win', 5, 'y', '7f only');
-  else bf('Trip Win', -5, 'r', 'neither');
+  if(won8f) bf('Trip Win', 3, 'g', '8f');
+  else if(won7f) bf('Trip Win', 2, 'y', '7f only');
+  else bf('Trip Win', 0, 'y', 'neither');
 
   // Last 7f/8f
-  if(last78f) bf('Last 7f/8f', 0, 'g', 'Yes');
-  else bf('Last 7f/8f', -5, 'r', 'No');
+  if(last78f) bf('Last 7f/8f', 2, 'g', 'Yes');
+  else bf('Last 7f/8f', -2, 'r', 'No');
 
   // Foal Month
   if(foalM===3) bf('Foal Month', 5, 'g', 'March');
   else if(foalM===2) bf('Foal Month', 3, 'y', 'February');
-  else if(foalM===1) bf('Foal Month', -2, 'r', 'January');
-  else bf('Foal Month', 0, 'y', ['','','','','April','May','June+'][foalM]||foalM);
+  else if(foalM===1) bf('Foal Month', 0, 'y', 'January');
+  else bf('Foal Month', 2, 'y', ['','','','','April','May','June+'][foalM]||foalM);
 
   // Draw
-  if(dg==='Low') bf('Draw', 3, 'g', 'Low ('+draw+')');
+  if(dg==='Low') bf('Draw', 2, 'g', 'Low ('+draw+')');
   else if(dg==='Mid') bf('Draw', 2, 'y', 'Mid ('+draw+')');
   else bf('Draw', 0, 'y', 'High ('+draw+')');
 
@@ -1055,48 +1060,33 @@ function scoreRunnerGuineas(r, fieldSize) {
   if(paceG==='PATIENT'||paceG==='HOLD UP'||paceG==='HOLD_UP') bf('Running Style', 2, 'g', 'Patient');
   else bf('Running Style', 0, 'y', 'Prominent');
 
-  // Trainer / Jockey Modifiers
-  if(trainer.indexOf('Appleby')>=0||(trainer.indexOf("O'Brien")>=0&&trainer.indexOf('Joseph')<0&&trainer.indexOf('Donnacha')<0)) bf('Trainer', 5, 'g', trainer);
+  // Trainer
+  if(trainer.indexOf('Appleby')>=0||(trainer.indexOf("O'Brien")>=0&&trainer.indexOf('Joseph')<0&&trainer.indexOf('Donnacha')<0)) bf('Trainer', 2, 'y', trainer);
   else if(trainer.indexOf('Balding')>=0||trainer.indexOf('Bolger')>=0) bf('Trainer', 3, 'g', trainer);
   else if(trainer.indexOf('Palmer')>=0||trainer.indexOf('Hannon')>=0||trainer.indexOf('Boughey')>=0) bf('Trainer', 2, 'y', trainer);
   else bf('Trainer', 0, 'y', trainer||'—');
 
+  // Jockey — tier 1 +3, tier 2 +2, neg/other 0
   var jk = (r.jockey || '').toLowerCase();
-  if(jk.indexOf('buick')>=0||jk.indexOf('doyle')>=0) bf('Jockey', 5, 'g', r.jockey);
+  if(jk.indexOf('buick')>=0||jk.indexOf('doyle')>=0) bf('Jockey', 3, 'g', r.jockey);
   else if(jk.indexOf('loughnane')>=0||jk.indexOf('moore')>=0||jk.indexOf('shoemark')>=0||jk.indexOf('levey')>=0||jk.indexOf('murphy')>=0) bf('Jockey', 2, 'y', r.jockey);
-  else if(jk.indexOf('egan')>=0||jk.indexOf('marquand')>=0||jk.indexOf('tudhope')>=0) bf('Jockey', -2, 'r', r.jockey);
   else bf('Jockey', 0, 'y', r.jockey||'—');
 
-  // BONUSES & PENALTIES
-  
-  // BPED: Pedigree Hits Anti-Stacking (3 conditions)
+  // BONUSES
   var hits = 0;
   if(r.g1_sire_123) hits++;
   if(r.gal_dub==='Y') hits++;
   if(scoreSireGuineas(r.sire_name||'') > 0) hits++;
-  
-  if(hits===3){ bonuses['BPED']=10; bonusTotal+=10; }
-  else if(hits===2){ bonuses['BPED']=5; bonusTotal+=5; }
+  if(hits===3){ bonuses['BPED']=3; bonusTotal+=3; }
+  else if(hits===2){ bonuses['BPED']=2; bonusTotal+=2; }
 
-  // Progression Bonuses
-  if(wonLast && or_>0 && rpr>or_ && totRuns<=4){ bonuses['B12']=5; bonusTotal+=5; }
-  if(r.rpr110_2yo && wonLast){ bonuses['B14']=5; bonusTotal+=5; }
+  if(wonLast && or_>0 && rpr>or_ && totRuns<=4){ bonuses['B12']=3; bonusTotal+=3; }
+  if(r.rpr110_2yo && wonLast){ bonuses['B14']=3; bonusTotal+=3; }
 
-  // Form Penalties
+  // PENALTIES
   var poorFinishCount=(r.form||'').replace(/-/g,'').split('').filter(function(c){return /[4567890]/.test(c);}).length;
-  if(poorFinishCount>=2) { penalties['P14']=-5; penTotal-=5; }
-  
-  if((or_>=114||rpr>=114)&&grpw===0) { penalties['P16']=-5; penTotal-=5; }
-  
-  if(grpw===0 && !r.rpr110_2yo) { penalties['P13']=-5; penTotal-=5; }
-
-  // Sire — base factor (named sire scoring, independent of SI)
-  var sireScore = scoreSireGuineas(r.sire_name||'');
-  var sireName = (r.sire_name||'').trim() || 'Unknown';
-  if(sireScore > 0)      bf('Sire', sireScore, 'g', sireName);
-  else if(sireScore < 0) bf('Sire', sireScore, 'r', sireName);
-  else                   bf('Sire', 0,          'y', sireName || '— unlisted');
-
+  if(poorFinishCount>=2) { penalties['P14']=-2; penTotal-=2; }
+  if((or_>=114||rpr>=114)&&grpw===0) { penalties['P16']=-2; penTotal-=2; }
   var finalScore=Math.max(0,base+bonusTotal+penTotal);
   return {finalScore:finalScore,composite:finalScore,base:base,bonusTotal:bonusTotal,penTotal:penTotal,bonuses:bonuses,penalties:penalties,baseFactors:baseFactors,drawGroup:dg};
 }
@@ -1349,20 +1339,20 @@ function runAnalysis() {
   var winnerAvg, top4Avg;
   if(CURRENT_RACE==='national')      { winnerAvg=94;  top4Avg=75; }
   else if(CURRENT_RACE==='g1000')    { winnerAvg=125; top4Avg=81; }
-  else                                { winnerAvg=105; top4Avg=70; }
+  else                                { winnerAvg=70; top4Avg=50; }
 
   // Winner benchmark box (Guineas only)
   if(CURRENT_RACE==='guineas') {
     var bmWinners = [
-      {year:2021, name:'Poetic Flare',   score:136},
-      {year:2022, name:'Coroebus',       score:145},
-      {year:2023, name:'Chaldean',       score:111},
-      {year:2024, name:'Notable Speech', score:145},
-      {year:2025, name:'Ruling Court',   score:137}
+      {year:2022, name:'Coroebus',       score:81},
+      {year:2023, name:'Chaldean',       score:62},
+      {year:2024, name:'Notable Speech', score:79},
+      {year:2025, name:'Ruling Court',   score:77},
+      {year:2026, name:'Bow Echo',       score:65}
     ];
     var bmHtml = '<div class="assessment-box" style="margin-bottom:0">';
     bmHtml += '<div class="sec-label" style="margin-bottom:8px">Historical Winner Benchmarks (2021\u20132025)</div>';
-    bmHtml += '<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:6px">';
+    bmHtml += '<div style="display:grid;grid-template-columns:repeat(6,1fr);gap:4px;margin-bottom:6px">';
     bmWinners.forEach(function(w){
       var col = w.score>=winnerAvg ? 'var(--gold)' : 'var(--mid)';
       bmHtml += '<div style="text-align:center;padding:6px 4px;background:var(--cream);border-radius:4px;border:1px solid var(--rule-light)">'
@@ -1372,7 +1362,7 @@ function runAnalysis() {
               + '</div>';
     });
     bmHtml += '</div>';
-    bmHtml += '<div style="font-family:IBM Plex Mono,monospace;font-size:9px;color:var(--mid)">Avg: 135 \u00b7 Range: 111\u2013145 \u00b7 Gold threshold: \u2265105</div>';
+    bmHtml += '<div style="font-family:IBM Plex Mono,monospace;font-size:9px;color:var(--mid)">Avg: 73 \u00b7 Range: 62\u201381 \u00b7 Gold threshold: \u226570</div>';
     bmHtml += '</div>';
     var bmEl = document.createElement('div');
     bmEl.innerHTML = bmHtml;
@@ -1570,7 +1560,7 @@ function renderProfile() {
   var isNH = CURRENT_RACE==='national';
   var is1000 = CURRENT_RACE==='g1000';
   var panelHdr = document.querySelector('#panel-profile .panel-title');
-  if (panelHdr) panelHdr.textContent = isNH ? '2022–2026 · 5 Winners · 179 Runners' : (is1000 ? '2021–2025 · 5 Winners' : '2021–2025 · 65 Runners · 5 Winners · Thresholds: Gold ≥105 · Grey 70–104');
+  if (panelHdr) panelHdr.textContent = isNH ? '2022–2026 · 5 Winners · 179 Runners' : (is1000 ? '2021–2025 · 5 Winners' : '2022–2026 · 65 Runners · 5 Winners · Thresholds: Gold ≥70 · Grey 50–69');
   if (!isNH && !is1000) {
     renderICPFactorBarsGuineas();
     renderWinnerTable();
