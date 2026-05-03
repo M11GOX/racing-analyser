@@ -532,11 +532,11 @@ var GN_WINNERS = [
 // 1000 GUINEAS WINNER DATA
 // ─────────────────────────────────────────────
 var G1000_WINNERS = [
-  {year:2025,winner:'Desert Flower', bred:'IRE',draw:1, drawGrp:'Low',  style:'PROMINENT',trainer:'Charlie Appleby',     jockey:'William Buick',          sp:'1/1F', or:117,form:'1111-',  lastRun:'1st',grpWin:'yes',si:8.0, dsi:8.5, jsi:16.5,di:0.91,cod:-0.05,field:10,rpr:115,ts:106,foal:'March',   won8f:true, won7f:true},
-  {year:2024,winner:'Elmalka',       bred:'GB', draw:16,drawGrp:'High', style:'PATIENT',  trainer:'Roger Varian',          jockey:'Silvestre De Sousa',     sp:'28/1', or:100,form:'1-3',    lastRun:'3rd',grpWin:'no', si:8.6, dsi:9.2, jsi:17.8,di:1.86,cod:0.50, field:16,rpr:103,ts:55, foal:'March',   won8f:false,won7f:true},
-  {year:2023,winner:'Mawj',          bred:'IRE',draw:17,drawGrp:'High', style:'PROMINENT',trainer:'Saeed bin Suroor',      jockey:'Oisin Murphy',           sp:'9/1',  or:110,form:'2143-11',lastRun:'1st',grpWin:'yes',si:6.8, dsi:10.0,jsi:16.8,di:1.35,cod:0.35, field:20,rpr:111,ts:101,foal:'April',   won8f:true, won7f:true},
-  {year:2022,winner:'Cachet',        bred:'IRE',draw:3, drawGrp:'Low',  style:'PROMINENT',trainer:'George Boughey',        jockey:'James Doyle',            sp:'16/1', or:109,form:'37234-1',lastRun:'1st',grpWin:'yes',si:6.7, dsi:10.9,jsi:17.6,di:0.33,cod:-0.50,field:13,rpr:111,ts:91, foal:'March',   won8f:false,won7f:true},
-  {year:2021,winner:'Mother Earth',  bred:'IRE',draw:2, drawGrp:'Low',  style:'PATIENT',  trainer:"A P O'Brien",           jockey:'Frankie Dettori',        sp:'10/1', or:111,form:'133032-',lastRun:'2nd',grpWin:'yes',si:9.5, dsi:7.8, jsi:17.3,di:1.00,cod:0.05, field:11,rpr:111,ts:98, foal:'March',   won8f:false,won7f:false},
+  {year:2022,winner:'Cachet',        bred:'IRE',draw:3, drawGrp:'Low', style:'PROMINENT',trainer:'George Boughey',   jockey:'James Doyle',        sp:'16/1', or:109,form:'37234-1', lastRun:'1st',grpWin:'yes',si:6.7, dsi:10.9,jsi:17.6,di:0.33,cod:-0.50,field:13,rpr:111,ts:91, foal:'March', won8f:false,won7f:true},
+  {year:2023,winner:'Mawj',          bred:'IRE',draw:17,drawGrp:'High',style:'PROMINENT',trainer:'Saeed bin Suroor', jockey:'Oisin Murphy',       sp:'9/1',  or:110,form:'2143-11', lastRun:'1st',grpWin:'yes',si:6.8, dsi:10.0,jsi:16.8,di:1.35,cod:0.35, field:20,rpr:111,ts:101,foal:'April', won8f:true, won7f:true},
+  {year:2024,winner:'Elmalka',       bred:'GB', draw:16,drawGrp:'High',style:'PATIENT',  trainer:'Roger Varian',    jockey:'Silvestre De Sousa', sp:'28/1', or:100,form:'1-3',     lastRun:'3rd',grpWin:'no', si:8.6, dsi:9.2, jsi:17.8,di:1.86,cod:0.50, field:16,rpr:103,ts:55, foal:'March', won8f:false,won7f:true},
+  {year:2025,winner:'Desert Flower', bred:'IRE',draw:1, drawGrp:'Low', style:'PROMINENT',trainer:'Charlie Appleby',  jockey:'William Buick',      sp:'1/1F', or:117,form:'1111-',  lastRun:'1st',grpWin:'yes',si:8.0, dsi:8.5, jsi:16.5,di:0.91,cod:-0.05,field:10,rpr:115,ts:106,foal:'March', won8f:true, won7f:true},
+  {year:2026,winner:'True Love',     bred:'IRE',draw:16,drawGrp:'High',style:'PROMINENT',trainer:"A P O'Brien",     jockey:'Wayne Lordan',       sp:'6/1',  or:115,form:'11218-1', lastRun:'1st',grpWin:'yes',si:7.5, dsi:10.0,jsi:17.5,di:2.25,cod:0.54, field:19,rpr:112,ts:103,foal:'April', won8f:false,won7f:true},
 ];
 
 var G1000_PROFILE_FACTORS = []; // Kept minimal here to preserve space
@@ -554,7 +554,7 @@ function renderICPFactorBars() {} // NH
 function renderNHScoreCard(out, scored, winnerAvg, top4Avg) {
   var WINNER_AVG=winnerAvg||100, TOP4_AVG=top4Avg||75;
   var isFlat = CURRENT_RACE !== 'national';
-  var maxScore=80;
+  var maxScore = (CURRENT_RACE==='g1000') ? 65 : 80;
   var winPct=Math.round(WINNER_AVG/maxScore*100);
   var t4Pct=Math.round(TOP4_AVG/maxScore*100);
   var wrap=document.createElement('div');
@@ -1514,21 +1514,35 @@ function runAnalysis() {
 
   var winnerAvg, top4Avg;
   if(CURRENT_RACE==='national')      { winnerAvg=94;  top4Avg=75; }
-  else if(CURRENT_RACE==='g1000')    { winnerAvg=125; top4Avg=81; }
+  else if(CURRENT_RACE==='g1000')    { winnerAvg=50; top4Avg=35; }
   else                                { winnerAvg=70; top4Avg=50; }
 
-  // Winner benchmark box (Guineas only)
-  if(CURRENT_RACE==='guineas') {
-    var bmWinners = [
-      {year:2022, name:'Coroebus',       score:81},
-      {year:2023, name:'Chaldean',       score:62},
-      {year:2024, name:'Notable Speech', score:79},
-      {year:2025, name:'Ruling Court',   score:77},
-      {year:2026, name:'Bow Echo',       score:65}
-    ];
+  // Winner benchmark box
+  if(CURRENT_RACE==='guineas' || CURRENT_RACE==='g1000') {
+    var bmWinners, bmAvg, bmRange, bmThreshold;
+    if(CURRENT_RACE==='guineas') {
+      bmWinners = [
+        {year:2022, name:'Coroebus',       score:81},
+        {year:2023, name:'Chaldean',       score:62},
+        {year:2024, name:'Notable Speech', score:79},
+        {year:2025, name:'Ruling Court',   score:77},
+        {year:2026, name:'Bow Echo',       score:65}
+      ];
+      bmAvg = 'Avg: 73 · Range: 62–81 · Gold threshold: ≥70';
+    } else {
+      bmWinners = [
+        {year:2022, name:'Cachet',         score:54},
+        {year:2023, name:'Mawj',           score:63},
+        {year:2024, name:'Elmalka',        score:44},
+        {year:2025, name:'Desert Flower',  score:59},
+        {year:2026, name:'True Love',      score:48}
+      ];
+      bmAvg = 'Avg: 54 · Range: 44–63 · Gold threshold: ≥50';
+    }
+    var bmTitle = CURRENT_RACE==='guineas' ? 'Historical Winner Benchmarks (2022–2026)' : 'Historical Winner Benchmarks (2022–2026)';
     var bmHtml = '<div class="assessment-box" style="margin-bottom:0">';
-    bmHtml += '<div class="sec-label" style="margin-bottom:8px">Historical Winner Benchmarks (2021\u20132025)</div>';
-    bmHtml += '<div style="display:grid;grid-template-columns:repeat(6,1fr);gap:4px;margin-bottom:6px">';
+    bmHtml += '<div class="sec-label" style="margin-bottom:8px">'+bmTitle+'</div>';
+    bmHtml += '<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin-bottom:6px">';
     bmWinners.forEach(function(w){
       var col = w.score>=winnerAvg ? 'var(--gold)' : 'var(--mid)';
       bmHtml += '<div style="text-align:center;padding:6px 4px;background:var(--cream);border-radius:4px;border:1px solid var(--rule-light)">'
@@ -1538,7 +1552,7 @@ function runAnalysis() {
               + '</div>';
     });
     bmHtml += '</div>';
-    bmHtml += '<div style="font-family:IBM Plex Mono,monospace;font-size:9px;color:var(--mid)">Avg: 73 \u00b7 Range: 62\u201381 \u00b7 Gold threshold: \u226570</div>';
+    bmHtml += '<div style="font-family:IBM Plex Mono,monospace;font-size:9px;color:var(--mid)">'+bmAvg+'</div>';
     bmHtml += '</div>';
     var bmEl = document.createElement('div');
     bmEl.innerHTML = bmHtml;
@@ -1736,7 +1750,7 @@ function renderProfile() {
   var isNH = CURRENT_RACE==='national';
   var is1000 = CURRENT_RACE==='g1000';
   var panelHdr = document.querySelector('#panel-profile .panel-title');
-  if (panelHdr) panelHdr.textContent = isNH ? '2022–2026 · 5 Winners · 179 Runners' : (is1000 ? '2022–2026 · 78 Runners · 5 Winners · Thresholds: Gold ≥55 · Grey 35–54' : '2022–2026 · 65 Runners · 5 Winners · Thresholds: Gold ≥70 · Grey 50–69');
+  if (panelHdr) panelHdr.textContent = isNH ? '2022–2026 · 5 Winners · 179 Runners' : (is1000 ? '2022–2026 · 5 Winners · Thresholds: Gold ≥50 · Grey 35–49' : '2022–2026 · 65 Runners · 5 Winners · Thresholds: Gold ≥70 · Grey 50–69');
   if (!isNH && !is1000) {
     renderICPFactorBarsGuineas();
     renderWinnerTable();
