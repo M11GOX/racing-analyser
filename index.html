@@ -925,7 +925,10 @@ var GUINEAS_CODE_MAP = {
   B14:'Precocity maintained (RPR 110+ as 2yo + Won last)',
   P14:'Exposed/vulnerable (2+ completed runs finishing 4th or worse)',
   P16:'Highly-rated maiden (OR/RPR ≥114 with 0 group wins)',
-  PS:'Sire penalty'
+  PS:'Sire penalty',
+  B1:'Elite form (RPR ≥111 + Won Last)',
+  B2:'Speed/Stamina sweet spot (JSI 16.7–17.9 + TS ≥90)',
+  B4:'Fresh target (0 runs this season)'
 };
 
 function scoreRunnerGuineas(r, fieldSize) {
@@ -1091,7 +1094,180 @@ function scoreRunnerGuineas(r, fieldSize) {
   return {finalScore:finalScore,composite:finalScore,base:base,bonusTotal:bonusTotal,penTotal:penTotal,bonuses:bonuses,penalties:penalties,baseFactors:baseFactors,drawGroup:dg};
 }
 
-function scoreRunner1000G(r, fieldSize) { return {finalScore:0, base:0, bonuses:{}, penalties:{}, baseFactors:{}, drawGroup:'Mid'}; }
+function scoreRunner1000G(r, fieldSize) {
+  var fm=parseFormFlat(r.form||'');
+  var draw=parseInt(r.draw)||1;
+  var dg=drawGroupFlat(draw, fieldSize||16);
+  var or_=parseInt(r.or||r.or_)||0;
+  var rpr=parseInt(r.rpr)||0;
+  var ts=parseInt(r.ts)||0;
+  var tsExc=r.ts_excuse||'none';
+  var si=parseFloat(r.si);
+  var di=parseFloat(r.di);
+  var cod=parseFloat(r.cod);
+  var jsi=parseFloat(r.jsi)||(si+(parseFloat(r.dsi||0)))||0;
+  var grpw=parseInt(r.grp_wins||r.grpWins)||0;
+  var foalM=parseInt(r.foal_month)||3;
+  var prep=fm.prepRuns, totRuns=fm.totalRuns, wonLast=fm.wonLast;
+  var completedRunCount=fm.completedRunCount, completedWins=fm.completedWins;
+  var winRate=completedRunCount>0?completedWins/completedRunCount:0;
+  var last78f=r.last_78f!==false&&r.last78f!==false;
+  var won8f=r.won_8f===true||r.won8f===true;
+  var won7f=r.won_7f===true||r.won7f===true;
+  var trainer=r.trainer||'';
+  var jk = (r.jockey || '').toLowerCase();
+  var paceG=(r.pace_guineas||'PATIENT').toUpperCase();
+  var isProminent = (paceG==='PROMINENT'||paceG==='LED');
+
+  var base=0,bonusTotal=0,penTotal=0,bonuses={},penalties={},baseFactors={};
+  function bf(label, pts, tier, val) {
+    base += pts; baseFactors[label] = {pts: pts, tier: tier, val: val};
+  }
+
+  // OR
+  if(or_===0) bf('OR', 2, 'y', 'Unrated');
+  else if(or_<=108) bf('OR', 0, 'y', or_);
+  else bf('OR', 3, 'g', or_);
+
+  // RPR
+  if(rpr===0) bf('RPR', 0, 'y', '—');
+  else if(rpr<=103) bf('RPR', 0, 'y', rpr);
+  else if(rpr<=110) bf('RPR', 2, 'y', rpr);
+  else bf('RPR', 3, 'g', rpr);
+
+  // Delta
+  if(or_>0){
+    var d = rpr - or_;
+    if(d>0) bf('RPR-OR Delta', 5, 'g', '+'+d);
+    else if(d===0) bf('RPR-OR Delta', 2, 'y', '0');
+    else bf('RPR-OR Delta', 0, 'y', d);
+  }
+
+  // TS
+  var tsExcused=ts<=89&&tsExc!=='none';
+  if(ts>=90) bf('Top Speed', 5, 'g', ts);
+  else if(tsExcused) bf('Top Speed', 3, 'y', ts+' (excused)');
+  else if(ts>0) bf('Top Speed', 0, 'y', ts);
+  else bf('Top Speed', 0, 'y', '—');
+
+  // SI — inverted: low SI = good for fillies
+  if(!isNaN(si) && si>0){
+    if(si<=6.9) bf('SI', 3, 'g', si);
+    else if(si>=8.0&&si<=8.9) bf('SI', 2, 'y', si);
+    else bf('SI', 0, 'y', si);
+  } else bf('SI', 0, 'y', '—');
+
+  // Sire (Named)
+  var sireName = (r.sire_name||'').trim() || '—';
+  var sScore = 0;
+  if(['Kingman','Night Of Thunder','Exceed And Excel','Dubawi','Frankel','No Nay Never'].indexOf(sireName)>=0) sScore=3;
+  else if(['Siyouni','Justify','Galileo','Sioux Nation','New Bay','Caravaggio'].indexOf(sireName)>=0) sScore=2;
+  else if(['Zoustar','Dark Angel','Kodiac','Dandy Man'].indexOf(sireName)>=0) sScore=-2;
+  if(sScore > 0) bf('Sire', sScore, 'g', sireName);
+  else if(sScore < 0) bf('Sire', sScore, 'r', sireName);
+  else bf('Sire', 0, 'y', sireName);
+
+  // DI
+  if(!isNaN(di) && di>0){
+    if(di>=0.80&&di<=1.05) bf('DI', 5, 'g', di);
+    else if(di>=1.06&&di<=2.00) bf('DI', 3, 'y', di);
+    else if(di<=0.79) bf('DI', 2, 'y', di);
+    else bf('DI', 0, 'y', di);
+  } else bf('DI', 0, 'y', '—');
+
+  // COD
+  if(!isNaN(cod)){
+    if(cod>=0.36&&cod<=0.50) bf('COD', 5, 'g', cod);
+    else if(cod<=-0.01) bf('COD', 3, 'y', cod);
+    else if(cod>=0.00&&cod<=0.35) bf('COD', 2, 'y', cod);
+    else bf('COD', 0, 'y', cod);
+  } else bf('COD', 0, 'y', '—');
+
+  // JSI
+  if(jsi>=16.7&&jsi<=17.9) bf('JSI', 3, 'g', jsi);
+  else if(jsi>=18.0&&jsi<=18.9) bf('JSI', 2, 'y', jsi);
+  else if(jsi>0) bf('JSI', 0, 'y', jsi);
+  else bf('JSI', 0, 'y', '—');
+
+  // Won Last
+  if(wonLast) bf('Won Last Race', 3, 'g', 'Yes');
+  else bf('Won Last Race', 0, 'y', 'No');
+
+  // Win Rate
+  if(winRate>=0.50 && completedRunCount>=2) bf('Win Rate', 2, 'g', '≥50%');
+  else bf('Win Rate', 0, 'y', '<50% or <2 runs');
+
+  // Group Win
+  var isGrp = grpw>=1;
+  if(isGrp) bf('Group Win?', 3, 'g', 'Yes');
+  else bf('Group Win?', 0, 'y', 'No');
+
+  // Trip Win
+  if(won8f) bf('Trip Win', 3, 'g', '8f');
+  else if(won7f) bf('Trip Win', 2, 'y', '7f only');
+  else bf('Trip Win', 0, 'y', 'neither');
+
+  // Last 7f/8f
+  if(last78f) bf('Last 7f/8f', 2, 'g', 'Yes');
+  else bf('Last 7f/8f', -2, 'r', 'No');
+
+  // Foal Month — fillies: March peak, April/May/June+ +3, January +2, February floor
+  if(foalM===3) bf('Foal Month', 5, 'g', 'March');
+  else if(foalM>=4) bf('Foal Month', 3, 'y', ['','','','','April','May','June+'][foalM]||foalM);
+  else if(foalM===1) bf('Foal Month', 2, 'y', 'January');
+  else bf('Foal Month', 0, 'y', 'February');
+
+  // Draw — fillies: High draws dominate (Elmalka 16, Mawj 17, True Love 16)
+  if(dg==='High') bf('Draw', 3, 'g', 'High ('+draw+')');
+  else if(dg==='Low') bf('Draw', 2, 'y', 'Low ('+draw+')');
+  else bf('Draw', 0, 'y', 'Mid ('+draw+')');
+
+  // Running Style — fillies: prominent dominates
+  if(isProminent) bf('Running Style', 3, 'g', 'Prominent');
+  else bf('Running Style', 0, 'y', 'Patient');
+
+  // Trainer
+  if(trainer.indexOf("O'Brien")>=0||trainer.indexOf('Appleby')>=0) bf('Trainer', 3, 'g', trainer);
+  else if(trainer.indexOf('Varian')>=0||trainer.indexOf('Saeed bin Suroor')>=0||trainer.indexOf('Boughey')>=0||trainer.indexOf('Hannon')>=0||trainer.indexOf('Burke')>=0) bf('Trainer', 2, 'y', trainer);
+  else bf('Trainer', 0, 'y', trainer||'—');
+
+  // Jockey
+  if(jk.indexOf('buick')>=0||jk.indexOf('murphy')>=0||jk.indexOf('doyle')>=0||jk.indexOf('lordan')>=0) bf('Jockey', 3, 'g', r.jockey);
+  else if(jk.indexOf('sousa')>=0||jk.indexOf('moore')>=0||jk.indexOf('foley')>=0) bf('Jockey', 2, 'y', r.jockey);
+  else bf('Jockey', 0, 'y', r.jockey||'—');
+
+  // Bonuses (all capped at +3 max)
+  var isEliteSire = sScore===3;
+  var pedHits = (r.g1_sire_123 ? 1 : 0) + (isEliteSire ? 1 : 0);
+  if(pedHits>=2) { bonuses['BPED']=2; bonusTotal+=2; }
+
+  // B1: Elite form — RPR ≥111 + Won Last
+  if(rpr>=111 && wonLast) { bonuses['B1']=2; bonusTotal+=2; }
+
+  // B2: Speed/Stamina sweet spot — JSI 16.7-17.9 + TS ≥90
+  var jsiSweet = jsi>=16.7&&jsi<=17.9;
+  if(jsiSweet && ts>=90) { bonuses['B2']=2; bonusTotal+=2; }
+
+  // B4: Fresh target — 0 runs this season
+  var formStr = (r.form||'').trim().toUpperCase();
+  var dashIdx = formStr.indexOf('-');
+  var runsThisSeason = 0;
+  if (dashIdx === -1) runsThisSeason = formStr.replace(/[^0-9FURP]/g,'').length;
+  else if (dashIdx !== formStr.length - 1) {
+    runsThisSeason = formStr.slice(dashIdx+1).replace(/[^0-9FURP]/g,'').length;
+  }
+  if(runsThisSeason===0) { bonuses['B4']=2; bonusTotal+=2; }
+
+  // Penalties
+  var poorFinishCount=(r.form||'').replace(/-/g,'').split('').filter(function(c){return /[4567890]/.test(c);}).length;
+  if(poorFinishCount>=3) { penalties['P14']=-2; penTotal-=2; }
+  if(or_>=105 && !isGrp) { penalties['P16']=-2; penTotal-=2; }
+
+  var finalScore=Math.max(0,base+bonusTotal+penTotal);
+  return {finalScore:finalScore,composite:finalScore,base:base,bonusTotal:bonusTotal,penTotal:penTotal,bonuses:bonuses,penalties:penalties,baseFactors:baseFactors,drawGroup:dg};
+}
+
+// ... UI functions remain identical ...
 
 // ... UI functions remain identical ...
 function updateJSI() {
@@ -1560,11 +1736,171 @@ function renderProfile() {
   var isNH = CURRENT_RACE==='national';
   var is1000 = CURRENT_RACE==='g1000';
   var panelHdr = document.querySelector('#panel-profile .panel-title');
-  if (panelHdr) panelHdr.textContent = isNH ? '2022–2026 · 5 Winners · 179 Runners' : (is1000 ? '2021–2025 · 5 Winners' : '2022–2026 · 65 Runners · 5 Winners · Thresholds: Gold ≥70 · Grey 50–69');
+  if (panelHdr) panelHdr.textContent = isNH ? '2022–2026 · 5 Winners · 179 Runners' : (is1000 ? '2022–2026 · 78 Runners · 5 Winners · Thresholds: Gold ≥55 · Grey 35–54' : '2022–2026 · 65 Runners · 5 Winners · Thresholds: Gold ≥70 · Grey 50–69');
   if (!isNH && !is1000) {
     renderICPFactorBarsGuineas();
     renderWinnerTable();
+  } else if (is1000) {
+    renderICPFactorBars1000G();
+    renderWinnerTable();
   }
+}
+
+function renderICPFactorBars1000G() {
+  var grid = document.getElementById('icp-grid');
+  if (!grid) return;
+  var factors = [
+    { label: 'Official Rating (OR)', icon: '&#x2696;',
+      bands: [
+        { label: '&ge;109', pts: '+3', tier: 'g', note: 'Confirmed class &mdash; most winners here' },
+        { label: '&le;108', pts: '0',  tier: 'y', note: 'Floor &mdash; Elmalka (100) won 2024 at 28/1' }
+      ]
+    },
+    { label: 'Best RPR', icon: '&#x1F4CA;',
+      bands: [
+        { label: '&ge;111',    pts: '+3', tier: 'g', note: 'Elite form' },
+        { label: '104&ndash;110', pts: '+2', tier: 'y', note: 'Competitive &mdash; Elmalka 103 won' },
+        { label: '&le;103',   pts: '0',  tier: 'y', note: 'Floor' }
+      ]
+    },
+    { label: 'RPR&ndash;OR Delta', icon: '&Delta;',
+      bands: [
+        { label: 'Positive', pts: '+5', tier: 'g', note: 'Improving profile' },
+        { label: 'Zero',     pts: '+2', tier: 'y', note: 'Stable' },
+        { label: 'Negative', pts: '0',  tier: 'y', note: 'Floor' }
+      ]
+    },
+    { label: 'Top Speed (TS)', icon: '&#x26A1;',
+      bands: [
+        { label: '&ge;90',         pts: '+5', tier: 'g', note: 'Strong TS for fillies' },
+        { label: '<90 excused',    pts: '+3', tier: 'y', note: 'AW prep / limited data' },
+        { label: '<90 no excuse',  pts: '0',  tier: 'y', note: 'Floor' }
+      ]
+    },
+    { label: 'Sire Index (SI)', icon: '&#x1F9EC;',
+      bands: [
+        { label: '&le;6.9',        pts: '+3', tier: 'g', note: 'Cachet (6.7), Mawj (6.8) &mdash; speed sires dominate' },
+        { label: '8.0&ndash;8.9',  pts: '+2', tier: 'y', note: 'Elmalka (8.6), Desert Flower (8.0) &mdash; competitive' },
+        { label: 'Other',          pts: '0',  tier: 'y', note: 'Neutral' }
+      ]
+    },
+    { label: 'Sire (Named)', icon: '&#x1F40E;',
+      bands: [
+        { label: 'Kingman / Night Of Thunder / Exceed And Excel / Dubawi / Frankel / No Nay Never', pts: '+3', tier: 'g', note: 'Proven 1000G sire group' },
+        { label: 'Siyouni / Justify / Galileo / Sioux Nation / New Bay / Caravaggio', pts: '+2', tier: 'y', note: 'Secondary positives' },
+        { label: 'Unlisted', pts: '0', tier: 'y', note: 'Neutral' },
+        { label: 'Zoustar / Dark Angel / Kodiac / Dandy Man', pts: '&minus;2', tier: 'r', note: 'Penalty sires' }
+      ]
+    },
+    { label: 'Dosage Index (DI)', icon: '&#x2697;',
+      bands: [
+        { label: '0.80&ndash;1.05', pts: '+5', tier: 'g', note: 'Ideal balance &mdash; peak 1000G zone' },
+        { label: '1.06&ndash;2.00', pts: '+3', tier: 'y', note: 'Speed-leaning but competitive' },
+        { label: '&le;0.79',        pts: '+2', tier: 'y', note: 'Stamina-leaning &mdash; Cachet (0.33) won' },
+        { label: '>2.00',           pts: '0',  tier: 'y', note: 'Speed-heavy &mdash; floor' }
+      ]
+    },
+    { label: 'COD Index', icon: '&#x2697;',
+      bands: [
+        { label: '0.36 to 0.50', pts: '+5', tier: 'g', note: 'Peak zone for 1000G' },
+        { label: '<0',           pts: '+3', tier: 'y', note: 'Negative COD competitive' },
+        { label: '0.00 to 0.35', pts: '+2', tier: 'y', note: 'Neutral-positive zone' },
+        { label: '>0.50',        pts: '0',  tier: 'y', note: 'Floor' }
+      ]
+    },
+    { label: 'JSI (Joint Sire Index)', icon: '&#x1F9EC;',
+      bands: [
+        { label: '16.7&ndash;17.9', pts: '+3', tier: 'g', note: 'Sweet spot &mdash; 3/5 winners in this band' },
+        { label: '18.0&ndash;18.9', pts: '+2', tier: 'y', note: 'Competitive second tier' },
+        { label: 'Other',           pts: '0',  tier: 'y', note: 'Floor' }
+      ]
+    },
+    { label: 'Won Last Race', icon: '&#x2713;',
+      bands: [
+        { label: 'Yes', pts: '+3', tier: 'g', note: 'Cachet, Mawj, Desert Flower all won last' },
+        { label: 'No',  pts: '0',  tier: 'y', note: 'Neutral &mdash; Elmalka (3rd last time) won' }
+      ]
+    },
+    { label: 'Win Rate &ge;50%', icon: '&#x1F4C8;',
+      bands: [
+        { label: '&ge;50% (&ge;2 runs)', pts: '+2', tier: 'g', note: 'Consistent quality' },
+        { label: 'Other',                pts: '0',  tier: 'y', note: 'Neutral' }
+      ]
+    },
+    { label: 'Group Win?', icon: '&#x1F3C6;',
+      bands: [
+        { label: 'Yes', pts: '+3', tier: 'g', note: '4/5 winners had group win' },
+        { label: 'No',  pts: '0',  tier: 'y', note: 'Floor &mdash; Elmalka the exception' }
+      ]
+    },
+    { label: 'Trip Win', icon: '&#x1F3C7;',
+      bands: [
+        { label: 'Won 8f',      pts: '+3', tier: 'g', note: 'Trip proven' },
+        { label: 'Won 7f only', pts: '+2', tier: 'y', note: 'Cachet, Elmalka, True Love &mdash; can stay' },
+        { label: 'Neither',     pts: '0',  tier: 'y', note: 'Floor' }
+      ]
+    },
+    { label: 'Last Run at 7f&ndash;8f', icon: '&#x1F4CD;',
+      bands: [
+        { label: 'Yes', pts: '+2', tier: 'g', note: 'Standard prep' },
+        { label: 'No',  pts: '&minus;2', tier: 'r', note: 'Distance concern' }
+      ]
+    },
+    { label: 'Foal Month', icon: '&#x1F4C5;',
+      bands: [
+        { label: 'March',              pts: '+5', tier: 'g', note: 'Cachet, Desert Flower, Elmalka &mdash; peak' },
+        { label: 'April / May / June+', pts: '+3', tier: 'y', note: 'Mawj (April), True Love (April)' },
+        { label: 'January',            pts: '+2', tier: 'y', note: 'Soft positive' },
+        { label: 'February',           pts: '0',  tier: 'y', note: 'Floor &mdash; no winners in window' }
+      ]
+    },
+    { label: 'Draw', icon: '&#x1F3AF;',
+      bands: [
+        { label: 'High stalls', pts: '+3', tier: 'g', note: 'Elmalka 16, Mawj 17, True Love 16' },
+        { label: 'Low stalls',  pts: '+2', tier: 'y', note: 'Desert Flower stall 1' },
+        { label: 'Mid stalls',  pts: '0',  tier: 'y', note: 'Neutral' }
+      ]
+    },
+    { label: 'Running Style', icon: '&#x1F3C3;',
+      bands: [
+        { label: 'Prominent / Front-running', pts: '+3', tier: 'g', note: '4/5 winners ran prominently' },
+        { label: 'Patient / Hold up',         pts: '0',  tier: 'y', note: 'Neutral &mdash; Desert Flower won patient' }
+      ]
+    },
+    { label: 'Trainer', icon: '&#x1F3A9;',
+      bands: [
+        { label: "A P O'Brien / Charlie Appleby", pts: '+3', tier: 'g', note: "O'Brien consistent presence &middot; Appleby Desert Flower 2025" },
+        { label: 'Roger Varian / Saeed bin Suroor / Boughey / Hannon / Burke', pts: '+2', tier: 'y', note: 'Varian (Elmalka) &middot; Suroor (Mawj)' },
+        { label: 'Other', pts: '0', tier: 'y', note: 'Neutral' }
+      ]
+    },
+    { label: 'Jockey', icon: '&#x1F9D1;',
+      bands: [
+        { label: 'Buick / Murphy / Doyle / Lordan', pts: '+3', tier: 'g', note: 'Buick (Desert Flower) &middot; Murphy (Mawj) &middot; Lordan (True Love)' },
+        { label: 'De Sousa / Moore / Foley',        pts: '+2', tier: 'y', note: 'De Sousa (Elmalka)' },
+        { label: 'Other',                           pts: '0',  tier: 'y', note: 'Neutral' }
+      ]
+    }
+  ];
+  var tierColor = { g: 'var(--green)', y: 'var(--amber)', r: 'var(--red)' };
+  var tierBg = { g: 'rgba(26,92,46,.08)', y: 'rgba(133,100,4,.07)', r: 'rgba(139,26,26,.07)' };
+  var html = '';
+  factors.forEach(function(f) {
+    html += '<div class="icp-card">';
+    html += '<div class="icp-label" style="display:flex;align-items:center;gap:6px;margin-bottom:8px"><span style="font-size:14px">'+f.icon+'</span><span>'+f.label+'</span></div>';
+    f.bands.forEach(function(b) {
+      var col = tierColor[b.tier]||'var(--mid)';
+      var bg = tierBg[b.tier]||'transparent';
+      html += '<div style="display:flex;align-items:flex-start;gap:8px;padding:5px 7px;border-radius:4px;background:'+bg+';margin-bottom:3px">'
+        +'<div style="min-width:60px;font-family:IBM Plex Mono,monospace;font-size:9px;color:'+col+';font-weight:700;padding-top:1px">'+b.pts+'</div>'
+        +'<div style="flex:1"><div style="font-family:IBM Plex Sans,sans-serif;font-size:11px;font-weight:500;color:var(--ink)">'+b.label+'</div>'
+        +'<div style="font-family:IBM Plex Mono,monospace;font-size:9px;color:var(--mid);margin-top:1px">'+b.note+'</div></div>'
+        +'<div style="font-size:9px;color:'+col+';margin-top:2px">'+(b.tier==='g'?'&#x1F7E2;':b.tier==='y'?'&#x1F7E1;':'&#x1F534;')+'</div>'
+        +'</div>';
+    });
+    html += '</div>';
+  });
+  grid.innerHTML = html;
 }
 
 function renderWinnerTable() {
