@@ -554,7 +554,7 @@ function renderICPFactorBars() {} // NH
 function renderNHScoreCard(out, scored, winnerAvg, top4Avg) {
   var WINNER_AVG=winnerAvg||100, TOP4_AVG=top4Avg||75;
   var isFlat = CURRENT_RACE !== 'national';
-  var maxScore = (CURRENT_RACE==='g1000') ? 65 : 80;
+  var maxScore = (CURRENT_RACE==='g1000') ? 60 : 80;
   var winPct=Math.round(WINNER_AVG/maxScore*100);
   var t4Pct=Math.round(TOP4_AVG/maxScore*100);
   var wrap=document.createElement('div');
@@ -568,7 +568,7 @@ function renderNHScoreCard(out, scored, winnerAvg, top4Avg) {
   var rows='';
   scored.forEach(function(s,idx){
     var score=s.result.finalScore||0;
-    var barPct=Math.round(Math.min(score,80)/80*100);
+    var barPct=Math.round(Math.min(score,maxScore)/maxScore*100);
     var bCls=score>=WINNER_AVG?'nh-bar-winner':score>=TOP4_AVG?'nh-bar-top4':'nh-bar-low';
     var stars=score>=WINNER_AVG?5:score>=TOP4_AVG+10?4:score>=TOP4_AVG?3:score>=50?2:1;
     var st=''; for(var i=0;i<5;i++) st+=i<stars?'<span class="sf">★</span>':'<span class="se">☆</span>';
