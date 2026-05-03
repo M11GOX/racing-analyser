@@ -412,7 +412,7 @@ textarea{resize:vertical;min-height:52px}
       <div class="fg flat-only"><label>Galileo / Dubawi Bloodline?</label><select id="f-gal-dub"><option value="N">No</option><option value="Y">Yes</option></select></div>
       <div class="fg flat-only"><label>G1 Sire (RPR 123+)?</label><select id="f-g1sire"><option value="no">No</option><option value="yes">Yes</option></select></div>
       <div class="fg flat-only"><label>Foal Month</label><select id="f-foal-month"><option value="">— Select —</option><option value="1">January</option><option value="2">February</option><option value="3">March</option><option value="4">April</option><option value="5">May</option><option value="6">June+</option></select></div>
-      <div class="fg flat-only"><label>Sire</label><select id="f-sire"><option value="">— Unknown / Not listed —</option><option value="American Pharoah">American Pharoah</option><option value="Ardad">Ardad</option><option value="Australia">Australia</option><option value="Blue Point">Blue Point</option><option value="Camacho">Camacho</option><option value="Camelot">Camelot</option><option value="Dandy Man">Dandy Man</option><option value="Dark Angel">Dark Angel</option><option value="Dawn Approach">Dawn Approach</option><option value="Deep Impact">Deep Impact</option><option value="Dubawi">Dubawi</option><option value="Fast Company">Fast Company</option><option value="Frankel">Frankel</option><option value="Galileo">Galileo</option><option value="Galileo Gold">Galileo Gold</option><option value="Gleneagles">Gleneagles</option><option value="Invincible Spirit">Invincible Spirit</option><option value="Justify">Justify</option><option value="Kameko">Kameko</option><option value="Kingman">Kingman</option><option value="Kodiac">Kodiac</option><option value="Kodi Bear">Kodi Bear</option><option value="Lope De Vega">Lope De Vega</option><option value="Mehmas">Mehmas</option><option value="Mohaather">Mohaather</option><option value="Night Of Thunder">Night Of Thunder</option><option value="No Nay Never">No Nay Never</option><option value="Oasis Dream">Oasis Dream</option><option value="Olden Times">Olden Times</option><option value="Palace Pier">Palace Pier</option><option value="Phoenix Of Spain">Phoenix Of Spain</option><option value="Roaring Lion">Roaring Lion</option><option value="Sea The Moon">Sea The Moon</option><option value="Sea The Stars">Sea The Stars</option><option value="Shamardal">Shamardal</option><option value="Sioux Nation">Sioux Nation</option><option value="Space Blues">Space Blues</option><option value="St Mark's Basilica">St Mark's Basilica</option><option value="Starman">Starman</option><option value="Starspangledbanner">Starspangledbanner</option><option value="Teofilo">Teofilo</option><option value="Too Darn Hot">Too Darn Hot</option><option value="Ulysses">Ulysses</option><option value="Universal">Universal</option><option value="War Front">War Front</option><option value="Without Parole">Without Parole</option><option value="Wootton Bassett">Wootton Bassett</option><option value="Zoffany">Zoffany</option></select></div>
+      <div class="fg flat-only"><label>Sire</label><select id="f-sire"><option value="">— Unknown / Not listed —</option><option value="American Pharoah">American Pharoah</option><option value="Ardad">Ardad</option><option value="Australia">Australia</option><option value="Blue Point">Blue Point</option><option value="Camacho">Camacho</option><option value="Camelot">Camelot</option><option value="Dandy Man">Dandy Man</option><option value="Dark Angel">Dark Angel</option><option value="Dawn Approach">Dawn Approach</option><option value="Deep Impact">Deep Impact</option><option value="Dubawi">Dubawi</option><option value="Fast Company">Fast Company</option><option value="Frankel">Frankel</option><option value="Galileo">Galileo</option><option value="Galileo Gold">Galileo Gold</option><option value="Gleneagles">Gleneagles</option><option value="Invincible Spirit">Invincible Spirit</option><option value="Justify">Justify</option><option value="Kameko">Kameko</option><option value="Kingman">Kingman</option><option value="Kodiac">Kodiac</option><option value="Kodi Bear">Kodi Bear</option><option value="Lope De Vega">Lope De Vega</option><option value="Mehmas">Mehmas</option><option value="Mohaather">Mohaather</option><option value="Night Of Thunder">Night Of Thunder</option><option value="No Nay Never">No Nay Never</option><option value="Oasis Dream">Oasis Dream</option><option value="Olden Times">Olden Times</option><option value="Palace Pier">Palace Pier</option><option value="Phoenix Of Spain">Phoenix Of Spain</option><option value="Roaring Lion">Roaring Lion</option><option value="Sea The Moon">Sea The Moon</option><option value="Sea The Stars">Sea The Stars</option><option value="Shamardal">Shamardal</option><option value="Sioux Nation">Sioux Nation</option><option value="Space Blues">Space Blues</option><option value="St Mark's Basilica">St Mark's Basilica</option><option value="Starman">Starman</option><option value="Starspangledbanner">Starspangledbanner</option><option value="Teofilo">Teofilo</option><option value="Too Darn Hot">Too Darn Hot</option><option value="Ulysses">Ulysses</option><option value="Universal">Universal</option><option value="War Front">War Front</option><option value="Without Parole">Without Parole</option><option value="Wootton Bassett">Wootton Bassett</option><option value="Zoffany">Zoffany</option><option value="Saxon Warrior">Saxon Warrior</option></select></div>
     </div>
     <div class="fsec flat-only">Trip Profile</div>
     <div class="g3 flat-only">
@@ -792,6 +792,35 @@ function renderICPFactorBarsGuineas() {
       ]
     },
     {
+      label: 'Sire (Named)', icon: '🐎',
+      bands: [
+        { label: 'Dubawi / Frankel / Justify / Dawn Approach / Kingman / Night Of Thunder', pts: '+5', tier: 'g', note: 'Proven Classic sire group — all produced Guineas winners' },
+        { label: 'Oasis Dream / Blue Point / Camelot / Gleneagles / PhoenixOfSpain / Olden Times / Camacho / Invincible Spirit', pts: '+3', tier: 'y', note: 'Strong secondary sire group' },
+        { label: 'Too Darn Hot / Roaring Lion / Kameko', pts: '+2', tier: 'y', note: 'Emerging positive sires' },
+        { label: 'Unlisted', pts: '0',  tier: 'y', note: 'No data signal — neutral' },
+        { label: 'Lope De Vega / Kodiac / Mehmas / Dark Angel / Wootton Bassett', pts: '−3', tier: 'r', note: '0 wins, weak placement in window' },
+        { label: 'Zoffany / Fast Company / Galileo Gold', pts: '−5', tier: 'r', note: 'Consistent non-performers' }
+      ]
+    },
+    {
+      label: 'Trainer', icon: '🎩',
+      bands: [
+        { label: "Charlie Appleby / A P O'Brien", pts: "+5", tier: "g", note: "Appleby 3/5 winners IV 4.33 · O'Brien consistent presence" },
+        { label: 'Andrew Balding / J S Bolger',   pts: '+3', tier: 'y', note: 'Balding 1 winner · Bolger Poetic Flare 2021' },
+        { label: 'Hugo Palmer / Richard Hannon / George Boughey', pts: '+2', tier: 'y', note: 'Know what it takes to win — previous winning trainers' },
+        { label: 'Other', pts: '0', tier: 'y', note: 'No penalty — neutral' }
+      ]
+    },
+    {
+      label: 'Jockey', icon: '🧑',
+      bands: [
+        { label: 'William Buick / James Doyle', pts: '+5', tier: 'g', note: 'Buick 2 wins IV 5.20 · Doyle 1 win IV 3.25' },
+        { label: 'Billy Loughnane / Ryan Moore / Kieran Shoemark / Sean Levey / Oisin Murphy', pts: '+2', tier: 'y', note: 'Loughnane 2026 winner · Moore/Shoemark/Murphy strong placement' },
+        { label: 'David Egan / Tom Marquand / Daniel Tudhope', pts: '−2', tier: 'r', note: '0 wins, poor PRB across window' },
+        { label: 'Other', pts: '0', tier: 'y', note: 'Neutral' }
+      ]
+    },
+    {
       label: 'Running Style', icon: '🏃',
       bands: [
         { label: 'Patient / Hold Up', pts: '+2', tier: 'g', note: '3/5 winners run patient — slight lean' },
@@ -877,13 +906,12 @@ function drawGroupFlat(draw, fs) {
 }
 
 function scoreSireGuineas(sire) {
-  var s = sire.trim();
-  if(['Dubawi','Frankel','Justify','Dawn Approach'].indexOf(s)>=0) return 8;
-  if(s==='Kingman') return 5;
+  var s = (sire||'').trim();
+  if(['Dubawi','Frankel','Justify','Dawn Approach','Kingman','Night Of Thunder'].indexOf(s)>=0) return 5;
   if(['Oasis Dream','Blue Point','Camelot','Gleneagles','Phoenix Of Spain','Olden Times','Camacho','Invincible Spirit'].indexOf(s)>=0) return 3;
   if(['Too Darn Hot','Roaring Lion','Kameko'].indexOf(s)>=0) return 2;
   if(['Lope De Vega','Kodiac','Mehmas','Dark Angel','Wootton Bassett'].indexOf(s)>=0) return -3;
-  if(['Zoffany','Fast Company','Night Of Thunder','Galileo Gold'].indexOf(s)>=0) return -5;
+  if(['Zoffany','Fast Company','Galileo Gold'].indexOf(s)>=0) return -5;
   return 0;
 }
 
@@ -897,7 +925,7 @@ var GUINEAS_CODE_MAP = {
   P13:'0 Group Wins AND RPR <110 at 2yo',
   P14:'Exposed/vulnerable (2+ completed runs finishing 4th or worse)',
   P16:'Highly-rated maiden (OR/RPR ≥114 with 0 group wins)',
-  PS:'Under-performing sire'
+  PS:'Sire penalty'
 };
 
 function scoreRunnerGuineas(r, fieldSize) {
@@ -1028,15 +1056,15 @@ function scoreRunnerGuineas(r, fieldSize) {
   else bf('Running Style', 0, 'y', 'Prominent');
 
   // Trainer / Jockey Modifiers
-  if(trainer.indexOf("A P O'Brien")>=0&&trainer.indexOf('Joseph')<0) bf('Trainer', 3, 'g', trainer);
-  else if(trainer.indexOf('Appleby')>=0||trainer.indexOf('Balding')>=0||trainer.indexOf('Bolger')>=0) bf('Trainer', 3, 'g', trainer);
-  else if(trainer.indexOf('Hugo Palmer')>=0||trainer.indexOf('Richard Hannon')>=0||trainer.indexOf('Hannon')>=0) bf('Trainer', 1, 'y', trainer);
+  if(trainer.indexOf('Appleby')>=0||(trainer.indexOf("O'Brien")>=0&&trainer.indexOf('Joseph')<0&&trainer.indexOf('Donnacha')<0)) bf('Trainer', 5, 'g', trainer);
+  else if(trainer.indexOf('Balding')>=0||trainer.indexOf('Bolger')>=0) bf('Trainer', 3, 'g', trainer);
+  else if(trainer.indexOf('Palmer')>=0||trainer.indexOf('Hannon')>=0||trainer.indexOf('Boughey')>=0) bf('Trainer', 2, 'y', trainer);
   else bf('Trainer', 0, 'y', trainer||'—');
 
   var jk = (r.jockey || '').toLowerCase();
-  if(jk.indexOf('buick')>=0||jk.indexOf('james doyle')>=0) bf('Jockey', 2, 'g', r.jockey);
-  else if(jk.indexOf('shoemark')>=0||jk.indexOf('murphy')>=0||jk.indexOf('moore')>=0||jk.indexOf('levey')>=0||jk.indexOf('crowley')>=0||jk.indexOf('foley')>=0) bf('Jockey', 1, 'y', r.jockey);
-  else if(jk.indexOf('egan')>=0||jk.indexOf('tudhope')>=0||jk.indexOf('marquand')>=0) bf('Jockey', -1, 'r', r.jockey);
+  if(jk.indexOf('buick')>=0||jk.indexOf('doyle')>=0) bf('Jockey', 5, 'g', r.jockey);
+  else if(jk.indexOf('loughnane')>=0||jk.indexOf('moore')>=0||jk.indexOf('shoemark')>=0||jk.indexOf('levey')>=0||jk.indexOf('murphy')>=0) bf('Jockey', 2, 'y', r.jockey);
+  else if(jk.indexOf('egan')>=0||jk.indexOf('marquand')>=0||jk.indexOf('tudhope')>=0) bf('Jockey', -2, 'r', r.jockey);
   else bf('Jockey', 0, 'y', r.jockey||'—');
 
   // BONUSES & PENALTIES
@@ -1062,9 +1090,12 @@ function scoreRunnerGuineas(r, fieldSize) {
   
   if(grpw===0 && !r.rpr110_2yo) { penalties['P13']=-5; penTotal-=5; }
 
-  // Sire Penalties
+  // Sire — base factor (named sire scoring, independent of SI)
   var sireScore = scoreSireGuineas(r.sire_name||'');
-  if(sireScore<0){ penalties['PS']=sireScore; penTotal+=sireScore; }
+  var sireName = (r.sire_name||'').trim() || 'Unknown';
+  if(sireScore > 0)      bf('Sire', sireScore, 'g', sireName);
+  else if(sireScore < 0) bf('Sire', sireScore, 'r', sireName);
+  else                   bf('Sire', 0,          'y', sireName || '— unlisted');
 
   var finalScore=Math.max(0,base+bonusTotal+penTotal);
   return {finalScore:finalScore,composite:finalScore,base:base,bonusTotal:bonusTotal,penTotal:penTotal,bonuses:bonuses,penalties:penalties,baseFactors:baseFactors,drawGroup:dg};
