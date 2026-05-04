@@ -568,7 +568,7 @@ var DERBY_CODE_MAP = {
 function renderNHScoreCard(out, scored, winnerAvg, top4Avg) {
   var WINNER_AVG=winnerAvg||100, TOP4_AVG=top4Avg||75;
   var isFlat = CURRENT_RACE !== 'national';
-  var maxScore = (CURRENT_RACE==='g1000') ? 60 : (CURRENT_RACE==='derby') ? 90 : 80;
+  var maxScore = (CURRENT_RACE==='g1000') ? 60 : (CURRENT_RACE==='derby') ? 75 : 80;
   var winPct=Math.round(WINNER_AVG/maxScore*100);
   var t4Pct=Math.round(TOP4_AVG/maxScore*100);
   var wrap=document.createElement('div');
