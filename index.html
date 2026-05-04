@@ -1739,50 +1739,187 @@ function renderICPFactorBarsDerby() {
   if (!grid) return;
 
   var factors = [
-    {
-      label: 'Class & Speed Power Block', icon: '⚖',
+    { label: 'Official Rating (OR)', icon: '⚖',
       bands: [
-        { label: 'OR ≥ 115 / RPR ≥ 115', pts: '+5', tier: 'g', note: 'Elite peak performance' },
-        { label: 'OR 109-114 / RPR 109-114', pts: '+3', tier: 'y', note: 'Strong class level' },
-        { label: 'Top Speed ≥ 92', pts: '+5', tier: 'g', note: 'Mandatory recorded speed' }
+        { label: '≥ 115', pts: '+5', tier: 'g', note: 'Elite peak performance' },
+        { label: '109–114', pts: '+3', tier: 'y', note: 'Strong class level' },
+        { label: '105–108', pts: '+2', tier: 'y', note: 'Competitive' },
+        { label: '≤ 104 / Unrated', pts: '0', tier: 'y', note: 'Floor' }
       ]
     },
-    {
-      label: 'Dosage Power (BPOWER)', icon: '⚗',
+    { label: 'Best RPR', icon: '📊',
       bands: [
-        { label: 'B(3-4), S(≥8), C(15-19)', pts: '+3', tier: 'g', note: 'All 3 conditions met (Desert Crown / City Of Troy)' },
-        { label: 'Meets exactly 2', pts: '+2', tier: 'y', note: 'Narrowly missed perfect profile' },
-        { label: 'Meets 0 or 1', pts: '0', tier: 'y', note: 'Protects neutral floor for chaos placers' }
+        { label: '≥ 115', pts: '+5', tier: 'g', note: 'Elite rating' },
+        { label: '109–114', pts: '+3', tier: 'y', note: 'Strong form' },
+        { label: '104–108', pts: '+2', tier: 'y', note: 'Competitive' },
+        { label: '≤ 103', pts: '0', tier: 'y', note: 'Floor' }
       ]
     },
-    {
-      label: 'Stamina Profile (C & JSI)', icon: '🧬',
+    { label: 'RPR–OR Delta', icon: '△',
       bands: [
-        { label: 'Classic Points 15-19', pts: '+3', tier: 'g', note: '12f stamina sweet spot' },
-        { label: 'JSI 20.0-21.9', pts: '+3', tier: 'g', note: 'Peak genetic stamina index' }
+        { label: 'Positive (RPR > OR)', pts: '+3', tier: 'g', note: 'Improving profile' },
+        { label: 'Level or −1', pts: '+2', tier: 'y', note: 'Stable' },
+        { label: '≤ −2 / Unrated', pts: '0', tier: 'y', note: 'Floor' }
       ]
     },
-    {
-      label: 'Exposed Stayer Protocol', icon: '🏇',
+    { label: 'Top Speed (TS)', icon: '⚡',
       bands: [
-        { label: 'Unexposed + Elite Stamina', pts: '+2', tier: 'g', note: 'Never ran 10f+ but pedigree promises stamina' },
-        { label: 'Exposed + Trial 106+', pts: '+2', tier: 'g', note: 'Ran 10f+ and posted elite trial figure' },
-        { label: 'Exposed + No Trial 106+', pts: '−2', tier: 'r', note: 'Hard penalty for exposed plodders' }
+        { label: '≥ 92', pts: '+5', tier: 'g', note: 'Mandatory recorded speed' },
+        { label: '≤ 91 (With Excuse)', pts: '+2', tier: 'y', note: 'Forgiven' },
+        { label: '≤ 91 (No Excuse)', pts: '0', tier: 'y', note: 'Floor' }
       ]
     },
-    {
-      label: 'Preparation', icon: '📅',
+    { label: 'Career Win Rate', icon: '📈',
       bands: [
-        { label: '1 Season Run', pts: '+5', tier: 'g', note: 'Targeted Peak profile' },
-        { label: 'March Foal', pts: '+5', tier: 'g', note: 'Goldilocks maturity month' }
+        { label: '≥ 60%', pts: '+3', tier: 'g', note: 'Consistent winner' },
+        { label: 'Other', pts: '0', tier: 'y', note: 'Neutral' }
       ]
     },
-    {
-      label: 'Connections', icon: '🎩',
+    { label: 'Last Run Result', icon: '🏁',
+      bands: [
+        { label: '1st or 2nd', pts: '+3', tier: 'g', note: 'Peak form arriving' },
+        { label: '3rd', pts: '0', tier: 'y', note: 'Neutral' },
+        { label: '4th+ (Win Rate ≥ 60%)', pts: '0', tier: 'y', note: 'Guineas bounce-back forgiven' },
+        { label: '4th+ (Win Rate < 60%)', pts: '−2', tier: 'r', note: 'Momentum concern' }
+      ]
+    },
+    { label: 'Group Win?', icon: '🏆',
+      bands: [
+        { label: 'Yes', pts: '+3', tier: 'g', note: 'Proven class' },
+        { label: 'No', pts: '0', tier: 'y', note: 'Floor' }
+      ]
+    },
+    { label: 'Poor Form Penalty', icon: '⚠',
+      bands: [
+        { label: '2+ runs finishing 4th+', pts: '−2', tier: 'r', note: 'Exposed/vulnerable' },
+        { label: 'Other', pts: '0', tier: 'y', note: 'Neutral' }
+      ]
+    },
+    { label: 'Trainer', icon: '🎩',
       bands: [
         { label: "A P O'Brien", pts: '+5', tier: 'g', note: 'Dominant Epsom trainer' },
         { label: 'Charlie Appleby', pts: '+3', tier: 'g', note: 'Elite operation' },
-        { label: 'Strong Jockey', pts: '+2', tier: 'y', note: 'Moore, Buick, Kingscote, etc.' }
+        { label: 'Established (Balding, Varian, Gosden, etc.)', pts: '+2', tier: 'y', note: 'Proven Classic handlers' },
+        { label: 'Other', pts: '0', tier: 'y', note: 'Neutral' }
+      ]
+    },
+    { label: 'Jockey', icon: '🧑',
+      bands: [
+        { label: 'Strong (Moore, Buick, Kingscote, etc.)', pts: '+2', tier: 'g', note: 'Elite pilot' },
+        { label: 'Other', pts: '0', tier: 'y', note: 'Neutral' }
+      ]
+    },
+    { label: 'Draw Group', icon: '🎯',
+      bands: [
+        { label: 'Low', pts: '+2', tier: 'g', note: 'Inside advantage' },
+        { label: 'Mid / High', pts: '0', tier: 'y', note: 'Neutral floor' }
+      ]
+    },
+    { label: 'Running Style x Draw', icon: '🏃',
+      bands: [
+        { label: 'Prominent + Low/Mid', pts: '+2', tier: 'g', note: 'Perfect tactical position' },
+        { label: 'Patient (Any Draw)', pts: '0', tier: 'y', note: 'Neutral floor' },
+        { label: 'Prominent + High', pts: '−2', tier: 'r', note: 'Tactical disaster' }
+      ]
+    },
+    { label: 'Sire Name', icon: '🐎',
+      bands: [
+        { label: 'Elite (Frankel, Deep Impact, Justify, etc.)', pts: '+3', tier: 'g', note: 'Royalty' },
+        { label: 'Strong (Camelot, Wootton Bassett, etc.)', pts: '+2', tier: 'y', note: 'Proven sources' },
+        { label: 'Penalty (Pivotal, Cotai Glory, etc.)', pts: '−2', tier: 'r', note: 'Speed influences' },
+        { label: 'Neutral', pts: '0', tier: 'y', note: 'Floor' }
+      ]
+    },
+    { label: 'Elite Sire (G1 123+)', icon: '🌟',
+      bands: [
+        { label: 'Yes', pts: '+2', tier: 'g', note: 'Mandatory class requirement' },
+        { label: 'No', pts: '0', tier: 'y', note: 'Chaos placer floor' }
+      ]
+    },
+    { label: 'Sire Index (SI)', icon: '🧬',
+      bands: [
+        { label: '9.9–10.9', pts: '+3', tier: 'g', note: 'Peak stamina index' },
+        { label: '≥ 11.0', pts: '+2', tier: 'y', note: 'Extreme stamina' },
+        { label: '≤ 9.8', pts: '0', tier: 'y', note: 'Floor' }
+      ]
+    },
+    { label: 'Joint Sire Index (JSI)', icon: '🧬',
+      bands: [
+        { label: '20.0–21.9', pts: '+3', tier: 'g', note: 'Derby sweet spot' },
+        { label: '18.0–19.9', pts: '+2', tier: 'y', note: 'Competitive' },
+        { label: 'Other', pts: '0', tier: 'y', note: 'Floor' }
+      ]
+    },
+    { label: 'Dosage Index (DI)', icon: '⚗',
+      bands: [
+        { label: '0.90–1.35', pts: '+3', tier: 'g', note: 'Perfect balance' },
+        { label: 'Other', pts: '0', tier: 'y', note: 'Floor' }
+      ]
+    },
+    { label: 'COD Index', icon: '⚗',
+      bands: [
+        { label: '0.00–0.30', pts: '+3', tier: 'g', note: 'Centered distribution' },
+        { label: 'Other', pts: '0', tier: 'y', note: 'Floor' }
+      ]
+    },
+    { label: 'Brilliant Points (B)', icon: '⚡',
+      bands: [
+        { label: '3–4', pts: '+3', tier: 'g', note: 'Engine room' },
+        { label: 'Other', pts: '0', tier: 'y', note: 'Floor' }
+      ]
+    },
+    { label: 'Speed Points (S)', icon: '⚡',
+      bands: [
+        { label: '≥ 8', pts: '+2', tier: 'g', note: 'Tactical speed' },
+        { label: 'Other', pts: '0', tier: 'y', note: 'Floor' }
+      ]
+    },
+    { label: 'Classic Points (C)', icon: '🐎',
+      bands: [
+        { label: '15–19', pts: '+3', tier: 'g', note: 'Stamina core' },
+        { label: 'Other', pts: '0', tier: 'y', note: 'Floor' }
+      ]
+    },
+    { label: 'BPOWER Compound', icon: '🔥',
+      bands: [
+        { label: 'Meets all 3 (B, S, C targets)', pts: '+3', tier: 'g', note: 'Perfect genetic profile' },
+        { label: 'Meets exactly 2', pts: '+2', tier: 'y', note: 'Elite candidate' },
+        { label: 'Meets 0 or 1', pts: '0', tier: 'y', note: 'Floor' }
+      ]
+    },
+    { label: 'Foal Month', icon: '📅',
+      bands: [
+        { label: 'March', pts: '+5', tier: 'g', note: 'Goldilocks month' },
+        { label: 'Jan / Feb', pts: '+3', tier: 'y', note: 'Early maturity' },
+        { label: 'April', pts: '+2', tier: 'y', note: 'Acceptable' },
+        { label: 'May+', pts: '0', tier: 'y', note: 'Floor' }
+      ]
+    },
+    { label: 'Season Runs', icon: '🏇',
+      bands: [
+        { label: '1 Run', pts: '+5', tier: 'g', note: 'Targeted Peak profile' },
+        { label: '2 Runs', pts: '+2', tier: 'y', note: 'Competitive' },
+        { label: '0 or 3+ Runs', pts: '0', tier: 'y', note: 'Floor' }
+      ]
+    },
+    { label: 'Prep Class (106+ Trial)', icon: '📈',
+      bands: [
+        { label: 'Yes (1-2-3 finish)', pts: '+3', tier: 'g', note: 'Proven prep form' },
+        { label: 'No', pts: '0', tier: 'y', note: 'Floor' }
+      ]
+    },
+    { label: 'Exposed Stayer Protocol', icon: '🛡',
+      bands: [
+        { label: 'Unexposed + Elite Pedigree', pts: '+2', tier: 'g', note: '10f+ debut with C=15-19 or JSI=20-21.9' },
+        { label: 'Exposed + Trial 106+', pts: '+2', tier: 'g', note: 'Ran 10f+ and posted elite trial figure' },
+        { label: 'Exposed + No Trial 106+', pts: '−2', tier: 'r', note: 'Hard penalty for exposed plodders' },
+        { label: 'Unexposed + Other Pedigree', pts: '0', tier: 'y', note: 'Floor' }
+      ]
+    },
+    { label: 'G1 Sire Enhancers', icon: '💎',
+      bands: [
+        { label: 'Targeted Peak (G1 Sire + 1 Run)', pts: '+2', tier: 'g', note: 'Elite sire + fresh target' },
+        { label: 'Genetic Blueprint (G1 Sire + BPOWER≥2)', pts: '+2', tier: 'g', note: 'Complete pedigree package' }
       ]
     }
   ];
