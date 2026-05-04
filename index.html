@@ -568,7 +568,7 @@ var DERBY_CODE_MAP = {
 function renderNHScoreCard(out, scored, winnerAvg, top4Avg) {
   var WINNER_AVG=winnerAvg||100, TOP4_AVG=top4Avg||75;
   var isFlat = CURRENT_RACE !== 'national';
-  var maxScore = (CURRENT_RACE==='g1000') ? 60 : (CURRENT_RACE==='derby') ? 45 : 80;
+  var maxScore = (CURRENT_RACE==='g1000') ? 60 : (CURRENT_RACE==='derby') ? 90 : 80;
   var winPct=Math.round(WINNER_AVG/maxScore*100);
   var t4Pct=Math.round(TOP4_AVG/maxScore*100);
   var wrap=document.createElement('div');
@@ -1463,7 +1463,7 @@ function runAnalysis() {
   var winnerAvg, top4Avg;
   if(CURRENT_RACE==='national')      { winnerAvg=94;  top4Avg=75; }
   else if(CURRENT_RACE==='g1000')    { winnerAvg=50;  top4Avg=35; }
-  else if(CURRENT_RACE==='derby')    { winnerAvg=25;  top4Avg=15; }
+  else if(CURRENT_RACE==='derby')    { winnerAvg=70;  top4Avg=50; }
   else                               { winnerAvg=70;  top4Avg=50; }
 
   // Winner benchmark box
@@ -1489,13 +1489,13 @@ function runAnalysis() {
       bmAvg = 'Avg: 54 · Range: 44–63 · Gold threshold: ≥50';
     } else if(CURRENT_RACE==='derby') {
       bmWinners = [
-        {year:2021, name:'Adayar',         score:22},
-        {year:2022, name:'Desert Crown',   score:40},
-        {year:2023, name:'Auguste Rodin',  score:24},
-        {year:2024, name:'City Of Troy',   score:31},
-        {year:2025, name:'Lambourn',       score:34}
+        {year:2021, name:'Adayar',         score:48},
+        {year:2022, name:'Desert Crown',   score:72},
+        {year:2023, name:'Auguste Rodin',  score:75},
+        {year:2024, name:'City Of Troy',   score:76},
+        {year:2025, name:'Lambourn',       score:70}
       ];
-      bmAvg = 'Avg: 30 · Range: 22–40 · Gold threshold: ≥25';
+      bmAvg = 'Avg: 68 · Range: 48–76 · Gold threshold: ≥70';
     }
     var bmTitle = 'Historical Winner Benchmarks (2021–2026)';
     var bmHtml = '<div class="assessment-box" style="margin-bottom:0">';
@@ -1724,7 +1724,7 @@ function renderProfile() {
     renderICPFactorBars1000G();
     renderWinnerTable();
   } else if (isDerby) {
-    if (panelHdr) panelHdr.textContent = '2021–2025 · 65 Runners · 5 Winners · Thresholds: Gold ≥25 · Grey 15–24';
+    if (panelHdr) panelHdr.textContent = '2021–2025 · 65 Runners · 5 Winners · Thresholds: Gold ≥70 · Grey 50–69';
     renderICPFactorBarsDerby();
     renderWinnerTable();
   } else {
