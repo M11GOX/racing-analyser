@@ -968,7 +968,7 @@ function scoreRunnerDerby(r, fieldSize) {
   else bf('B Points', 0, 'y', bPts);
 
   var sPts = parseInt(r.s_pts)||0;
-  if(sPts>=8) bf('S Points', 2, 'g', sPts);
+  if(sPts>=7) bf('S Points', 2, 'g', sPts);
   else bf('S Points', 0, 'y', sPts);
 
   var cPts = parseInt(r.c_pts)||0;
@@ -1778,7 +1778,7 @@ function renderICPFactorBarsDerby() {
     },
     { label: 'Speed Points (S)', icon: '⚡',
       bands: [
-        { label: '≥ 8', pts: '+2', tier: 'g', note: 'Tactical speed' },
+        { label: '≥ 7', pts: '+2', tier: 'g', note: 'Tactical speed' },
         { label: 'Other', pts: '0', tier: 'y', note: 'Floor' }
       ]
     },
