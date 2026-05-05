@@ -997,7 +997,7 @@ function scoreRunnerDerby(r, fieldSize) {
 
   var bPowerHits = 0;
   if(bPts>=3&&bPts<=4) bPowerHits++;
-  if(sPts>=8) bPowerHits++;
+  if(sPts>=7) bPowerHits++;
   if(cPts>=15&&cPts<=19) bPowerHits++;
   
   if(bPowerHits===3) { bonuses['BPED']=3; bonusTotal+=3; }
@@ -1456,8 +1456,8 @@ function renderBenchmarks() {
     winnerAvg = 70; top4Avg = 50;
     bmWinners = [
       {year:2021, name:'Adayar',         score:48},
-      {year:2022, name:'Desert Crown',   score:72},
-      {year:2023, name:'Auguste Rodin',  score:75},
+      {year:2022, name:'Desert Crown',   score:74},
+      {year:2023, name:'Auguste Rodin',  score:77},
       {year:2024, name:'City Of Troy',   score:76},
       {year:2025, name:'Lambourn',       score:70}
     ];
@@ -1493,7 +1493,7 @@ function renderNHScoreCard(out, scored, winnerAvg, top4Avg) {
   var WINNER_AVG=winnerAvg||100, TOP4_AVG=top4Avg||75;
   var isFlat = CURRENT_RACE !== 'national';
   
-  var maxScore = (CURRENT_RACE==='g1000') ? 60 : (CURRENT_RACE==='derby') ? 90 : 80;
+  var maxScore = (CURRENT_RACE==='g1000') ? 60 : (CURRENT_RACE==='derby') ? 80 : 80;
   
   var winPct=Math.round(WINNER_AVG/maxScore*100);
   var t4Pct=Math.round(TOP4_AVG/maxScore*100);
