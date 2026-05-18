@@ -319,6 +319,7 @@ textarea{resize:vertical;min-height:52px}
       <!-- DERBY ONLY TRIP PROFILE -->
       <div class="fg derby-only" style="display:none"><label>Has Ran at 10f+?</label><select id="f-ran10f"><option value="no">No</option><option value="yes">Yes</option></select></div>
       <div class="fg derby-only" style="display:none"><label>106+ RPR in Trial 1-2-3?</label><select id="f-trial106"><option value="no">No</option><option value="yes">Yes</option></select></div>
+      <div class="fg derby-only" style="display:none"><label>Stride Match</label><select id="f-stride-tier"><option value="not_assessed">Not Assessed</option><option value="perfect">Perfect</option><option value="strong">Strong</option><option value="acceptable">Acceptable</option><option value="poor">Poor</option></select></div>
     </div>
     <div class="fg" style="margin-top:12px"><label>Notes (optional)</label><textarea id="f-notes" placeholder="Course form, fitness, jockey booking context, going preferences..."></textarea></div>
     <div class="fa">
@@ -431,11 +432,11 @@ var G1000_WINNERS = [
 ];
 
 var DERBY_WINNERS = [
-  {year:2021,winner:'Adayar',        bred:'IRE',draw:1, drawGrp:'Low', style:'PROMINENT',trainer:'Charlie Appleby',  jockey:'Adam Kirby',         sp:'16/1', or:107,form:'41-22',   lastRun:'2nd',grpWin:'no',si:10.5,dsi:9.6,jsi:20.1,di:0.58,cod:-0.30,field:11,rpr:112,ts:95, foal:'March', ran10f:true, trial106:true},
-  {year:2022,winner:'Desert Crown',  bred:'GB', draw:12,drawGrp:'High',style:'PATIENT',  trainer:'Sir Michael Stoute',jockey:'Richard Kingscote', sp:'5/2',  or:117,form:'1-1',     lastRun:'1st',grpWin:'yes',si:12.3,dsi:7.8,jsi:20.1,di:1.00,cod:0.13,field:17,rpr:120,ts:102,foal:'March', ran10f:true, trial106:true},
-  {year:2023,winner:'Auguste Rodin', bred:'IRE',draw:10,drawGrp:'High',style:'PATIENT',  trainer:"A P O'Brien",      jockey:'Ryan Moore',         sp:'9/2',  or:117,form:'2111-0',  lastRun:'0',  grpWin:'yes',si:10.6,dsi:11.3,jsi:21.9,di:0.94,cod:0.07,field:14,rpr:118,ts:94, foal:'January', ran10f:false,trial106:true},
-  {year:2024,winner:'City Of Troy',  bred:'USA',draw:1, drawGrp:'Low', style:'PATIENT',  trainer:"A P O'Brien",      jockey:'Ryan Moore',         sp:'3/1',  or:124,form:'111-9',   lastRun:'9th',grpWin:'yes',si:9.9,dsi:11.3,jsi:21.2,di:1.21,cod:0.19,field:16,rpr:123,ts:102,foal:'March', ran10f:false,trial106:false},
-  {year:2025,winner:'Lambourn',      bred:'IRE',draw:10,drawGrp:'Mid', style:'PROMINENT',trainer:"A P O'Brien",      jockey:'Wayne Lordan',       sp:'13/2', or:109,form:'115-21',  lastRun:'1st',grpWin:'yes',si:11.2,dsi:7.3,jsi:18.5,di:1.34,cod:0.26,field:18,rpr:109,ts:92, foal:'April', ran10f:true, trial106:true},
+  {year:2021,winner:'Adayar',        bred:'IRE',draw:1, drawGrp:'Low', style:'PROMINENT',trainer:'Charlie Appleby',  jockey:'Adam Kirby',         sp:'16/1', or:107,form:'41-22',   lastRun:'2nd',grpWin:'no',si:10.5,dsi:9.6,jsi:20.1,di:0.58,cod:-0.30,field:11,rpr:112,ts:95, foal:'March', ran10f:true, trial106:true, strideTier:'strong'},
+  {year:2022,winner:'Desert Crown',  bred:'GB', draw:12,drawGrp:'High',style:'PATIENT',  trainer:'Sir Michael Stoute',jockey:'Richard Kingscote', sp:'5/2',  or:117,form:'1-1',     lastRun:'1st',grpWin:'yes',si:12.3,dsi:7.8,jsi:20.1,di:1.00,cod:0.13,field:17,rpr:120,ts:102,foal:'March', ran10f:true, trial106:true, strideTier:'strong'},
+  {year:2023,winner:'Auguste Rodin', bred:'IRE',draw:10,drawGrp:'High',style:'PATIENT',  trainer:"A P O'Brien",      jockey:'Ryan Moore',         sp:'9/2',  or:117,form:'2111-0',  lastRun:'0',  grpWin:'yes',si:10.6,dsi:11.3,jsi:21.9,di:0.94,cod:0.07,field:14,rpr:118,ts:94, foal:'January', ran10f:false,trial106:true, strideTier:'perfect'},
+  {year:2024,winner:'City Of Troy',  bred:'USA',draw:1, drawGrp:'Low', style:'PATIENT',  trainer:"A P O'Brien",      jockey:'Ryan Moore',         sp:'3/1',  or:124,form:'111-9',   lastRun:'9th',grpWin:'yes',si:9.9,dsi:11.3,jsi:21.2,di:1.21,cod:0.19,field:16,rpr:123,ts:102,foal:'March', ran10f:false,trial106:false, strideTier:'perfect'},
+  {year:2025,winner:'Lambourn',      bred:'IRE',draw:10,drawGrp:'Mid', style:'PROMINENT',trainer:"A P O'Brien",      jockey:'Wayne Lordan',       sp:'13/2', or:109,form:'115-21',  lastRun:'1st',grpWin:'yes',si:11.2,dsi:7.3,jsi:18.5,di:1.34,cod:0.26,field:18,rpr:109,ts:92, foal:'April', ran10f:true, trial106:true, strideTier:'perfect'},
 ];
 
 var GN_WINNERS = [
@@ -995,6 +996,13 @@ function scoreRunnerDerby(r, fieldSize) {
   if(r.trial106) bf('Prep Class (106+ Trial)', 3, 'g', 'Yes');
   else bf('Prep Class (106+ Trial)', 0, 'y', 'No');
 
+  var strideTier = r.stride_tier || 'not_assessed';
+  if(strideTier==='perfect') bf('Stride Match', 5, 'g', 'Perfect');
+  else if(strideTier==='strong') bf('Stride Match', 2, 'g', 'Strong');
+  else if(strideTier==='acceptable') bf('Stride Match', 0, 'y', 'Acceptable');
+  else if(strideTier==='poor') bf('Stride Match', -2, 'r', 'Poor');
+  else bf('Stride Match', 0, 'y', 'Not Assessed');
+
   var bPowerHits = 0;
   if(bPts>=3&&bPts<=4) bPowerHits++;
   if(sPts>=7) bPowerHits++;
@@ -1082,6 +1090,7 @@ function addRunner() {
     c_pts:parseInt((document.getElementById('f-c-pts')||{}).value)||0,
     ran10f:((document.getElementById('f-ran10f')||{value:'no'}).value==='yes'),
     trial106:((document.getElementById('f-trial106')||{value:'no'}).value==='yes'),
+    stride_tier:(document.getElementById('f-stride-tier')||{value:'not_assessed'}).value||'not_assessed',
   };
   if (editIdx>=0) { runners[editIdx]=runner; editIdx=-1; document.getElementById('form-title').textContent='Add Runner'; }
   else runners.push(runner);
@@ -1139,6 +1148,7 @@ function editRunner(i) {
   var cpEl=document.getElementById('f-c-pts'); if(cpEl) cpEl.value=r.c_pts||'';
   var ran10fEl=document.getElementById('f-ran10f'); if(ran10fEl) ran10fEl.value=r.ran10f?'yes':'no';
   var t106El=document.getElementById('f-trial106'); if(t106El) t106El.value=r.trial106?'yes':'no';
+  var stEl=document.getElementById('f-stride-tier'); if(stEl) stEl.value=r.stride_tier||'not_assessed';
 
   editIdx=i; document.getElementById('form-title').textContent='Edit — '+r.name;
   document.getElementById('runner-form').scrollIntoView({behavior:'smooth'});
@@ -1165,6 +1175,7 @@ function clearForm() {
   var p110=document.getElementById('f-rpr110-2yo'); if(p110) p110.value='N';
   var ran10=document.getElementById('f-ran10f'); if(ran10) ran10.value='no';
   var tri106=document.getElementById('f-trial106'); if(tri106) tri106.value='no';
+  var stTier=document.getElementById('f-stride-tier'); if(stTier) stTier.value='not_assessed';
 
   editIdx=-1; document.getElementById('form-title').textContent='Add Runner';
 }
@@ -1305,7 +1316,15 @@ function runImport() {
       s_pts: parseInt(d.s_pts)||0,
       c_pts: parseInt(d.c_pts)||0,
       ran10f: !!d.ran10f,
-      trial106: !!d.trial106
+      trial106: !!d.trial106,
+      stride_tier: (function(v){
+        if(!v) return 'not_assessed';
+        var s=String(v).toLowerCase().replace(/\s+match$/,'').replace(/\s+/g,'_');
+        // Remap legacy 5-tier values to new 4-tier scheme
+        if(s==='close' || s==='fringe') s='acceptable';
+        if(['perfect','strong','acceptable','poor','not_assessed'].indexOf(s)>=0) return s;
+        return 'not_assessed';
+      })(d.stride_tier)
     });
   });
   renderRunners();
@@ -1453,15 +1472,15 @@ function renderBenchmarks() {
     bmAvg = 'Avg: 54 · Range: 44–63 · Gold threshold: ≥50';
     bmTitle = 'Historical Winner Benchmarks (2022–2026)';
   } else if (CURRENT_RACE === 'derby') {
-    winnerAvg = 70; top4Avg = 50;
+    winnerAvg = 75; top4Avg = 50;
     bmWinners = [
-      {year:2021, name:'Adayar',         score:48},
-      {year:2022, name:'Desert Crown',   score:74},
-      {year:2023, name:'Auguste Rodin',  score:77},
-      {year:2024, name:'City Of Troy',   score:76},
-      {year:2025, name:'Lambourn',       score:70}
+      {year:2021, name:'Adayar',         score:50},
+      {year:2022, name:'Desert Crown',   score:76},
+      {year:2023, name:'Auguste Rodin',  score:82},
+      {year:2024, name:'City Of Troy',   score:81},
+      {year:2025, name:'Lambourn',       score:75}
     ];
-    bmAvg = 'Avg: 68 · Range: 48–76 · Gold threshold: ≥70';
+    bmAvg = 'Avg: 73 · Range: 50–82 · Gold threshold: ≥75';
     bmTitle = 'Historical Winner Benchmarks (2021–2025)';
   }
 
@@ -1493,7 +1512,7 @@ function renderNHScoreCard(out, scored, winnerAvg, top4Avg) {
   var WINNER_AVG=winnerAvg||100, TOP4_AVG=top4Avg||75;
   var isFlat = CURRENT_RACE !== 'national';
   
-  var maxScore = (CURRENT_RACE==='g1000') ? 60 : (CURRENT_RACE==='derby') ? 80 : 80;
+  var maxScore = (CURRENT_RACE==='g1000') ? 60 : (CURRENT_RACE==='derby') ? 90 : 80;
   
   var winPct=Math.round(WINNER_AVG/maxScore*100);
   var t4Pct=Math.round(TOP4_AVG/maxScore*100);
@@ -1828,6 +1847,14 @@ function renderICPFactorBarsDerby() {
       bands: [
         { label: 'Targeted Peak (G1 Sire + 1 Run)', pts: '+2', tier: 'g', note: 'Elite sire + fresh target' },
         { label: 'Genetic Blueprint (G1 Sire + BPOWER≥2)', pts: '+2', tier: 'g', note: 'Complete pedigree package' }
+      ]
+    },
+    { label: 'Stride Match', icon: '🏃',
+      bands: [
+        { label: 'Perfect', pts: '+5', tier: 'g', note: '5/12 winners (12y) — 3/5 recent winners — IV 6.00' },
+        { label: 'Strong', pts: '+2', tier: 'g', note: '7/12 winners (12y) — 27% T4 rate (2023-25)' },
+        { label: 'Acceptable', pts: '0', tier: 'y', note: '0/12 winners — 0/5 T4 (2023-25) — true void' },
+        { label: 'Poor', pts: '−2', tier: 'r', note: '0/12 winners — 1/13 T4 (2023-25)' }
       ]
     }
   ];
@@ -2227,8 +2254,10 @@ function renderWinnerTable() {
   var wArr = CURRENT_RACE === 'g1000' ? G1000_WINNERS : (isDerby ? DERBY_WINNERS : WINNERS);
   
   if (isDerby) {
-    thead.innerHTML = '<tr><th>Year</th><th>Winner</th><th>Bred</th><th>Draw</th><th>OR</th><th>Ran 10f+</th><th>Grp Win</th><th>SP</th><th>Form</th><th>Field</th></tr>';
+    thead.innerHTML = '<tr><th>Year</th><th>Winner</th><th>Bred</th><th>Draw</th><th>OR</th><th>Ran 10f+</th><th>Grp Win</th><th>Stride</th><th>SP</th><th>Form</th><th>Field</th></tr>';
     tbody.innerHTML = wArr.map(function(w) {
+      var stMap={perfect:'Perfect',strong:'Strong',acceptable:'Acceptable',poor:'Poor'};
+      var stLabel = stMap[w.strideTier] || '-';
       return '<tr>'+
         '<td>'+w.year+'</td>'+
         '<td style="font-weight:600">'+w.winner+'</td>'+
@@ -2237,6 +2266,7 @@ function renderWinnerTable() {
         '<td>'+(w.or||'-')+'</td>'+
         '<td>'+(w.ran10f?'Yes':'No')+'</td>'+
         '<td>'+(w.grpWin==='yes'||w.grpWin===true?'Yes':'No')+'</td>'+
+        '<td>'+stLabel+'</td>'+
         '<td>'+w.sp+'</td>'+
         '<td style="font-family:IBM Plex Mono,monospace">'+w.form+'</td>'+
         '<td>'+(w.field||'-')+'</td>'+
