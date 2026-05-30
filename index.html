@@ -1679,7 +1679,7 @@ function renderBenchmarks() {
     bmAvg = 'Avg: 73 · Range: 50–82 · Gold threshold: ≥75';
     bmTitle = 'Historical Winner Benchmarks (2021–2025)';
   } else if (CURRENT_RACE === 'oaks') {
-    winnerAvg = 65; top4Avg = 45;
+    winnerAvg = 65; top4Avg = 50;
     bmWinners = [
       {year:2021, name:'Snowfall',     score:73},
       {year:2022, name:'Tuesday',      score:55},
@@ -1840,7 +1840,7 @@ function runAnalysis() {
   if(CURRENT_RACE==='national')      { winnerAvg=94;  top4Avg=75; }
   else if(CURRENT_RACE==='g1000')    { winnerAvg=50;  top4Avg=35; }
   else if(CURRENT_RACE==='derby')    { winnerAvg=70;  top4Avg=50; }
-  else if(CURRENT_RACE==='oaks')     { winnerAvg=65;  top4Avg=45; }
+  else if(CURRENT_RACE==='oaks')     { winnerAvg=65;  top4Avg=50; }
   else                               { winnerAvg=70;  top4Avg=50; }
 
   renderNHScoreCard(out, scored, winnerAvg, top4Avg);
