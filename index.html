@@ -1722,7 +1722,7 @@ function renderNHScoreCard(out, scored, winnerAvg, top4Avg) {
   var WINNER_AVG=winnerAvg||100, TOP4_AVG=top4Avg||75;
   var isFlat = CURRENT_RACE !== 'national';
   
-  var maxScore = (CURRENT_RACE==='g1000') ? 60 : (CURRENT_RACE==='derby') ? 90 : (CURRENT_RACE==='oaks') ? 80 : 80;
+  var maxScore = (CURRENT_RACE==='g1000') ? 60 : (CURRENT_RACE==='derby') ? 90 : (CURRENT_RACE==='oaks') ? 80 : (CURRENT_RACE==='guineas') ? 70 : 80;
   
   var winPct=Math.round(WINNER_AVG/maxScore*100);
   var t4Pct=Math.round(TOP4_AVG/maxScore*100);
