@@ -1649,7 +1649,7 @@ function renderBenchmarks() {
     bmAvg = 'Avg: 94 · Range: 76–105 · Gold threshold: ≥94';
     bmTitle = 'Historical Winner Benchmarks (2022–2026)';
   } else if (CURRENT_RACE === 'guineas') {
-    winnerAvg = 70; top4Avg = 50;
+    winnerAvg = 65; top4Avg = 50;
     bmWinners = [
       {year:2022, name:'Coroebus',       score:81},
       {year:2023, name:'Chaldean',       score:62},
@@ -1657,7 +1657,7 @@ function renderBenchmarks() {
       {year:2025, name:'Ruling Court',   score:77},
       {year:2026, name:'Bow Echo',       score:65}
     ];
-    bmAvg = 'Avg: 73 · Range: 62–81 · Gold threshold: ≥70';
+    bmAvg = 'Avg: 73 · Range: 62–81 · Gold threshold: ≥65';
     bmTitle = 'Historical Winner Benchmarks (2022–2026)';
   } else if (CURRENT_RACE === 'g1000') {
     winnerAvg = 50; top4Avg = 35;
@@ -1844,6 +1844,7 @@ function runAnalysis() {
   else if(CURRENT_RACE==='g1000')    { winnerAvg=50;  top4Avg=35; }
   else if(CURRENT_RACE==='derby')    { winnerAvg=70;  top4Avg=50; }
   else if(CURRENT_RACE==='oaks')     { winnerAvg=65;  top4Avg=50; }
+  else if(CURRENT_RACE==='guineas')  { winnerAvg=65;  top4Avg=50; }
   else                               { winnerAvg=70;  top4Avg=50; }
 
   renderNHScoreCard(out, scored, winnerAvg, top4Avg);
@@ -1871,7 +1872,7 @@ function renderProfile() {
     renderICPFactorBarsOaks();
     renderWinnerTable();
   } else {
-    if (panelHdr) panelHdr.textContent = '2022–2026 · 65 Runners · 5 Winners · Thresholds: Gold ≥70 · Grey 50–69';
+    if (panelHdr) panelHdr.textContent = '2022–2026 · 65 Runners · 5 Winners · Thresholds: Gold ≥65 · Grey 50–64';
     renderICPFactorBarsGuineas();
     renderWinnerTable();
   }
