@@ -1595,6 +1595,9 @@ function selectRace(raceId) {
   } else if (raceId === 'derby') {
     document.getElementById('hdr-race-name').textContent = 'The Derby';
     document.getElementById('hdr-race-sub').textContent = 'Epsom · 1m 4f · 3yo Colts & Fillies · Group 1 · 2011–2025 · 15 winners';
+  } else if (raceId === 'oaks') {
+    document.getElementById('hdr-race-name').textContent = 'The Oaks';
+    document.getElementById('hdr-race-sub').textContent = 'Epsom · 1m 4f · 3yo Fillies · Group 1 · 2021–2025 · 5 winners';
   }
 
   document.querySelectorAll('.flat-only').forEach(function(el){el.style.display=isNH?'none':'flex';});
@@ -1850,6 +1853,7 @@ function renderProfile() {
   var isNH = CURRENT_RACE==='national';
   var is1000 = CURRENT_RACE==='g1000';
   var isDerby = CURRENT_RACE==='derby';
+  var isOaks = CURRENT_RACE==='oaks';
   var panelHdr = document.querySelector('#panel-profile .panel-title');
   
   if (isNH) {
@@ -1861,6 +1865,10 @@ function renderProfile() {
   } else if (isDerby) {
     if (panelHdr) panelHdr.textContent = '2021–2025 · 65 Runners · 5 Winners · Thresholds: Gold ≥70 · Grey 50–69';
     renderICPFactorBarsDerby();
+    renderWinnerTable();
+  } else if (isOaks) {
+    if (panelHdr) panelHdr.textContent = '2021–2025 · 55 Runners · 5 Winners · Thresholds: Gold ≥65 · Grey 50–64';
+    renderICPFactorBarsOaks();
     renderWinnerTable();
   } else {
     if (panelHdr) panelHdr.textContent = '2022–2026 · 65 Runners · 5 Winners · Thresholds: Gold ≥70 · Grey 50–69';
@@ -2077,6 +2085,213 @@ function renderICPFactorBarsDerby() {
           + '<span style="font-size:14px">' + f.icon + '</span>'
           + '<span>' + f.label + '</span></div>';
 
+    f.bands.forEach(function(b) {
+      var col = tierColor[b.tier] || 'var(--mid)';
+      var bg  = tierBg[b.tier]  || 'transparent';
+      html += '<div style="display:flex;align-items:flex-start;gap:8px;padding:5px 7px;border-radius:4px;background:' + bg + ';margin-bottom:3px">'
+            + '<div style="min-width:60px;font-family:IBM Plex Mono,monospace;font-size:9px;color:' + col + ';font-weight:700;padding-top:1px">' + b.pts + '</div>'
+            + '<div style="flex:1">'
+            +   '<div style="font-family:IBM Plex Sans,sans-serif;font-size:11px;font-weight:500;color:var(--ink)">' + b.label + '</div>'
+            +   '<div style="font-family:IBM Plex Mono,monospace;font-size:9px;color:var(--mid);margin-top:1px">' + b.note + '</div>'
+            + '</div>'
+            + '<div style="font-size:9px;color:' + col + ';margin-top:2px">' + (b.tier==='g'?'🟢':b.tier==='y'?'🟡':'🔴') + '</div>'
+            + '</div>';
+    });
+    html += '</div>';
+  });
+
+  grid.innerHTML = html;
+}
+
+function renderICPFactorBarsOaks() {
+  var grid = document.getElementById('icp-grid');
+  if (!grid) return;
+
+  var factors = [
+    { label: 'Official Rating (OR)', icon: '⚖',
+      bands: [
+        { label: '≥ 108', pts: '+5', tier: 'g', note: '3 winners (Snowfall, Tuesday, Soul Sister) — IV 2.75' },
+        { label: '100–107', pts: '+2', tier: 'y', note: '2 winners (Ezeliya, Minnie Hauk) — IV 1.10' },
+        { label: '≤ 99 / Unrated', pts: '0', tier: 'y', note: '0 winners across 18 horses' }
+      ]
+    },
+    { label: 'Best RPR', icon: '📊',
+      bands: [
+        { label: '≥ 109', pts: '+5', tier: 'g', note: '3 winners — IV 2.54 — 38.5% T2 rate' },
+        { label: '103–108', pts: '+2', tier: 'y', note: '1 winner (Ezeliya) — IV 0.85 but 38.5% T4' },
+        { label: '≤ 102 / Unrated', pts: '0', tier: 'y', note: 'Win signal collapses below 102' }
+      ]
+    },
+    { label: 'RPR–OR Delta', icon: '△',
+      bands: [
+        { label: 'Positive (≥ +1)', pts: '+3', tier: 'g', note: '2 winners — IV 0.92 but T2 rate 20.8%' },
+        { label: '−1 to 0', pts: '+2', tier: 'y', note: '2 winners — IV 1.38 — handicapper has horse pegged' },
+        { label: '≤ −2 / Unrated', pts: '0', tier: 'y', note: '1 winner (Ezeliya) — IV 0.92, at baseline' }
+      ]
+    },
+    { label: 'Top Speed (TS)', icon: '⚡',
+      bands: [
+        { label: '≥ 92', pts: '+3', tier: 'g', note: '67% T4 rate — Tuesday alone here' },
+        { label: '≤ 91 (With Excuse)', pts: '+2', tier: 'y', note: 'IV 1.57 — Soul Sister band (soft/limited/aw)' },
+        { label: '≤ 91 (No Excuse)', pts: '0', tier: 'y', note: 'Floor — many winners have low TS from slow trials' }
+      ]
+    },
+    { label: 'Sire Index (SI)', icon: '🧬',
+      bands: [
+        { label: '10.0–10.9', pts: '+5', tier: 'g', note: '3 winners — IV 2.54 — speed/stamina balance' },
+        { label: '≥ 11.0', pts: '+2', tier: 'y', note: '1 winner (Tuesday) — pure stamina, places more than wins' },
+        { label: '9.0–9.9', pts: '+2', tier: 'y', note: '1 winner (Ezeliya) — at baseline but real' },
+        { label: '< 9.0', pts: '−2', tier: 'r', note: '0 winners across 9 horses — speed-biased void' }
+      ]
+    },
+    { label: 'Named Sire', icon: '👑',
+      bands: [
+        { label: 'Frankel, Dubawi', pts: '+5', tier: 'g', note: 'Active elite — 3 of 5 winners — IV 2.75' },
+        { label: 'Sea The Stars', pts: '+2', tier: 'y', note: 'Active stamina classic sire — T4 50%' },
+        { label: 'All Others', pts: '0', tier: 'y', note: 'Floor — pedigree void caught by SI' }
+      ]
+    },
+    { label: 'Dosage Index (DI)', icon: '🔬',
+      bands: [
+        { label: '≤ 0.70', pts: '+5', tier: 'g', note: '4 winners — IV 3.38 — dominant stamina sweet spot' },
+        { label: '0.71–1.20', pts: '0', tier: 'y', note: '1 winner (Minnie Hauk 0.76) — baseline' },
+        { label: '> 1.20', pts: '−2', tier: 'r', note: '14 horses, 0 wins, IV(T2) 0.39 — speed-biased void' }
+      ]
+    },
+    { label: 'Centre of Distribution (COD)', icon: '⚖',
+      bands: [
+        { label: '≤ −0.15', pts: '+5', tier: 'g', note: '3 winners — IV 2.75 — extreme stamina distribution' },
+        { label: '−0.14 to −0.06', pts: '+2', tier: 'y', note: '2 winners (Snowfall, Minnie Hauk) — IV 1.47' },
+        { label: '−0.05 to 0.20', pts: '0', tier: 'y', note: '0 wins — strong placing, no winning signal' },
+        { label: '> 0.20', pts: '−2', tier: 'r', note: '12 horses, 0 T2 — cleanest void' }
+      ]
+    },
+    { label: 'Jockey Sire Index (JSI)', icon: '🎯',
+      bands: [
+        { label: '20.0–21.9', pts: '+5', tier: 'g', note: '4 winners — IV 2.00 — dominant sweet spot' },
+        { label: '18.0–19.9', pts: '+2', tier: 'y', note: '1 winner (Tuesday) — directional positive' },
+        { label: '< 18.0', pts: '0', tier: 'y', note: '0 wins, T4 37.5% — neutral' },
+        { label: '≥ 22.0', pts: '−2', tier: 'r', note: '5 runners — zero wins, zero T4 — clean void' }
+      ]
+    },
+    { label: 'B Points (Brilliant)', icon: '⚡',
+      bands: [
+        { label: '1', pts: '+2', tier: 'g', note: '3 winners — IV 1.57, AE 1.34 — modal modern band' },
+        { label: '2–6', pts: '0', tier: 'y', note: 'Floor — neutral' },
+        { label: '0 or 7', pts: '−2', tier: 'r', note: 'Extremes — too little or too much brilliance' }
+      ]
+    },
+    { label: 'S Points (Stamina)', icon: '🏔',
+      bands: [
+        { label: '3–5', pts: '+3', tier: 'g', note: '4 winners — IV 1.83, AE 1.85 — clearest S signal' },
+        { label: 'Other', pts: '0', tier: 'y', note: 'Both extremes weak; central not strong enough' }
+      ]
+    },
+    { label: 'C Points (Classic)', icon: '🏛',
+      bands: [
+        { label: '11–13', pts: '+5', tier: 'g', note: '3 winners — IV 2.36, AE 2.39 — strongest dosage signal' },
+        { label: '6–10', pts: '0', tier: 'y', note: 'At baseline — Ezeliya zone' },
+        { label: '14–18', pts: '0', tier: 'y', note: 'Tuesday band — neutral despite slight AE 0.62' },
+        { label: '≤ 5 or ≥ 19', pts: '−2', tier: 'r', note: 'N=15, 0 wins — bimodal extremes void' }
+      ]
+    },
+    { label: 'Last Run Result', icon: '🏁',
+      bands: [
+        { label: '1st', pts: '+5', tier: 'g', note: '4 winners off a last-run win — IV 2.00' },
+        { label: '2nd', pts: '+3', tier: 'g', note: 'Tuesday — AE 2.21 — trial runner-up profile' },
+        { label: '≥ 3rd', pts: '0', tier: 'y', note: 'Floor — including 5th+ for symmetry' }
+      ]
+    },
+    { label: 'Career Win Rate', icon: '📈',
+      bands: [
+        { label: '≥ 66%', pts: '+2', tier: 'g', note: '3 winners at 67% — IV 2.36, AE 1.22' },
+        { label: '33–65%', pts: '0', tier: 'y', note: '2 winners — baseline' },
+        { label: '< 33%', pts: '−2', tier: 'r', note: 'PRB 0.352 — sub-1-in-3 winners rarely show' }
+      ]
+    },
+    { label: 'Group Win?', icon: '🏆',
+      bands: [
+        { label: 'Yes', pts: '+5', tier: 'g', note: '3 winners — IV 1.94, AE 1.32, T4 64.7%' },
+        { label: 'No', pts: '0', tier: 'y', note: 'Tuesday & Minnie Hauk — absence not penalty' }
+      ]
+    },
+    { label: 'Trip & Trial Composite', icon: '🛣',
+      bands: [
+        { label: '10f+ & Trial Y', pts: '+5', tier: 'g', note: '4 winners — standard winner profile' },
+        { label: '10f+ N & Trial Y', pts: '+3', tier: 'g', note: 'Tuesday — miler stepping up via 1000G route' },
+        { label: '10f+ N & Trial N', pts: '0', tier: 'y', note: 'N=1 — neutral (Santa Barbara only)' },
+        { label: '10f+ Y & Trial N', pts: '−2', tier: 'r', note: '19 horses, 0 wins, 0 T2 — exposed plodders' }
+      ]
+    },
+    { label: 'Foal Month', icon: '🌱',
+      bands: [
+        { label: 'January–March', pts: '+2', tier: 'g', note: '3 winners — early foals have residual maturity edge' },
+        { label: 'April', pts: '0', tier: 'y', note: 'Minnie Hauk — T2 5.6% but contains a winner' },
+        { label: 'May / June+', pts: '0', tier: 'y', note: 'Tuesday (June+) — small N, neutral' }
+      ]
+    },
+    { label: 'Draw Position', icon: '🚪',
+      bands: [
+        { label: 'Low', pts: '+3', tier: 'g', note: '2 winners (Tuesday, Minnie Hauk) — IV 1.69, AE 1.47' },
+        { label: 'High', pts: '+2', tier: 'g', note: '2 winners (Snowfall, Soul Sister) — T4 40.9%' },
+        { label: 'Mid', pts: '0', tier: 'y', note: 'Ezeliya — AE 0.46 but contains a winner' }
+      ]
+    },
+    { label: 'Running Style × Draw', icon: '🐎',
+      bands: [
+        { label: 'Patient (Any Draw)', pts: '+2', tier: 'g', note: '3 winners — IV 1.22, AE 1.26 — Epsom-suited tactics' },
+        { label: 'Prominent + Low Draw', pts: '+2', tier: 'g', note: 'Minnie Hauk — AE 1.36 — rail-saved prominent' },
+        { label: 'Prominent + Mid/High', pts: '0', tier: 'y', note: 'Soul Sister exception — most fail (AE 0.56)' }
+      ]
+    },
+    { label: 'Trainer', icon: '🎓',
+      bands: [
+        { label: "A P O'Brien", pts: '+5', tier: 'g', note: '3 of 5 recent winners — IV 2.06, AE 1.42' },
+        { label: 'Gosden', pts: '+3', tier: 'g', note: 'Soul Sister — PRB 0.675 highest of any trainer' },
+        { label: 'Appleby, Weld, Beckett, Haggas, Dunlop, J O\'Brien', pts: '+2', tier: 'g', note: 'Elite operations with classic-fillies pedigree' },
+        { label: 'All Others', pts: '0', tier: 'y', note: 'No reliable independent signal' }
+      ]
+    },
+    { label: 'Jockey', icon: '🏇',
+      bands: [
+        { label: 'Ryan Moore', pts: '+5', tier: 'g', note: '2 winners — IV 4.40, AE 1.43 — Coolmore #1' },
+        { label: 'Buick, Doyle, Murphy, Marquand, Keane, Hayes, Crowley', pts: '+2', tier: 'g', note: 'Elite active Group 1 jockeys' },
+        { label: 'All Others', pts: '0', tier: 'y', note: 'Floor' }
+      ]
+    },
+    { label: 'Stride Match', icon: '🏃',
+      bands: [
+        { label: 'Perfect', pts: '+5', tier: 'g', note: '3 winners — PRB 0.735, IV 4.71, AE 2.47' },
+        { label: 'Strong', pts: '+2', tier: 'g', note: '2 winners (Snowfall, Tuesday) — AE 3.62, T4 75%' },
+        { label: 'Acceptable', pts: '0', tier: 'y', note: 'N=13, 0 wins — neutral floor' },
+        { label: 'Poor', pts: '−2', tier: 'r', note: 'N=4, 0 wins, 0 T2 — clean void' }
+      ]
+    },
+    { label: 'Season Runs', icon: '📅',
+      bands: [
+        { label: '1 Run', pts: '+2', tier: 'g', note: '3 winners fresh — IV 1.22, AE 1.16' },
+        { label: '≥ 2 Runs', pts: '0', tier: 'y', note: 'Floor — conservative pending more samples' }
+      ]
+    },
+    { label: 'FFC Compound Bonus', icon: '💫',
+      bands: [
+        { label: 'G1 Sire + SR=1 + Group Win', pts: '+3', tier: 'g', note: 'Super-additive — PRB 0.790, IV 3.14 — fresh elite' }
+      ]
+    },
+    { label: 'CF Compound Bonus', icon: '✨',
+      bands: [
+        { label: 'Stride Perfect/Strong + COD ≤ −0.06', pts: '+2', tier: 'g', note: 'Catches all 5 winners — IV 6.88, AE 5.57' }
+      ]
+    }
+  ];
+
+  var tierColor = { g: 'var(--green)', y: 'var(--amber)', r: 'var(--red)' };
+  var tierBg    = { g: 'rgba(26,92,46,.08)', y: 'rgba(133,100,4,.07)', r: 'rgba(139,26,26,.07)' };
+
+  var html = '';
+  factors.forEach(function(f) {
+    html += '<div class="icp-card">';
+    html += '<div class="icp-label" style="display:flex;align-items:center;gap:6px;margin-bottom:8px"><span style="font-size:14px">' + f.icon + '</span><span>' + f.label + '</span></div>';
     f.bands.forEach(function(b) {
       var col = tierColor[b.tier] || 'var(--mid)';
       var bg  = tierBg[b.tier]  || 'transparent';
