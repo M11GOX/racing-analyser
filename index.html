@@ -441,11 +441,11 @@ var DERBY_WINNERS = [
 ];
 
 var OAKS_WINNERS = [
-  {year:2021,winner:'Snowfall',    bred:'JPN',draw:12,drawGrp:'High',style:'PATIENT',  trainer:"A P O'Brien",       jockey:'Frankie Dettori', sp:'11/2', or:108,form:'14598-1', lastRun:'1st',grpWin:'yes',si:10.6,dsi:11.3,jsi:21.9,di:0.66,cod:-0.08,field:14,rpr:109,ts:79, foal:'February',ran10f:true, trial:true, strideTier:'strong', seasonRuns:1, bPts:3,sPts:3,cPts:13, g1sire:true},
-  {year:2022,winner:'Tuesday',     bred:'IRE',draw:1, drawGrp:'Low', style:'PATIENT',  trainer:"A P O'Brien",       jockey:'Ryan Moore',      sp:'13/2', or:109,form:'2-132',   lastRun:'2nd',grpWin:'no', si:11.3,dsi:8.4, jsi:19.7,di:0.54,cod:-0.23,field:11,rpr:109,ts:95, foal:'June+',  ran10f:false,trial:true, strideTier:'strong', seasonRuns:3, bPts:4,sPts:5,cPts:18, g1sire:true},
-  {year:2023,winner:'Soul Sister', bred:'IRE',draw:10,drawGrp:'High',style:'PROMINENT',trainer:'John & Thady Gosden',jockey:'Frankie Dettori', sp:'11/4', or:113,form:'1-01',    lastRun:'1st',grpWin:'yes',si:10.5,dsi:9.8, jsi:20.3,di:0.49,cod:-0.35,field:9, rpr:115,ts:79, foal:'January', ran10f:true, trial:true, strideTier:'perfect',seasonRuns:2, bPts:1,sPts:3,cPts:11, g1sire:true},
-  {year:2024,winner:'Ezeliya',     bred:'FR', draw:5, drawGrp:'Mid', style:'PATIENT',  trainer:'D K Weld',          jockey:'Chris Hayes',     sp:'13/2', or:105,form:'41-1',    lastRun:'1st',grpWin:'yes',si:9.6, dsi:10.9,jsi:20.5,di:0.67,cod:-0.20,field:12,rpr:103,ts:73, foal:'March',   ran10f:true, trial:true, strideTier:'perfect',seasonRuns:1, bPts:1,sPts:9,cPts:6,  g1sire:true},
-  {year:2025,winner:'Minnie Hauk', bred:'IRE',draw:2, drawGrp:'Low', style:'PROMINENT',trainer:"A P O'Brien",       jockey:'Ryan Moore',      sp:'9/2',  or:100,form:'21-1',    lastRun:'1st',grpWin:'no', si:10.5,dsi:9.8, jsi:20.3,di:0.76,cod:-0.09,field:9, rpr:99, ts:72, foal:'April',   ran10f:true, trial:true, strideTier:'perfect',seasonRuns:1, bPts:1,sPts:4,cPts:11, g1sire:true},
+  {year:2022,winner:'Tuesday',     bred:'IRE',draw:1, drawGrp:'Low', style:'PATIENT',  trainer:"A P O'Brien",         jockey:'Ryan Moore',            sp:'13/2', or:109,form:'2-132',   lastRun:'2nd',grpWin:'no', si:11.3,dsi:8.4, jsi:19.7,di:0.54,cod:-0.23,field:11,rpr:109,ts:95, foal:'June+',  ran10f:false,trial:true, strideTier:'strong', seasonRuns:3, bPts:4,sPts:5,cPts:18, g1sire:true},
+  {year:2023,winner:'Soul Sister', bred:'IRE',draw:10,drawGrp:'High',style:'PROMINENT',trainer:'John & Thady Gosden', jockey:'Frankie Dettori',       sp:'11/4', or:113,form:'1-01',    lastRun:'1st',grpWin:'yes',si:10.5,dsi:9.8, jsi:20.3,di:0.49,cod:-0.35,field:9, rpr:115,ts:79, foal:'January', ran10f:true, trial:true, strideTier:'perfect',seasonRuns:2, bPts:1,sPts:3,cPts:11, g1sire:true},
+  {year:2024,winner:'Ezeliya',     bred:'FR', draw:5, drawGrp:'Mid', style:'PATIENT',  trainer:'D K Weld',            jockey:'Chris Hayes',           sp:'13/2', or:105,form:'41-1',    lastRun:'1st',grpWin:'yes',si:9.6, dsi:10.9,jsi:20.5,di:0.67,cod:-0.20,field:12,rpr:103,ts:73, foal:'March',   ran10f:true, trial:true, strideTier:'perfect',seasonRuns:1, bPts:1,sPts:9,cPts:6,  g1sire:true},
+  {year:2025,winner:'Minnie Hauk', bred:'IRE',draw:2, drawGrp:'Low', style:'PROMINENT',trainer:"A P O'Brien",         jockey:'Ryan Moore',            sp:'9/2',  or:100,form:'21-1',    lastRun:'1st',grpWin:'no', si:10.5,dsi:9.8, jsi:20.3,di:0.76,cod:-0.09,field:9, rpr:99, ts:72, foal:'April',   ran10f:true, trial:true, strideTier:'perfect',seasonRuns:1, bPts:1,sPts:4,cPts:11, g1sire:true},
+  {year:2026,winner:'Thundering On',bred:'GB',draw:5, drawGrp:'Mid', style:'PATIENT',  trainer:"Joseph Patrick O'Brien",jockey:'Dylan Browne McMonagle',sp:'5/1',  or:107,form:'42-21',   lastRun:'1st',grpWin:'yes',si:10.5,dsi:8.1, jsi:18.6,di:0.65,cod:-0.18,field:9, rpr:106,ts:88, foal:'January', ran10f:true, trial:true, strideTier:'strong', seasonRuns:2, bPts:1,sPts:4,cPts:14, g1sire:true},
 ];
 
 var GN_WINNERS = [
@@ -1682,16 +1682,16 @@ function renderBenchmarks() {
     bmAvg = 'Avg: 73 · Range: 50–82 · Gold threshold: ≥75';
     bmTitle = 'Historical Winner Benchmarks (2021–2025)';
   } else if (CURRENT_RACE === 'oaks') {
-    winnerAvg = 65; top4Avg = 50;
+    winnerAvg = 60; top4Avg = 50;
     bmWinners = [
-      {year:2021, name:'Snowfall',     score:73},
-      {year:2022, name:'Tuesday',      score:55},
-      {year:2023, name:'Soul Sister',  score:81},
-      {year:2024, name:'Ezeliya',      score:65},
-      {year:2025, name:'Minnie Hauk',  score:67}
+      {year:2022, name:'Tuesday',       score:55},
+      {year:2023, name:'Soul Sister',   score:81},
+      {year:2024, name:'Ezeliya',       score:65},
+      {year:2025, name:'Minnie Hauk',   score:67},
+      {year:2026, name:'Thundering On', score:56}
     ];
-    bmAvg = 'Avg: 68 · Range: 55–81 · Gold threshold: ≥65';
-    bmTitle = 'Historical Winner Benchmarks (2021–2025)';
+    bmAvg = 'Avg: 65 · Range: 55–81 · Gold threshold: ≥60';
+    bmTitle = 'Historical Winner Benchmarks (2022–2026)';
   }
 
   var bmHtml = '<div class="assessment-box" style="margin-bottom:18px">';
@@ -1722,7 +1722,7 @@ function renderNHScoreCard(out, scored, winnerAvg, top4Avg) {
   var WINNER_AVG=winnerAvg||100, TOP4_AVG=top4Avg||75;
   var isFlat = CURRENT_RACE !== 'national';
   
-  var maxScore = (CURRENT_RACE==='g1000') ? 60 : (CURRENT_RACE==='derby') ? 90 : (CURRENT_RACE==='oaks') ? 80 : (CURRENT_RACE==='guineas') ? 70 : 80;
+  var maxScore = (CURRENT_RACE==='g1000') ? 60 : (CURRENT_RACE==='derby') ? 90 : (CURRENT_RACE==='oaks') ? 70 : (CURRENT_RACE==='guineas') ? 70 : 80;
   
   var winPct=Math.round(WINNER_AVG/maxScore*100);
   var t4Pct=Math.round(TOP4_AVG/maxScore*100);
@@ -1843,7 +1843,7 @@ function runAnalysis() {
   if(CURRENT_RACE==='national')      { winnerAvg=94;  top4Avg=75; }
   else if(CURRENT_RACE==='g1000')    { winnerAvg=50;  top4Avg=35; }
   else if(CURRENT_RACE==='derby')    { winnerAvg=70;  top4Avg=50; }
-  else if(CURRENT_RACE==='oaks')     { winnerAvg=65;  top4Avg=50; }
+  else if(CURRENT_RACE==='oaks')     { winnerAvg=60;  top4Avg=50; }
   else if(CURRENT_RACE==='guineas')  { winnerAvg=65;  top4Avg=50; }
   else                               { winnerAvg=70;  top4Avg=50; }
 
@@ -1868,7 +1868,7 @@ function renderProfile() {
     renderICPFactorBarsDerby();
     renderWinnerTable();
   } else if (isOaks) {
-    if (panelHdr) panelHdr.textContent = '2021–2025 · 55 Runners · 5 Winners · Thresholds: Gold ≥65 · Grey 50–64';
+    if (panelHdr) panelHdr.textContent = '2022–2026 · 5 Winners · Thresholds: Gold ≥60 · Grey 50–59';
     renderICPFactorBarsOaks();
     renderWinnerTable();
   } else {
