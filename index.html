@@ -668,9 +668,9 @@ function scoreRunnerOaks(r, fieldSize) {
   else if(cod<=0.20) bf('COD', 0, 'y', cod);
   else bf('COD', -2, 'r', cod);
 
-  // 9 JSI — 20.0-21.9 +5, 18.0-19.9 +2, >=22 -2, else 0
+  // 9 JSI — 20.0-21.9 +5, 18.0-19.9 +3, >=22 -2, else 0
   if(jsi>=20.0&&jsi<=21.9) bf('JSI', 5, 'g', jsi);
-  else if(jsi>=18.0&&jsi<=19.9) bf('JSI', 2, 'y', jsi);
+  else if(jsi>=18.0&&jsi<=19.9) bf('JSI', 3, 'g', jsi);
   else if(jsi>=22.0) bf('JSI', -2, 'r', jsi);
   else bf('JSI', 0, 'y', jsi);
 
@@ -697,9 +697,10 @@ function scoreRunnerOaks(r, fieldSize) {
   else if(lastResult==='2') bf('Last Run', 3, 'g', '2nd');
   else bf('Last Run', 0, 'y', lastResult||'—');
 
-  // 12 Win Rate — >=66% +2, 33-65% 0, <33% -2
+  // 12 Win Rate — >=66% +2, 33-65% 0, <33% -2 (exempt to 0 if Group Win = Y)
   if(winRate>=0.66) bf('Win Rate', 2, 'g', '≥66%');
   else if(winRate>=0.33) bf('Win Rate', 0, 'y', '33–65%');
+  else if(grpw>=1) bf('Win Rate', 0, 'y', '<33% (Group winner — exempt)');
   else bf('Win Rate', -2, 'r', '<33%');
 
   // 13 Group Win — Y +5, N 0
@@ -735,7 +736,7 @@ function scoreRunnerOaks(r, fieldSize) {
 
   // 19 Jockey
   if(jk.indexOf('moore')>=0) bf('Jockey', 5, 'g', r.jockey);
-  else if(jk.indexOf('buick')>=0||jk.indexOf('doyle')>=0||jk.indexOf('murphy')>=0||jk.indexOf('marquand')>=0||jk.indexOf('keane')>=0||jk.indexOf('hayes')>=0||jk.indexOf('crowley')>=0) bf('Jockey', 2, 'g', r.jockey);
+  else if(jk.indexOf('buick')>=0||jk.indexOf('doyle')>=0||jk.indexOf('murphy')>=0||jk.indexOf('marquand')>=0||jk.indexOf('keane')>=0||jk.indexOf('hayes')>=0||jk.indexOf('crowley')>=0||jk.indexOf('mcmonagle')>=0) bf('Jockey', 2, 'g', r.jockey);
   else bf('Jockey', 0, 'y', r.jockey||'—');
 
   // 21 Stride Match — Perfect +5, Strong +2, Acceptable 0, Poor -2
@@ -1684,13 +1685,13 @@ function renderBenchmarks() {
   } else if (CURRENT_RACE === 'oaks') {
     winnerAvg = 60; top4Avg = 50;
     bmWinners = [
-      {year:2022, name:'Tuesday',       score:55},
+      {year:2022, name:'Tuesday',       score:56},
       {year:2023, name:'Soul Sister',   score:81},
       {year:2024, name:'Ezeliya',       score:65},
       {year:2025, name:'Minnie Hauk',   score:67},
-      {year:2026, name:'Thundering On', score:56}
+      {year:2026, name:'Thundering On', score:61}
     ];
-    bmAvg = 'Avg: 65 · Range: 55–81 · Gold threshold: ≥60';
+    bmAvg = 'Avg: 66 · Range: 56–81 · Gold threshold: ≥60';
     bmTitle = 'Historical Winner Benchmarks (2022–2026)';
   }
 
@@ -2170,7 +2171,7 @@ function renderICPFactorBarsOaks() {
     { label: 'Jockey Sire Index (JSI)', icon: '🎯',
       bands: [
         { label: '20.0–21.9', pts: '+5', tier: 'g', note: '4 winners — IV 2.00 — dominant sweet spot' },
-        { label: '18.0–19.9', pts: '+2', tier: 'y', note: '1 winner (Tuesday) — directional positive' },
+        { label: '18.0–19.9', pts: '+3', tier: 'g', note: '2 winners (Tuesday, Thundering On) — sub-20 winners now recurring' },
         { label: '< 18.0', pts: '0', tier: 'y', note: '0 wins, T4 37.5% — neutral' },
         { label: '≥ 22.0', pts: '−2', tier: 'r', note: '5 runners — zero wins, zero T4 — clean void' }
       ]
@@ -2207,7 +2208,8 @@ function renderICPFactorBarsOaks() {
       bands: [
         { label: '≥ 66%', pts: '+2', tier: 'g', note: '3 winners at 67% — IV 2.36, AE 1.22' },
         { label: '33–65%', pts: '0', tier: 'y', note: '2 winners — baseline' },
-        { label: '< 33%', pts: '−2', tier: 'r', note: 'PRB 0.352 — sub-1-in-3 winners rarely show' }
+        { label: '< 33% + Group Win', pts: '0', tier: 'y', note: 'Exempt — proven class, PRB 0.865, T4 100% (3/3)' },
+        { label: '< 33%, no Group Win', pts: '−2', tier: 'r', note: 'PRB 0.295 — genuine void without proven class' }
       ]
     },
     { label: 'Group Win?', icon: '🏆',
@@ -2256,7 +2258,7 @@ function renderICPFactorBarsOaks() {
     { label: 'Jockey', icon: '🏇',
       bands: [
         { label: 'Ryan Moore', pts: '+5', tier: 'g', note: '2 winners — IV 4.40, AE 1.43 — Coolmore #1' },
-        { label: 'Buick, Doyle, Murphy, Marquand, Keane, Hayes, Crowley', pts: '+2', tier: 'g', note: 'Elite active Group 1 jockeys' },
+        { label: 'Buick, Doyle, Murphy, Marquand, Keane, Hayes, Crowley, McMonagle', pts: '+2', tier: 'g', note: 'Elite active Group 1 jockeys (McMonagle won 2026)' },
         { label: 'All Others', pts: '0', tier: 'y', note: 'Floor' }
       ]
     },
